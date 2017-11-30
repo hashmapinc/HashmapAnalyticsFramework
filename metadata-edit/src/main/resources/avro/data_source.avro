@@ -1,0 +1,139 @@
+{
+  "type": "record",
+  "name": "DataSource",
+  "namespace": "com.hashmap.haf.models",
+  "fields": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "host",
+      "type": "string"
+    },
+    {
+      "name": "port",
+      "type": "int"
+    },
+    {
+      "name": "database",
+      "type": "string"
+    },
+    {
+      "name": "datasets",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "DataSet",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "table",
+              "type": "string"
+            },
+            {
+              "name": "columns",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "record",
+                  "name": "Column",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "name": "key",
+                      "type": "boolean",
+                      "default": false
+                    },
+                    {
+                      "name": "dataType",
+                      "type": "string"
+                    },
+                    {
+                      "name": "metadata",
+                      "type": {
+                        "type": "record",
+                        "name": "ColumnMetadata",
+                        "fields": [
+                          {
+                            "name": "flags",
+                            "type": {
+                              "type": "record",
+                              "name": "ColumnType",
+                              "fields": [
+                                {
+                                  "name": "categorical",
+                                  "type": "boolean",
+                                  "default": false
+                                },
+                                {
+                                  "name": "feature",
+                                  "type": "boolean",
+                                  "default": true
+                                },
+                                {
+                                  "name": "label",
+                                  "type": "boolean",
+                                  "default": false
+                                },
+                                {
+                                  "name": "score",
+                                  "type": "boolean",
+                                  "default": false
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "name": "weight",
+                            "type": "int"
+                          },
+                          {
+                            "name": "conversion",
+                            "type": [
+                              "null",
+                              {
+                                "type": "record",
+                                "name": "Conversion",
+                                "fields": [
+                                  {
+                                    "name": "name",
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "default": null
+                                  },
+                                  {
+                                    "name": "dataType",
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "default": null
+                                  }
+                                ]
+                              }
+                            ],
+                            "default": null
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
