@@ -13,6 +13,7 @@ class FunctionsRegistry {
 		//Have a local copy of those functions for faster lookup
 
 		registry += alias -> name
+		println("Check compile")
 		/*val f: Map[String, Predef.Function[_, _]] = registry.getOrElse((typeOf[I], typeOf[RT]), Map.empty)
 		registry += (typeOf[I], typeOf[RT]) -> (f + name -> func)*/
 	}
