@@ -1,0 +1,139 @@
+{
+  "source": "postgresql",
+  "host": "localhost",
+  "port": 5432,
+  "database": "thingsboard",
+  "datasets": [
+    {
+      "name": "timeseries",
+      "table": "ts_kv",
+      "columns": [
+        {
+          "name": "entity_type",
+          "key": false,
+          "dataType": "string",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1
+          }
+        },
+        {
+          "name": "entity_id",
+          "key": true,
+          "dataType": "string",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1,
+            "conversion": {
+              "dataType": "uuid"
+            }
+          }
+        },
+        {
+          "name": "key",
+          "key": false,
+          "dataType": "string",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1
+          }
+        },
+        {
+          "name": "ts",
+          "key": true,
+          "dataType": "long",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1,
+            "conversion": {
+              "name": "date_time",
+              "dataType": "timestamp"
+            }
+          }
+        },
+        {
+          "name": "str_v",
+          "key": false,
+          "dataType": "string",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1,
+            "conversion": {
+              "dataType": "double"
+            }
+          }
+        },
+        {
+          "name": "long_v",
+          "key": false,
+          "dataType": "long",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1
+          }
+        },
+        {
+          "name": "bool_v",
+          "key": false,
+          "dataType": "boolean",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1,
+            "conversion": {
+              "dataType": "smallint"
+            }
+          }
+        },
+        {
+          "name": "dbl_v",
+          "key": false,
+          "dataType": "double",
+          "metadata": {
+            "flags": {
+              "categorical": false,
+              "feature": true,
+              "label": false,
+              "score": false
+            },
+            "weight": -1
+          }
+        }
+      ]
+    }
+  ]
+}
