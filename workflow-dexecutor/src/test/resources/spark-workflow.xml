@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workflow>
+    <task name="Edit Metadata">
+        <spark>
+            <server>livy</server>
+            <jar>edit-metadata-1.0.0-SNAPSHOT.jar</jar>
+            <mainClass>com.hashmap.haf.functions.EditMetadataFunction</mainClass>
+        </spark>
+    </task>
+</workflow>
