@@ -9,6 +9,7 @@ import org.apache.avro.Schema
 import org.apache.ignite.cache.affinity.Affinity
 import org.apache.ignite.spark.IgniteRDD
 import org.apache.spark.api.java.JavaRDD
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
@@ -23,6 +24,9 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 
 	val schema: Schema = AvroSchema[DataSource]
 	println(schema)
+
+	private val value: RDD[(String, String)] = spark.sparkContext.wholeTextFiles("resources/a")
+
 
 	parseArgument(args(0)) match {
 		case Success(source: DataSource) =>

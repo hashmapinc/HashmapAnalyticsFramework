@@ -1,7 +1,8 @@
 package com.hashmap.haf.workflow.processor
 
 import java.util.UUID
-import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig}
+import java.util.concurrent.TimeUnit
+import com.github.dexecutor.core._
 import com.github.dexecutor.ignite.IgniteDexecutorState
 import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.ignite.IgniteContext
@@ -14,6 +15,8 @@ object WorkflowProcessor {
 
 	def process(): Unit ={
 		val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(UUID.randomUUID())
+		buildTaskGraph(executor)
+		executor.execute(new ExecutionConfig().scheduledRetrying(3, new Duration(2, TimeUnit.SECONDS)))
 	}
 
 	private def newTaskExecutor(workflowId: UUID) = {
@@ -21,5 +24,9 @@ object WorkflowProcessor {
 		val config = new DexecutorConfig[UUID, String](new IgniteSparkExecutionEngine[UUID, String](dexecutorState, ignite.compute), DefaultTaskProvider())
 		config.setDexecutorState(dexecutorState)
 		new DefaultDexecutor[UUID, String](config)
+	}
+
+	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit ={
+
 	}
 }
