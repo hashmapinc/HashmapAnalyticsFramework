@@ -6,11 +6,6 @@ import org.apache.ignite.lang.IgniteCallable
 abstract class SparkTaskClosure[T <: Comparable[T], R]
 	extends Task[T, R] with IgniteCallable[ExecutionResult[T, R]]{
 
-	import org.apache.ignite.resources.ServiceResource
-
-	@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
-	protected val mapSvc = _
-
 	@throws[Exception]
 	override def call(): ExecutionResult[T, R] = {
 		var r: R = _
