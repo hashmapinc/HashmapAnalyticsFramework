@@ -7,7 +7,7 @@ import com.hashmap.haf.workflow.closure.SparkTaskClosure
 import org.apache.ignite.IgniteCompute
 import org.apache.ignite.lang.{IgniteFuture, IgniteInClosure}
 
-class IgniteSparkExecutionEngine[T <: Comparable[T], R](dexecutorState: DexecutorState[T, R],
+class IgniteSparkExecutionEngine[T <: Comparable[T], R](executorState: DexecutorState[T, R],
                                                         igniteCompute: IgniteCompute,
                                                         completionQueue: BlockingQueue[ExecutionResult[T, R]])
 	extends ExecutionEngine [T, R] {
@@ -33,9 +33,9 @@ class IgniteSparkExecutionEngine[T <: Comparable[T], R](dexecutorState: Dexecuto
 		try {
 			val executionResult: ExecutionResult[T, R] = completionQueue.take
 			if (executionResult.isSuccess)
-				this.dexecutorState.removeErrored(executionResult)
+				this.executorState.removeErrored(executionResult)
 			else
-				this.dexecutorState.addErrored(executionResult)
+				this.executorState.addErrored(executionResult)
 			executionResult
 		} catch {
 			case e: InterruptedException =>
@@ -45,7 +45,7 @@ class IgniteSparkExecutionEngine[T <: Comparable[T], R](dexecutorState: Dexecuto
 
 	override def isDistributed = true
 
-	override def isAnyTaskInError: Boolean = this.dexecutorState.erroredCount > 0
+	override def isAnyTaskInError: Boolean = this.executorState.erroredCount > 0
 
 }
 

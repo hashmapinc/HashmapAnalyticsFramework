@@ -11,8 +11,8 @@ case class SparkTask(override val name: String,
                      args: List[String],
                      override val to: Option[String] = None) extends EntityTask[String](name, id, to){
 
-	@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
-	protected val mapSvc = _
+	//@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
+	//protected val mapSvc = _
 
 	override def execute(): String = {
 		//mapSvc.runSurvice()

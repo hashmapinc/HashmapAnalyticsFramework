@@ -9,7 +9,11 @@ import scala.xml.Node
 case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
 	extends Workflow[UUID, String](tasks, name) {
 
-	def buildGraph(executor: Dexecutor[UUID, String]): Unit ={
+	val id: UUID = UUID.randomUUID()
+
+	override def getId: UUID = id
+
+	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit ={
 		tasks.foreach(t => {
 			val toTask: Option[EntityTask[String]] = t.to.map(n => tasks.find(_.name.equalsIgnoreCase(n)).getOrElse(throw new RuntimeException("No to task defined")))
 			if(toTask.isDefined)
