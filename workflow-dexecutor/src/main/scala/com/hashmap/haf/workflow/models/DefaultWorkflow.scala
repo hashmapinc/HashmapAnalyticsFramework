@@ -23,7 +23,6 @@ case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
 object DefaultWorkflow{
 	def apply(): DefaultWorkflow = new DefaultWorkflow(Nil, "EmptyWorkflow")
 
-
 	def apply(xml: Node): DefaultWorkflow = {
 		val workflowXml: Node = (xml \ "workflow").head
 		new DefaultWorkflow(
