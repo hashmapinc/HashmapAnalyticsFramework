@@ -5,6 +5,9 @@
             <server>livy</server>
             <jar>edit-metadata-1.0.0-SNAPSHOT.jar</jar>
             <mainClass>com.hashmap.haf.functions.EditMetadataFunction</mainClass>
+            <args>
+                <arg>somevalue</arg>
+            </args>
         </spark>
     </task>
 </workflow>

@@ -7,4 +7,5 @@ object XmlConstants {
 	val JAR = "jar"
 	val MAIN_CLAZZ = "mainClass"
 	val ARGS = "args"
+	val ARG = "arg"
 }
