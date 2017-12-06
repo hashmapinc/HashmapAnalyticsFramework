@@ -1,8 +1,9 @@
 package com.hashmap.haf.workflow.builder
 
 import java.util.UUID
-import com.hashmap.haf.workflow.Workflow
-import com.hashmap.haf.workflow.models.DefaultWorkflow
+
+import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
+
 import scala.xml.Elem
 
 class DefaultWorkflowBuilder(path: String) extends ResourceWorkflowBuilder[UUID, String](path) {

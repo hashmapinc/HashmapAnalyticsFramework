@@ -1,8 +1,9 @@
 package com.hashmap.haf.workflow.task
 
 import java.util.UUID
-import com.hashmap.haf.workflow.Workflow
+
 import com.hashmap.haf.workflow.builder.{DefaultWorkflowBuilder, WorkflowBuilder}
+import com.hashmap.haf.workflow.models.Workflow
 
 class DefaultTaskProvider(workflow: Workflow[UUID, String])
 	extends WorkflowTaskProvider[UUID, String](workflow){

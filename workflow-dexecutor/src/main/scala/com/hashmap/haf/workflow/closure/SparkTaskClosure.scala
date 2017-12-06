@@ -1,11 +1,12 @@
 package com.hashmap.haf.workflow.closure
 
-import com.github.dexecutor.core.task.{ExecutionResult, Task}
+import com.github.dexecutor.core.task.ExecutionResult
+import com.hashmap.haf.workflow.factory.Factory.WorkflowTask
 import org.apache.ignite.lang.IgniteCallable
 import scala.util.{Failure, Success, Try}
 
 abstract class SparkTaskClosure[T <: Comparable[T], R]
-	extends Task[T, R] with IgniteCallable[ExecutionResult[T, R]]{
+	extends WorkflowTask[T, R] with IgniteCallable[ExecutionResult[T, R]]{
 
 	def defaultValue[U]: U = {
 		class Default[U] {

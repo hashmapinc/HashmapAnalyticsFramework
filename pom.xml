@@ -111,12 +111,6 @@
                 <version>1.8.0</version>
             </dependency>
             <dependency>
-                <groupId>com.typesafe.play</groupId>
-                <artifactId>play-specs2_2.11</artifactId>
-                <version>${play2.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-core</artifactId>
                 <version>${ignite.version}</version>
@@ -146,6 +140,12 @@
                         <artifactId>ignite-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.play</groupId>
+                <artifactId>play-specs2_${scala.compat.version}</artifactId>
+                <version>${play2.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

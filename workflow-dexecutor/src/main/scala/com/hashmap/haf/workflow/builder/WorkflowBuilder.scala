@@ -1,6 +1,7 @@
 package com.hashmap.haf.workflow.builder
 
-import com.hashmap.haf.workflow.Workflow
+import com.hashmap.haf.workflow.models.Workflow
+
 import scala.xml.{Elem, Source, XML}
 
 trait WorkflowBuilder[T <: Comparable[T], R] {

@@ -21,13 +21,14 @@ case class SparkTask(override val name: String,
 }
 
 object SparkTask {
+	import com.hashmap.haf.workflow.constants.XmlConstants._
 
 	def apply(xml: NodeSeq): SparkTask =
 		new SparkTask(
-			name = (xml \ "@name").text,
-			jar = (xml \ "spark" \ "jar").text,
-			mainClazz = (xml \ "spark" \ "mainClass").text,
-			args = List[String]((xml \ "args").toList map {a => a.text}: _*)
+			name = (xml \ NAME_ATTRIBUTE).text,
+			jar = (xml \ SPARK_TASK \ JAR).text,
+			mainClazz = (xml \ SPARK_TASK \ MAIN_CLAZZ).text,
+			args = List[String]((xml \ ARGS).toList map {a => a.text}: _*)
 		)
 
 }
