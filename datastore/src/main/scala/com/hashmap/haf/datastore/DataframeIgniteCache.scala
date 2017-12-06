@@ -13,7 +13,7 @@ object DataframeIgniteCache {
   private var CONFIG:String = _ // Configuration to create ignite cache
 
   def create(configPath: String):Datastore = {
-    CONFIG = getClass.getResource("/examples/cache.xml").getPath
+    CONFIG = configPath
     IgniteCacheInstance
   }
 
