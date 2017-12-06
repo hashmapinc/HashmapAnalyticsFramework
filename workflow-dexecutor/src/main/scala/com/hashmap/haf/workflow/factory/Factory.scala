@@ -2,11 +2,12 @@ package com.hashmap.haf.workflow.factory
 
 import java.util.UUID
 import com.github.dexecutor.core.task.Task
+import com.hashmap.haf.workflow.constants.XmlConstants
 import com.hashmap.haf.workflow.task.SparkTask
 import scala.language.higherKinds
 import scala.xml.Node
 
-object Factory {
+object Factory extends XmlConstants{
 
 	trait WorkflowTask[T <: Comparable[T], R] extends Task[T, R]
 
@@ -21,7 +22,7 @@ object Factory {
 	implicit object EntityTaskFactory extends TaskFactory[UUID, String] {
 		def create(xml: Node): WorkflowTask[UUID, String] = {
 			(xml \ "_").headOption.map(_.label) match {
-				case Some("spark") => SparkTask(xml)
+				case Some(SPARK_TASK) => SparkTask(xml)
 				case _ => throw new IllegalArgumentException("No factory method found for given task")
 			}
 		}
