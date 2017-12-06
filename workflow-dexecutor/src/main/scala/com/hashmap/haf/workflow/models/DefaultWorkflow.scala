@@ -17,10 +17,10 @@ case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
 	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit = {
 		tasks.foreach(t => {
 			val toTask: Option[EntityTask[String]] =
-				t.to.map{n =>
+				t.to.flatMap{n =>
 					if(n.equalsIgnoreCase("end")) None
-					else tasks.find(_.name.equalsIgnoreCase(n))
-				}.getOrElse(throw new IllegalStateException("No to task defined"))
+					else tasks.find(_.name.equalsIgnoreCase(n)).orElse(throw new IllegalStateException("No to task defined"))
+				}
 			toTask match {
 				case Some(et) => executor.addDependency(t.getId, et.getId)
 				case _ =>  executor.addIndependent(t.id)
