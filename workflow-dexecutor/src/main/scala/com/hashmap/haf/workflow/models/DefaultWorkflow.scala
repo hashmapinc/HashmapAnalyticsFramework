@@ -3,7 +3,8 @@ package com.hashmap.haf.workflow.models
 import java.util.UUID
 import com.github.dexecutor.core.Dexecutor
 import com.hashmap.haf.workflow.Workflow
-import com.hashmap.haf.workflow.task.{EntityTask, SparkTask}
+import com.hashmap.haf.workflow.task.EntityTask
+import com.hashmap.haf.workflow.factory.Factory._
 import scala.xml.Node
 
 case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
@@ -30,7 +31,7 @@ object DefaultWorkflow{
 	def apply(xml: Node): DefaultWorkflow = {
 		new DefaultWorkflow(
 			name = (xml \ "@name").text,
-			tasks = List[EntityTask[String]]((xml \ "task").toList map { s => SparkTask(s) }: _*)
+			tasks = List[EntityTask[String]]((xml \ "task").toList map {s => TaskFactory[UUID, String](s).asInstanceOf[EntityTask[String]]}: _*)
 		)
 
 	}
