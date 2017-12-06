@@ -28,7 +28,7 @@ object SparkTask {
 			name = (xml \ NAME_ATTRIBUTE).text,
 			jar = (xml \ SPARK_TASK \ JAR).text,
 			mainClazz = (xml \ SPARK_TASK \ MAIN_CLAZZ).text,
-			args = List[String]((xml \ ARGS).toList map {a => a.text}: _*)
+			args = List[String]((xml \ SPARK_TASK \ ARGS \ ARG).toList map {a => a.text}: _*)
 		)
 
 }
