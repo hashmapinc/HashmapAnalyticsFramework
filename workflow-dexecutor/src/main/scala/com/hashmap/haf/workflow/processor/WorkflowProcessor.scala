@@ -2,12 +2,13 @@ package com.hashmap.haf.workflow.processor
 
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+
 import com.github.dexecutor.core._
 import com.github.dexecutor.ignite.IgniteDexecutorState
-import com.hashmap.haf.workflow.Workflow
 import com.hashmap.haf.workflow.builder.{DefaultWorkflowBuilder, WorkflowBuilder}
 import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.ignite.IgniteContext
+import com.hashmap.haf.workflow.models.Workflow
 import com.hashmap.haf.workflow.task.DefaultTaskProvider
 import org.apache.ignite.Ignite
 

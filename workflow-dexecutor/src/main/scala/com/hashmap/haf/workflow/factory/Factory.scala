@@ -23,6 +23,7 @@ object Factory extends XmlConstants{
 		def create(xml: Node): WorkflowTask[UUID, String] = {
 			(xml \ "_").headOption.map(_.label) match {
 				case Some(SPARK_TASK) => SparkTask(xml)
+				case None => throw new IllegalStateException("At least one tak should be defined in a workflow")
 				case _ => throw new IllegalArgumentException("No factory method found for given task")
 			}
 		}

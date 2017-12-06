@@ -1,9 +1,7 @@
 package com.hashmap.haf.workflow.models
 
 import java.util.UUID
-
 import com.github.dexecutor.core.Dexecutor
-import com.hashmap.haf.workflow.Workflow
 import com.hashmap.haf.workflow.constants.XmlConstants
 import com.hashmap.haf.workflow.task.EntityTask
 import com.hashmap.haf.workflow.factory.Factory._
@@ -16,9 +14,9 @@ case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
 
 	override def getId: UUID = id
 
-	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit ={
+	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit = {
 		tasks.foreach(t => {
-			val toTask: Option[EntityTask[String]] = t.to.map(n => tasks.find(_.name.equalsIgnoreCase(n)).getOrElse(throw new RuntimeException("No to task defined")))
+			val toTask: Option[EntityTask[String]] = t.to.map(n => tasks.find(_.name.equalsIgnoreCase(n)).getOrElse(throw new IllegalStateException("No to task defined")))
 			if(toTask.isDefined)
 				executor.addDependency(t.id, toTask.get.id)
 			else

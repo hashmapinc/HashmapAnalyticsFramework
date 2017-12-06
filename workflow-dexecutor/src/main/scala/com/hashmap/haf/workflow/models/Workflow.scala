@@ -1,4 +1,4 @@
-package com.hashmap.haf.workflow
+package com.hashmap.haf.workflow.models
 
 import java.util.UUID
 
@@ -16,4 +16,8 @@ abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: St
 	def getId: T
 
 	def buildTaskGraph(executor: Dexecutor[T, R]): Unit
+
+	def getName: String = name
+
+	private[workflow] def getTasks: List[Task[T, R]] = tasks
 }
