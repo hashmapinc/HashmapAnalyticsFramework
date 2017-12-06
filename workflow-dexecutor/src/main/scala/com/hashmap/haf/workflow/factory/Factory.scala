@@ -11,15 +11,15 @@ object Factory {
 	trait WorkflowTask[T <: Comparable[T], R] extends Task[T, R]
 
 	trait TaskFactory[T <: Comparable[T], R] {
-		def make(xml: Node): WorkflowTask[T, R]
+		def create(xml: Node): WorkflowTask[T, R]
 	}
 
 	object TaskFactory {
-		def apply[T <: Comparable[T], R](xml: Node)(implicit ev: TaskFactory[T, R]): Task[T, R] = ev.make(xml)
+		def apply[T <: Comparable[T], R](xml: Node)(implicit ev: TaskFactory[T, R]): Task[T, R] = ev.create(xml)
 	}
 
 	implicit object EntityTaskFactory extends TaskFactory[UUID, String] {
-		def make(xml: Node): WorkflowTask[UUID, String] = {
+		def create(xml: Node): WorkflowTask[UUID, String] = {
 			(xml \ "_").headOption.map(_.label) match {
 				case Some("spark") => SparkTask(xml)
 				case _ => throw new IllegalArgumentException("No factory method found for given task")
@@ -29,7 +29,7 @@ object Factory {
 
 	/*//Example for other types
 	implicit object IntTaskFactory extends TaskFactory[Int, String]{
-		override def make(xml: Node): WorkflowTask[Int, String] = ???
+		override def create(xml: Node): WorkflowTask[Int, String] = ???
 	}*/
 
 }
