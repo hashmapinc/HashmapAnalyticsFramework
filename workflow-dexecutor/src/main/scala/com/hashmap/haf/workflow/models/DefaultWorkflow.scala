@@ -28,10 +28,9 @@ object DefaultWorkflow{
 	def apply(): DefaultWorkflow = new DefaultWorkflow(Nil, "EmptyWorkflow")
 
 	def apply(xml: Node): DefaultWorkflow = {
-		val workflowXml: Node = (xml \ "workflow").head
 		new DefaultWorkflow(
-			name = (workflowXml \ "name").text,
-			tasks = List[EntityTask[String]]((workflowXml \ "task").toList map { s => SparkTask(s) }: _*)
+			name = (xml \ "@name").text,
+			tasks = List[EntityTask[String]]((xml \ "task").toList map { s => SparkTask(s) }: _*)
 		)
 
 	}
