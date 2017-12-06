@@ -7,7 +7,8 @@ import com.hashmap.haf.workflow.task.SparkTask
 import scala.language.higherKinds
 import scala.xml.Node
 
-object Factory extends XmlConstants{
+object Factory{
+	import XmlConstants._
 
 	trait WorkflowTask[T <: Comparable[T], R] extends Task[T, R]
 

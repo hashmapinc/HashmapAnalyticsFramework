@@ -25,7 +25,9 @@ case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
 	}
 }
 
-object DefaultWorkflow extends XmlConstants{
+object DefaultWorkflow{
+	import XmlConstants._
+
 	def apply(): DefaultWorkflow = new DefaultWorkflow(Nil, "EmptyWorkflow")
 
 	def apply(xml: Node): DefaultWorkflow = {
