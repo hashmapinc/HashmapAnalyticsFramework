@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<workflow>
-    <task name="Edit Metadata" uuid="123">
-        <spark>
+<workflow name="Sample Workflow">
+    <configurations>
+        <configuration>
+            <key>ignite.cache</key>
+            <value>resource/cache.xml</value>
+        </configuration>
+        <!--<configuration>
+            <key>ignite.conf</key>
+            <value>resource/example.xml</value>
+        </configuration>-->
+    </configurations>
+    <task name="datasource_edit_metadata">
+        <livy>
+            <configuration>
+                <key>ignite.cache</key>
+                <value>testResources/cache.xml</value>
+            </configuration>
             <server>livy</server>
             <jar>edit-metadata-1.0.0-SNAPSHOT.jar</jar>
             <mainClass>com.hashmap.haf.functions.EditMetadataFunction</mainClass>
             <args>
                 <arg></arg>
             </args>
-            <to task="abc"/>
+            <to task="forked_summarize"/>
+            <!--<to task="some_other_task"/>-->
+        </livy>
+    </task>
+    <task name = "forked_summarize">
+        <spark>
+            <configurations>
+                <configuration>
+                    <key>ignite.cache</key>
+                    <value>testResources/cache.xml</value>
+                </configuration>
+            </configurations>
+            <function>SummarizeServiceV2</function>
+            <inputCache>output_edit_metadata</inputCache>
+            <outputCache>output_summarize</outputCache>
+            <args>
+                <arg key="aggregates">min,max,avg</arg>
+            </args>
+            <to task="end"/>
         </spark>
     </task>
-    <task uuid=" 2324"></task>
 </workflow>
+
+<!-- TODO: Think about jobs joining -->
