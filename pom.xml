@@ -23,6 +23,9 @@
     <modules>
         <module>metadata-edit</module>
         <module>workflow-dexecutor</module>
+        <module>functions-api</module>
+        <module>datastore</module>
+        <module>functions</module>
     </modules>
 
     <repositories>

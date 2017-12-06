@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hashmap-analytics</artifactId>
+        <groupId>com.hashmap.haf</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hashmap.haf.functions</groupId>
+    <artifactId>functions</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <functions-api>1.0-SNAPSHOT</functions-api>
+        <datastore>1.0.0-SNAPSHOT</datastore>
+    </properties>
+    <modules>
+        <module>summarize</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.hashmap.haf.functions.api</groupId>
+                <artifactId>functions-api</artifactId>
+                <version>${functions-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf.datastore</groupId>
+                <artifactId>datastore</artifactId>
+                <version>${datastore}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
