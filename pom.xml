@@ -13,6 +13,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <encoding>UTF-8</encoding>
+        <jdk.version>1.8</jdk.version>
         <scala.version>2.11.8</scala.version>
         <scala.compat.version>2.11</scala.compat.version>
         <play2.version>2.6.7</play2.version>
@@ -27,6 +28,7 @@
         <module>datastore</module>
         <module>functions</module>
         <module>function-archetype</module>
+        <module>function-annotations</module>
     </modules>
 
     <repositories>
@@ -157,6 +159,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.6.0</version>
                     <configuration>
                         <skipMain>true</skipMain> <!-- skip compile -->
                         <skip>true</skip> <!-- skip testCompile -->
