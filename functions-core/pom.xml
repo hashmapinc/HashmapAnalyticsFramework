@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>datastore</artifactId>
+    <artifactId>functions-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,10 +19,6 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-sql_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
         </dependency>
         <dependency>
             <groupId>org.apache.ignite</groupId>
@@ -36,6 +32,7 @@
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
+        <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -45,11 +42,6 @@
                 <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
                 <artifactId>sbt-compiler-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
-
 </project>

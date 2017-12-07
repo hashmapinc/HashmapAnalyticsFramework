@@ -1,4 +1,4 @@
-package com.hashmap.haf.functions.api.service
+package com.hashmap.haf.functions.services
 
 import org.apache.ignite.services.Service
 

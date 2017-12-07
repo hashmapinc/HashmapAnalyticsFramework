@@ -10,9 +10,7 @@
         <artifactId>hashmap-analytics</artifactId>
     </parent>
 
-    <groupId>com.hashmap.haf.functions.api</groupId>
     <artifactId>functions-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>

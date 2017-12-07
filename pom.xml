@@ -23,13 +23,14 @@
     </properties>
 
     <modules>
-        <module>metadata-edit</module>
-        <module>workflow-dexecutor</module>
-        <module>functions-api</module>
         <module>datastore</module>
         <module>function-archetype</module>
         <module>function-annotations</module>
+        <module>functions-core</module>
+        <module>functions-api</module>
+        <module>workflow-dexecutor</module>
         <module>functions</module>
+        <module>metadata-edit</module>
     </modules>
 
     <repositories>
@@ -183,6 +184,21 @@
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-xml_${scala.compat.version}</artifactId>
                 <version>1.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>functions-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>functions-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>datastore</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.dexecutor</groupId>

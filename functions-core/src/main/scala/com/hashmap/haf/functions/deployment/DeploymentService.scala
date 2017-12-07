@@ -1,6 +1,6 @@
-package com.hashmap.haf.functions.api.deployment
+package com.hashmap.haf.functions.deployment
 
-import com.hashmap.haf.functions.api.service.ServiceFunction
+import com.hashmap.haf.functions.services.ServiceFunction
 import org.apache.ignite.{Ignite, IgniteServices, Ignition}
 
 trait DeploymentService {
