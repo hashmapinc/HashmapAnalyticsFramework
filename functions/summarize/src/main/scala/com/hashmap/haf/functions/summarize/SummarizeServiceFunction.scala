@@ -2,7 +2,7 @@ package com.hashmap.haf.functions.summarize
 
 import com.hashmap.haf.datastore.DataframeIgniteCache
 import com.hashmap.haf.functions.api.service.ServiceFunction
-import org.apache.ignite.services.{Service, ServiceContext}
+import org.apache.ignite.services.ServiceContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.types._
@@ -20,8 +20,6 @@ class SparkSummarizeService extends ServiceFunction{
       .appName("Spark Summarize Service")
       .master("local")
       .getOrCreate()
-
-    import spark.implicits._
     val cache = DataframeIgniteCache.create(CONFIG)
     val (schema, igniteRDD) = cache.get(spark.sparkContext, inputKey)
 

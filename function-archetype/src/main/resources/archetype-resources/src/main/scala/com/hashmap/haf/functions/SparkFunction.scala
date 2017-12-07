@@ -9,7 +9,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 
 
-class SparkFunction extends ServiceFunction{
+class SparkFunction(configs: Map[String, String] = Map.empty[String, String]) extends ServiceFunction{
 
 	var appName = ""
 	val CONFIG = getClass.getResource("/cache.xml").getPath
