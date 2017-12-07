@@ -1,7 +1,7 @@
 package com.hashmap.haf.functions
 
 import com.hashmap.haf.datastore.DataframeIgniteCache
-import com.hashmap.haf.functions.api.ServiceFunction
+import com.hashmap.haf.functions.api.service.ServiceFunction
 import org.apache.ignite.services.{Service, ServiceContext}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
