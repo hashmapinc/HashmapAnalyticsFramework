@@ -13,8 +13,6 @@ class IgniteSparkExecutionEngine[T <: Comparable[T], R](executorState: Dexecutor
 	extends ExecutionEngine [T, R] {
 
 	def this(dexecutorState: DexecutorState[T, R], igniteCompute: IgniteCompute) {
-		//checkNotNull(igniteCompute, "Executer Service should not be null")
-		//checkNotNull(completionQueue, "BlockingQueue should not be null")
 		this(dexecutorState, igniteCompute, new LinkedBlockingQueue[ExecutionResult[T, R]]())
 	}
 

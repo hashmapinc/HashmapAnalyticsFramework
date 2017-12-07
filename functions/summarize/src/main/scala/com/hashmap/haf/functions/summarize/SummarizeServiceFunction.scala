@@ -9,7 +9,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 
 
-class SparkSummarizeService extends ServiceFunction with Service{
+class SparkSummarizeService extends ServiceFunction{
 
   var appName = ""
   val CONFIG = getClass.getResource("/examples/cache.xml").getPath

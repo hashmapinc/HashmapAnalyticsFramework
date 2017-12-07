@@ -14,8 +14,32 @@
     <artifactId>functions-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-spark</artifactId>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.hashmap.haf.datastore</groupId>
+            <artifactId>datastore</artifactId>
+        </dependency>-->
+    </dependencies>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
