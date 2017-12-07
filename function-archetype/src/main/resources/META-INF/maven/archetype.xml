@@ -1,0 +1,6 @@
+<archetype>
+    <id>function-archetype</id>
+    <sources>
+        <source>src/main/scala/com/hashmap/haf/functions/SparkFunction.scala</source>
+    </sources>
+</archetype>

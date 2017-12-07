@@ -26,6 +26,7 @@
         <module>functions-api</module>
         <module>datastore</module>
         <module>functions</module>
+        <module>function-archetype</module>
     </modules>
 
     <repositories>
