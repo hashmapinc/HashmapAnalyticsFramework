@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan(Array("com.hashmap.haf.functions.api.service"))
+@ComponentScan(Array("com.hashmap.haf.functions.api.services"))
 class FunctionApiApplication
 
 object FunctionApiApplication extends App{

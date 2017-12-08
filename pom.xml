@@ -201,6 +201,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>function-annotations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.dexecutor</groupId>
                 <artifactId>dexecutor-ignite</artifactId>
                 <version>1.0.1</version>
@@ -210,6 +215,11 @@
                         <artifactId>ignite-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>eu.infomas</groupId>
+                <artifactId>annotation-detector</artifactId>
+                <version>3.0.5</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.play</groupId>

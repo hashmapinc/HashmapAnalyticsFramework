@@ -1,2 +1,8 @@
 functions:
-  directory: "/home/lib"
+  input:
+    location: "file:///home"
+  output:
+    location: "file:///home/functions"
+  protocol: "file"
+
+  #Other options are s3, ftp, ftps, https etc
