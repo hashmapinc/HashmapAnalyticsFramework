@@ -34,11 +34,11 @@ object DefaultWorkflow{
 
 	def apply(): DefaultWorkflow = new DefaultWorkflow(Nil, "EmptyWorkflow")
 
-	def apply(xml: Node): DefaultWorkflow = {
+	def apply(xml: Node, commonConfigs: Map[String, String]): DefaultWorkflow = {
 		new DefaultWorkflow(
 			name = (xml \ NAME_ATTRIBUTE).text,
 			tasks = List[EntityTask[String]](
-				(xml \ TASK).toList map {s => TaskFactory[UUID, String](s).asInstanceOf[EntityTask[String]]}: _*
+				(xml \ TASK).toList map {s => TaskFactory[UUID, String](s, commonConfigs).asInstanceOf[EntityTask[String]]}: _*
 			)
 		)
 

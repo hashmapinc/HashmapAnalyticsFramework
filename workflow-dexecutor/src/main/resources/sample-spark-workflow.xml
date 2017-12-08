@@ -10,7 +10,7 @@
             <value>resource/example.xml</value>
         </configuration>-->
     </configurations>
-    <task name="datasource_edit_metadata">
+    <task name="datasource_edit_metadata" className="com.hashmap.abc.EditMetadataSparkIgniteTask">
         <livy>
             <configuration>
                 <key>ignite.cache</key>
@@ -26,16 +26,25 @@
             <!--<to task="some_other_task"/>-->
         </livy>
     </task>
-    <task name = "forked_summarize">
+    <task name = "forked_deduplication" className="com.hashmap.haf.tasks.DeduplicateSparkIgniteTask">
         <spark>
             <configurations>
                 <configuration>
-                    <key>ignite.cache</key>
-                    <value>testResources/cache.xml</value>
+                    <key>spark.driver.memory</key>
+                    <value>2g</value>
                 </configuration>
             </configurations>
-            <function>SummarizeServiceV2</function>
-            <inputCache>output_edit_metadata</inputCache>
+            <inputCache>output_postgres</inputCache>
+            <outputCache>output_deduplicate</outputCache>
+            <args>
+                <arg key="retainlast">true</arg>
+            </args>
+            <to task="forked_summarize"/>
+        </spark>
+    </task>
+    <task name = "forked_summarize" className="com.hashmap.haf.tasks.SummarizeIgniteTask">
+        <spark>
+            <inputCache>output_deduplicate</inputCache>
             <outputCache>output_summarize</outputCache>
             <args>
                 <arg key="aggregates">min,max,avg</arg>
