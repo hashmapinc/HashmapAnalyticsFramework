@@ -55,7 +55,9 @@ object Factories {
 		implicit object IgniteFunctionProcessorFactory extends ProcessorFactory[IgniteFunction, IgniteFunctionType]{
 			override def build(): AnnotationsProcessor[IgniteFunction, IgniteFunctionType] = {
 				val reporter = TypeReporterFactory[IgniteFunction, IgniteFunctionType]
-				new FunctionsAnnotationsProcessor[IgniteFunction, IgniteFunctionType](new AnnotationDetector(reporter), reporter.asInstanceOf[Reporter[IgniteFunctionType]])
+				new FunctionsAnnotationsProcessor[IgniteFunction, IgniteFunctionType](
+					new AnnotationDetector(reporter),
+					reporter.asInstanceOf[Reporter[IgniteFunctionType]])
 			}
 		}
 	}

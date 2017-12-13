@@ -10,13 +10,13 @@ import eu.infomas.annotation.AnnotationDetector.TypeReporter
 import scala.collection.mutable
 
 trait AnnotationsProcessor[T <: Annotation, R]{
-	def detectAnnotations(jars: List[File]): Map[String, R]
+	def process(jars: List[File]): Map[String, R]
 }
 
 class FunctionsAnnotationsProcessor[T <: Annotation, R](detector: AnnotationDetector,
                                                         reporter: Reporter[R]) extends AnnotationsProcessor[T, R]{
 
-	override def detectAnnotations(jars: List[File]): Map[String, R] = {
+	override def process(jars: List[File]): Map[String, R] = {
 		detector.detect(jars: _*)
 		reporter.detectedAnnotations
 	}
