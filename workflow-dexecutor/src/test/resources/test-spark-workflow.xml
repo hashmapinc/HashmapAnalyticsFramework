@@ -10,6 +10,17 @@
             <value>1</value>
         </configuration>
     </configurations>
+    <task name = "forked_edit_metadata" className="com.hashmap.haf.tasks.MetaDataIgniteTask">
+        <spark>
+            <inputCache>output_postgres</inputCache>
+            <outputCache>output_metadata</outputCache>
+            <args>
+                <arg key="someargs">someargsvalues</arg>
+            </args>
+            <to task="forked_deduplication"/>
+            <to task="forked_summarize"/>
+        </spark>
+    </task>
     <task name = "forked_deduplication" className="com.hashmap.haf.tasks.DeduplicateSparkIgniteTask">
         <spark>
             <configurations>
@@ -18,17 +29,16 @@
                     <value>2g</value>
                 </configuration>
             </configurations>
-            <inputCache>output_postgres</inputCache>
+            <inputCache>output_metadata</inputCache>
             <outputCache>output_deduplicate</outputCache>
             <args>
                 <arg key="retainlast">true</arg>
             </args>
-            <to task="forked_summarize"/>
         </spark>
     </task>
     <task name = "forked_summarize" className="com.hashmap.haf.tasks.SummarizeIgniteTask">
         <spark>
-            <inputCache>output_deduplicate</inputCache>
+            <inputCache>output_metadata</inputCache>
             <outputCache>output_summarize</outputCache>
             <args>
                 <arg key="aggregates">min,max,avg</arg>

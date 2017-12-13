@@ -7,8 +7,8 @@ import com.hashmap.haf.workflow.models.Workflow
 abstract class WorkflowTaskProvider[T <: Comparable[T], U](workflow: Workflow[T, U])
 	extends TaskProvider[T, U]{
 
-	def this(builder: WorkflowBuilder[T, U]){
-		this(builder.build())
+	def this(builder: WorkflowBuilder[T, U], xmlContent: String){
+		this(builder.build(xmlContent))
 	}
 
 	override def provideTask(t: T): Task[T, U] = workflow.task(t)

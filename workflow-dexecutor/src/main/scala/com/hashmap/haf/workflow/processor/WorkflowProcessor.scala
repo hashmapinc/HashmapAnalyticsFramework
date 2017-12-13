@@ -16,8 +16,8 @@ class WorkflowProcessor(builder: WorkflowBuilder[UUID, String]) {
 
 	val ignite: Ignite = IgniteContext.ignite
 
-	def process(): Unit ={
-		val workflow: Workflow[UUID, String] = builder.build()
+	def process(xmlContent: String): Unit ={
+		val workflow: Workflow[UUID, String] = builder.build(xmlContent)
 		val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
 		workflow.buildTaskGraph(executor)
 		executor.execute(new ExecutionConfig().scheduledRetrying(3, new Duration(2, TimeUnit.SECONDS)))
@@ -32,5 +32,5 @@ class WorkflowProcessor(builder: WorkflowBuilder[UUID, String]) {
 }
 
 object WorkflowProcessor{
-	def apply(path: String): WorkflowProcessor = new WorkflowProcessor(new DefaultWorkflowBuilder(path))
+	def apply(): WorkflowProcessor = new WorkflowProcessor(new DefaultWorkflowBuilder())
 }

@@ -7,25 +7,25 @@ import com.hashmap.haf.workflow.task.EntityTask
 import com.hashmap.haf.workflow.factory.Factory._
 import scala.xml.Node
 
-case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String)
+case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String, id: UUID = UUID.randomUUID())
 	extends Workflow[UUID, String](tasks, name){
-
-	val id: UUID = UUID.randomUUID()
 
 	override def getId: UUID = id
 
 	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit = {
 		tasks.foreach(t => {
-			val toTask: Option[EntityTask[String]] =
-				t.to.flatMap{n =>
-					if(n.equalsIgnoreCase("end")) None
-					else tasks.find(_.name.equalsIgnoreCase(n)).orElse(throw new IllegalStateException("No to task defined"))
-				}
-			toTask match {
-				case Some(et) => executor.addDependency(t.getId, et.getId)
-				case _ =>  executor.addIndependent(t.id)
+			val toTasks = getEntityTasksForTasksStrings(t.to)
+			toTasks match {
+				case Nil => executor.addIndependent(t.id)
+				case dts => dts.foreach(dt => executor.addDependency(t.getId, dt.getId))
 			}
 		})
+	}
+
+	def getEntityTasksForTasksStrings(ts: List[String]): List[EntityTask[String]] = {
+		ts.filterNot(_.equalsIgnoreCase("end")).map(n =>
+			tasks.find(_.name.equalsIgnoreCase(n)).getOrElse(throw new IllegalStateException("No valid to task defined"))
+		)
 	}
 }
 

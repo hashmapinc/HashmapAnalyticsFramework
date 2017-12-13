@@ -11,7 +11,7 @@ case class SparkIgniteTask(override val name: String,
                            outputCache: String,
                            functionArguments: Map[String, String],
                            configurations: Map[String, String],
-                           override val to: Option[String] = None) extends EntityTask[String](name, id, to){
+                           override val to: List[String] = Nil) extends EntityTask[String](name, id, to){
 
   //@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
   //protected val mapSvc = _
@@ -25,11 +25,14 @@ case class SparkIgniteTask(override val name: String,
 object SparkIgniteTask {
   import com.hashmap.haf.workflow.constants.XmlConstants._
 
-  def apply(xml: NodeSeq, commonConfigs: Map[String, String]): SparkIgniteTask = new SparkIgniteTask(
-    name = (xml \ NAME_ATTRIBUTE).text,
-    inputCache = (xml \ SPARK_TASK \ INPUT_CACHE).text,
-    outputCache = (xml \ SPARK_TASK \ OUTPUT_CACHE).text,
-    functionArguments = (xml \ SPARK_TASK \ ARGS \ ARG).map(a => ((a \ KEY_ATTRIBUTE).text, a.text)).toMap,
-    configurations = commonConfigs ++ (xml \ SPARK_TASK \ CONFIGURATIONS \ CONFIGURATION).map(n => ((n \ CONFIGURATION_KEY).text, (n \ CONFIGURATION_VALUE).text)).toMap
-  )
+  def apply(xml: NodeSeq, commonConfigs: Map[String, String]): SparkIgniteTask = {
+    new SparkIgniteTask(
+      name = (xml \ NAME_ATTRIBUTE).text,
+      inputCache = (xml \ SPARK_TASK \ INPUT_CACHE).text,
+      outputCache = (xml \ SPARK_TASK \ OUTPUT_CACHE).text,
+      functionArguments = (xml \ SPARK_TASK \ ARGS \ ARG).map(a => ((a \ KEY_ATTRIBUTE).text, a.text)).toMap,
+      configurations = commonConfigs ++ (xml \ SPARK_TASK \ CONFIGURATIONS \ CONFIGURATION).map(n => ((n \ CONFIGURATION_KEY).text, (n \ CONFIGURATION_VALUE).text)).toMap,
+      to = (xml \ SPARK_TASK \ TO_TASK).map(a =>(a \ TO_TASK_ATTRIBUTE).text).toList
+    )
+  }
 }

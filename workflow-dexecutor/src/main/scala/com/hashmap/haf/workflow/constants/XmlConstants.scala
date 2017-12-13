@@ -9,6 +9,8 @@ object XmlConstants {
 	val LIVY_TASK = "livy"
 	val INPUT_CACHE = "inputCache"
 	val OUTPUT_CACHE = "outputCache"
+	val TO_TASK = "to"
+	val TO_TASK_ATTRIBUTE = "@task"
 	val NAME_ATTRIBUTE = "@name"
 	val TASK = "task"
 	val JAR = "jar"
