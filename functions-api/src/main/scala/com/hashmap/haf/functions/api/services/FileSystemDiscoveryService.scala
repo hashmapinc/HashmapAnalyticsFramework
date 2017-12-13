@@ -3,26 +3,18 @@ package com.hashmap.haf.functions.api.services
 import java.io.File
 import java.net.URI
 
+import com.hashmap.haf.functions.api.processors.FunctionsAnnotationsProcessor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
+@Component
 class FileSystemDiscoveryService(@Autowired gateway: FunctionsDiscoveryGateway)
 	extends FunctionsDiscoveryService{
 
-	/*@Value("${functions.location}") var location : String = _
-	/*@Autowired
-	def this(@Value("${functions.location}") location : String,
-	         gateway: FunctionsDiscoveryGateway) {
-		this()
-		discoverFunctions(new URI(location))
-	}*/*/
-
 	override def discoverFunctions(uri: URI): Unit = {
 		val files = gateway.readFrom(uri)
-		files.foreach(f => {
-			if(isJar(f)){
-
-			}
-		})
+		/*val detector = FunctionsAnnotationsProcessor()
+		detector.detectAnnotations(files.filter(isJar))*/
 	}
 
 	private def isJar(f: File) = {
