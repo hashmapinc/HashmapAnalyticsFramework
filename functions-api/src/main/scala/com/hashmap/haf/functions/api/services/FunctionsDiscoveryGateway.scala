@@ -7,8 +7,6 @@ trait FunctionsDiscoveryGateway {
 
 	def readFrom(uri: URI): List[File]
 
-	def writeTo(uri: URI)
-
 	def poll(uri: URI): Unit
 
 }

@@ -18,13 +18,10 @@ class FunctionsAnnotationsProcessor[T <: Annotation, R](detector: AnnotationDete
 
 	override def process(jars: List[File]): Map[String, R] = {
 		detector.detect(jars: _*)
-		reporter.detectedAnnotations
+		val annotations = reporter.detectedAnnotations
+		//annotations.foreach(c => )
+		annotations
 	}
-}
-
-object AnnotationsProcessor {
-	import com.hashmap.haf.functions.api.factory.Factories.Processors._
-	def apply[T <: Annotation, R](implicit ev: ProcessorFactory[T, R]): AnnotationsProcessor[T, R] = ev.build()
 }
 
 trait Reporter[R] extends TypeReporter{
