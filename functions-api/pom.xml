@@ -41,6 +41,10 @@
             <groupId>com.hashmap.haf</groupId>
             <artifactId>function-annotations</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
