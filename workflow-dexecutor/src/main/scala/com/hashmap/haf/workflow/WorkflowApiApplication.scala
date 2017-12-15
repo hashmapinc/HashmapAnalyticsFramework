@@ -12,7 +12,7 @@ class WorkflowApiApplication
 
 object FunctionApiApplication extends App{
   private val SPRING_CONFIG_NAME_KEY = "--spring.config.name"
-  private val DEFAULT_SPRING_CONFIG_PARAM = SPRING_CONFIG_NAME_KEY + "=" + "workflow-api"
+  private val DEFAULT_SPRING_CONFIG_PARAM = SPRING_CONFIG_NAME_KEY + "=" + "workflow-dexecutor"
 
   SpringApplication.run(classOf[WorkflowApiApplication], updateArguments(args): _*)
 

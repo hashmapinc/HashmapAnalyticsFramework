@@ -3,11 +3,11 @@ package com.hashmap.haf.workflow.models
 import java.util.UUID
 import com.github.dexecutor.core.Dexecutor
 import com.hashmap.haf.workflow.constants.XmlConstants
-import com.hashmap.haf.workflow.task.EntityTask
+import com.hashmap.haf.workflow.task.BaseTask
 import com.hashmap.haf.workflow.factory.Factory._
 import scala.xml.Node
 
-case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String, id: UUID = UUID.randomUUID())
+case class DefaultWorkflow(tasks: List[BaseTask[String]], name: String, id: UUID = UUID.randomUUID())
 	extends Workflow[UUID, String](tasks, name){
 
 	override def getId: UUID = id
@@ -22,7 +22,7 @@ case class DefaultWorkflow(tasks: List[EntityTask[String]], name: String, id: UU
 		})
 	}
 
-	def getEntityTasksForTasksStrings(ts: List[String]): List[EntityTask[String]] = {
+	def getEntityTasksForTasksStrings(ts: List[String]): List[BaseTask[String]] = {
 		ts.filterNot(_.equalsIgnoreCase("end")).map(n =>
 			tasks.find(_.name.equalsIgnoreCase(n)).getOrElse(throw new IllegalStateException("No valid to task defined"))
 		)
@@ -37,8 +37,8 @@ object DefaultWorkflow{
 	def apply(xml: Node, commonConfigs: Map[String, String]): DefaultWorkflow = {
 		new DefaultWorkflow(
 			name = (xml \ NAME_ATTRIBUTE).text,
-			tasks = List[EntityTask[String]](
-				(xml \ TASK).toList map {s => TaskFactory[UUID, String](s, commonConfigs).asInstanceOf[EntityTask[String]]}: _*
+			tasks = List[BaseTask[String]](
+				(xml \ TASK).toList map {s => TaskFactory[UUID, String](s, commonConfigs).asInstanceOf[BaseTask[String]]}: _*
 			)
 		)
 

@@ -1,29 +1,35 @@
 package com.hashmap.haf.workflow.entity
 
-import java.util.UUID
-import javax.persistence.{Column, Entity, Table}
+import javax.persistence._
+import collection.JavaConverters._
 import com.hashmap.haf.workflow.models.DefaultWorkflow
-import com.hashmap.haf.workflow.util.UUIDConverter
+import com.hashmap.haf.workflow.task.{BaseTask, SparkIgniteTask}
+
+import beans.BeanProperty
+
 
 @Entity
-@Table(name = "workflow")
-class WorkflowEntity(
-                      id: UUID,
-                      name: String,
-                      tasks: List[SparkIgniteTaskEntity]
-                    ) extends BaseSqlEntity[DefaultWorkflow](UUIDConverter.fromTimeUUID(id)){
+@Table(name = "WORKFLOW")
+class WorkflowEntity(@BeanProperty val name: String) extends BaseSqlEntity[DefaultWorkflow]{
+
+  private def this() = this(null)
+
+  @BeanProperty
+  @OneToMany(cascade = Array(CascadeType.ALL))
+  @JoinColumn(name = "WORKFLOW_ID")
+  var sparkIgniteTaskEntities : java.util.List[BaseTaskEntity[String]] = _
 
   override def toData(): DefaultWorkflow = {
-    DefaultWorkflow()
+    DefaultWorkflow(sparkIgniteTaskEntities.asScala.map(_.toData()).toList, name, getId)
   }
 }
 
 object WorkflowEntity {
   def apply(defaultWorkflow: DefaultWorkflow): WorkflowEntity = {
-    val tasks: List[SparkIgniteTaskEntity] = defaultWorkflow.getTasks.map(SparkIgniteTaskEntity(_))
-
-
-    val workflowEntity = new WorkflowEntity(defaultWorkflow.getId, defaultWorkflow.getName, defaultWorkflow.getTasks)
+    val igniteTaskEntities: List[BaseTaskEntity[String]] = defaultWorkflow.tasks.map(a => SparkIgniteTaskEntity(a.asInstanceOf[SparkIgniteTask]))
+    val workflowEntity = new WorkflowEntity(defaultWorkflow.getName)
+    workflowEntity.setSparkIgniteTaskEntities(igniteTaskEntities.asJava)
+    workflowEntity.setId(defaultWorkflow.id)
     workflowEntity
   }
 }

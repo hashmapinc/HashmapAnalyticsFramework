@@ -9,7 +9,7 @@ case class LivyTask(override val name: String,
                     jar: String,
                     mainClazz: String,
                     args: List[String],
-                    override val to: List[String] = List()) extends EntityTask[String](name, id, to){
+                    override val to: List[String] = List()) extends BaseTask[String](name, id, to){
 
 	//@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
 	//protected val mapSvc = _

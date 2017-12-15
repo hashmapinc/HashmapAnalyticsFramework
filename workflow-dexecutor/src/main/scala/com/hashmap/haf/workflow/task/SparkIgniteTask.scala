@@ -11,7 +11,7 @@ case class SparkIgniteTask(override val name: String,
                            outputCache: String,
                            functionArguments: Map[String, String],
                            configurations: Map[String, String],
-                           override val to: List[String] = Nil) extends EntityTask[String](name, id, to){
+                           override val to: List[String] = Nil) extends BaseTask[String](name, id, to){
 
   //@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
   //protected val mapSvc = _
