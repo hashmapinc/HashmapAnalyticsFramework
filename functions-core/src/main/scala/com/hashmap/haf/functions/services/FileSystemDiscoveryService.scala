@@ -40,9 +40,13 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 
 	private def processAnnotations(processor: AnnotationsProcessor[IgniteFunction, IgniteFunctionType], f: File) = {
 		processor.process(f).foreach { case (clazzName, function) =>
-			val source = sourceGenerator.generateSource(function, clazzName)
-			compiler.compile(clazzName, source)
-			compiler.clazzBytes(clazzName).foreach(c => outputGateway.writeTo(new URI(s"${f.getParentFile.toURI}/$clazzName.class"), c))
+			val source = sourceGenerator.generateSource(function)
+			source match {
+				case Right(s) =>
+					compiler.compile(clazzName, s)
+					compiler.clazzBytes(clazzName).foreach(c => outputGateway.writeTo(new URI(s"${f.getParentFile.toURI}/$clazzName.class"), c))
+				case Left(m) => println(s"Error while generating source: ${m._1} exception is ${m._2.getLocalizedMessage} ")
+			}
 		}
 	}
 

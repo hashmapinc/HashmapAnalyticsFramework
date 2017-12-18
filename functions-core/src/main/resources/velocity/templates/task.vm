@@ -1,20 +1,8 @@
 package com.hashmap.haf.functions.extension
 
-@Data
-public class ${model.getConfiguration().getClassName()} extends SparkComputationPluginActionConfiguration{
-    private String application = "${model.getApplicationKey()}";
-    #foreach ($mapEntry in $model.getConfiguration().getFields().entrySet())
-    private ${mapEntry.value} ${mapEntry.key};
-	#end
-}
-
-
-
-package com.hashmap.haf.functions.extension
-
 import scala.xml.NodeSeq
 
-case class ${model.clazzName}(xml: NodeSeq, configs: Map[String, String]) extends SparkIgniteTask(xml, configs){
+case class ${model.functionClazz}(xml: NodeSeq, configs: Map[String, String]) extends SparkIgniteTask(xml, configs){
 
   @ServiceResource(serviceName = "${model.serviceName}", proxyInterface = classOf[Nothing])
   protected val mapSvc = _

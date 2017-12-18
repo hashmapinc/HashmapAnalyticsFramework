@@ -6,10 +6,12 @@ public class IgniteFunctionType {
 
     private String service;
     private ConfigurationType[] configs;
+    private String functionClazz;
 
-    public IgniteFunctionType(String service, ConfigurationType[] configs){
+    public IgniteFunctionType(String service, ConfigurationType[] configs, String functionClazz){
         this.service = service;
         this.configs = configs;
+        this.functionClazz = functionClazz;
     }
 
     public ConfigurationType[] getConfigs() {
@@ -18,6 +20,10 @@ public class IgniteFunctionType {
 
     public String getService() {
         return service;
+    }
+
+    public String getFunctionClazz() {
+        return functionClazz;
     }
 
     @Override
@@ -29,13 +35,15 @@ public class IgniteFunctionType {
 
         if (!getService().equals(that.getService())) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(getConfigs(), that.getConfigs());
+        if (!Arrays.equals(getConfigs(), that.getConfigs())) return false;
+        return getFunctionClazz().equals(that.getFunctionClazz());
     }
 
     @Override
     public int hashCode() {
         int result = getService().hashCode();
         result = 31 * result + Arrays.hashCode(getConfigs());
+        result = 31 * result + getFunctionClazz().hashCode();
         return result;
     }
 }

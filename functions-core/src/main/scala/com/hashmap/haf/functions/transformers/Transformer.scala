@@ -13,6 +13,6 @@ class IgniteFunctionTransformer extends Transformer[IgniteFunction, IgniteFuncti
 		val configs = annotation.configs().map { c =>
 			new ConfigurationType(c.key(), c.value())
 		}
-		new IgniteFunctionType(annotation.service(), configs)
+		new IgniteFunctionType(annotation.service(), configs, annotation.functionClazz())
 	}
 }

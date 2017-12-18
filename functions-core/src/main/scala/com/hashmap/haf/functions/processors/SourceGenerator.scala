@@ -2,14 +2,17 @@ package com.hashmap.haf.functions.processors
 
 import java.io.StringWriter
 import java.util.Properties
+
 import com.hashmap.haf.models.IgniteFunctionType
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
+import scala.util.{Failure, Success, Try}
+
 trait SourceGenerator[T] {
-	def generateSource(function: T, clazz: String): String
+	def generateSource(function: T): Either[(String, Throwable), String]
 }
 
 @Service
@@ -19,20 +22,15 @@ class VelocitySourceGenerator extends SourceGenerator[IgniteFunctionType] {
 	var template: String = _
 	lazy val ve: VelocityEngine = initializeVelocityEngine("velocity/velocity.properties")
 
-	@Value("${functions.output.location}")
-	var output: String = _
-
-	override def generateSource(function: IgniteFunctionType, clazz: String): String = {
-		val writer = new StringWriter
-		try {
-			val vc = new VelocityContext
-			vc.put("model", function)
-			//val tp = "templates/task.vm"
-			val vt = ve.getTemplate(template)
-			vt.merge(vc, writer)
-			writer.toString
-		}finally {
-			writer.close()
+	override def generateSource(function: IgniteFunctionType): Either[(String, Throwable), String] = {
+		val vc = new VelocityContext
+		vc.put("model", function)
+		Try(ve.getTemplate(template)) match{
+			case Success(vt) =>
+				val writer = new StringWriter
+				vt.merge(vc, writer)
+				Right(writer.toString)
+			case Failure(e) => Left("Error while loading template", e)
 		}
 	}
 
