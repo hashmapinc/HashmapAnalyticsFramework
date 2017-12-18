@@ -3,17 +3,20 @@ package com.hashmap.haf.functions.services
 import java.io.File
 import java.net.URI
 import java.nio.file.Path
-
+import javax.annotation.PostConstruct
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.functions.compiler.FunctionCompiler
+import com.hashmap.haf.functions.deployment.{DefaultDeploymentService, DeploymentService}
 import com.hashmap.haf.functions.factory.Factories.Processors.ProcessorFactory
 import com.hashmap.haf.functions.gateways.{FunctionsInputGateway, FunctionsOutputGateway}
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import com.hashmap.haf.functions.processors.{AnnotationsProcessor, SourceGenerator}
 import com.hashmap.haf.models.IgniteFunctionType
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Component
+
+import scala.util.{Failure, Success, Try}
 
 @Component
 class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGateway,
@@ -22,6 +25,19 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 	extends FunctionsDiscoveryService{
 
 	private val compiler = FunctionCompiler()
+	private val PACKAGE_NAME = "com.hashmap.haf.functions.extension"
+
+	@Value("${functions.service.config}")
+	var serviceConfig: String = _
+	private var deploymentService: DeploymentService = _
+
+	@PostConstruct
+	def init(): Unit ={
+		Option(serviceConfig) match {
+			case Some(c) => deploymentService = DefaultDeploymentService(serviceConfig)
+			case _ => deploymentService = DefaultDeploymentService()
+		}
+	}
 
 	override def discoverFunctions(uri: URI): Unit = {
 		val files = inputGateway.listFilesFrom(uri)
@@ -43,10 +59,23 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 			val source = sourceGenerator.generateSource(function)
 			source match {
 				case Right(s) =>
-					compiler.compile(clazzName, s)
-					compiler.clazzBytes(clazzName).foreach(c => outputGateway.writeTo(new URI(s"${f.getParentFile.toURI}/$clazzName.class"), c))
+					val canonicalClazzName = s"$PACKAGE_NAME.${function.getFunctionClazz}"
+					val directory = canonicalClazzName.replace('.', File.pathSeparatorChar)
+					compiler.compile(canonicalClazzName, s)
+					compiler.clazzBytes(canonicalClazzName).foreach(c => outputGateway.writeTo(new URI(s"${f.getParentFile.toURI}/$directory.class"), c))
+					deployService(clazzName, function.getService)
 				case Left(m) => println(s"Error while generating source: ${m._1} exception is ${m._2.getLocalizedMessage} ")
 			}
+		}
+	}
+
+	private def deployService(clazz: String, serviceName: String): Unit ={
+		Try(Class.forName(clazz)) match {
+			case Success(c) =>
+				val instance = c.newInstance().asInstanceOf[ServiceFunction]
+				deploymentService.deployNodeSingleton(serviceName, instance)
+
+			case Failure(e) => throw new IllegalStateException("Error while deploying service", e)
 		}
 	}
 

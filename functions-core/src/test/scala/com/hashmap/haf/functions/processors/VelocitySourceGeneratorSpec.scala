@@ -15,11 +15,11 @@ class VelocitySourceGeneratorSpec extends Specification{
 				             |
 				             |case class TestTask(xml: NodeSeq, configs: Map[String, String]){
 				             |
-				             |  @ServiceResource(serviceName = "${model.serviceName}", proxyInterface = classOf[ServiceFunction])
+				             |  @ServiceResource(serviceName = "testService", proxyInterface = classOf[ServiceFunction])
 				             |  protected val mapSvc = _
 				             |
 				             |  def execute(): Unit = {
-				             |    mapSvc.runSurvice(inputCache, outputCache, confs)
+				             |    mapSvc.run(inputCache, outputCache, confs)
 				             |  }
 				             |}""".stripMargin
 
