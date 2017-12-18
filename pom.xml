@@ -22,6 +22,7 @@
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
         <velocity.version>1.7</velocity.version>
         <postgresql.driver.version>9.4.1211</postgresql.driver.version>
+        <commons-io.version>2.5</commons-io.version>
     </properties>
 
     <modules>
@@ -203,6 +204,11 @@
                 <version>1.0.6</version>
             </dependency>
             <dependency>
+                <groupId>com.lightbend.akka</groupId>
+                <artifactId>akka-stream-alpakka-file_${scala.compat.version}</artifactId>
+                <version>0.8</version>
+            </dependency>
+            <dependency>
                 <groupId>com.hashmap.haf</groupId>
                 <artifactId>functions-core</artifactId>
                 <version>${project.version}</version>
@@ -242,6 +248,11 @@
                 <groupId>eu.infomas</groupId>
                 <artifactId>annotation-detector</artifactId>
                 <version>3.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.play</groupId>
