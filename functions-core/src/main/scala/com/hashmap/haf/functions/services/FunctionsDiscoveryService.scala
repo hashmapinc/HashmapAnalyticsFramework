@@ -1,4 +1,4 @@
-package com.hashmap.haf.functions.api.services
+package com.hashmap.haf.functions.services
 
 import java.net.URI
 

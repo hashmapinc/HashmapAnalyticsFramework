@@ -1,4 +1,4 @@
-package com.hashmap.haf.functions.api.transformer
+package com.hashmap.haf.functions.transformers
 
 import java.lang.annotation.Annotation
 import com.hashmap.haf.annotations.IgniteFunction

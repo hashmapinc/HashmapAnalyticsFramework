@@ -20,6 +20,7 @@
         <ignite.version>2.3.0</ignite.version>
         <spark.version>2.1.1</spark.version>
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
+        <velocity.version>1.7</velocity.version>
         <postgresql.driver.version>9.4.1211</postgresql.driver.version>
     </properties>
 
@@ -108,6 +109,11 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-reflect</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-compiler</artifactId>
                 <version>${scala.version}</version>
             </dependency>
             <dependency>
@@ -226,6 +232,11 @@
                         <artifactId>ignite-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.infomas</groupId>

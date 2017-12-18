@@ -33,18 +33,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
-        <dependency>
-            <groupId>eu.infomas</groupId>
-            <artifactId>annotation-detector</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hashmap.haf</groupId>
-            <artifactId>function-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

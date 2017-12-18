@@ -1,25 +1,24 @@
-package com.hashmap.haf.functions.api.processors
+package com.hashmap.haf.functions.processors
 
 import java.io.File
 import java.lang.annotation.Annotation
 import com.hashmap.haf.annotations.IgniteFunction
-import com.hashmap.haf.functions.api.transformer.Transformer
+import com.hashmap.haf.functions.transformers.Transformer
 import com.hashmap.haf.models.IgniteFunctionType
 import eu.infomas.annotation.AnnotationDetector
 import eu.infomas.annotation.AnnotationDetector.TypeReporter
 import scala.collection.mutable
 
 trait AnnotationsProcessor[T <: Annotation, R]{
-	def process(jars: List[File]): Map[String, R]
+	def process(jars: File): Map[String, R]
 }
 
 class FunctionsAnnotationsProcessor[T <: Annotation, R](detector: AnnotationDetector,
                                                         reporter: Reporter[R]) extends AnnotationsProcessor[T, R]{
 
-	override def process(jars: List[File]): Map[String, R] = {
-		detector.detect(jars: _*)
+	override def process(jars: File): Map[String, R] = {
+		detector.detect(jars)
 		val annotations = reporter.detectedAnnotations
-		//annotations.foreach(c => )
 		annotations
 	}
 }

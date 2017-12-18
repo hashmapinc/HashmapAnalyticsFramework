@@ -1,10 +1,10 @@
-package com.hashmap.haf.functions.api.factory
+package com.hashmap.haf.functions.factory
 
 import java.lang.annotation.Annotation
 
 import com.hashmap.haf.annotations.IgniteFunction
-import com.hashmap.haf.functions.api.processors.{AnnotationsProcessor, FunctionsAnnotationsProcessor, IgniteFunctionTypeReporter, Reporter}
-import com.hashmap.haf.functions.api.transformer.{IgniteFunctionTransformer, Transformer}
+import com.hashmap.haf.functions.processors._
+import com.hashmap.haf.functions.transformers.{IgniteFunctionTransformer, Transformer}
 import com.hashmap.haf.models.IgniteFunctionType
 import eu.infomas.annotation.AnnotationDetector
 import eu.infomas.annotation.AnnotationDetector.TypeReporter
