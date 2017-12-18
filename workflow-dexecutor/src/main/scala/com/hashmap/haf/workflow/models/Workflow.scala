@@ -5,6 +5,8 @@ import java.util.UUID
 import com.github.dexecutor.core.Dexecutor
 import com.github.dexecutor.core.task.Task
 
+import scala.xml.Elem
+
 abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: String, id: UUID) {
 
 	def this(tasks: List[Task[T, R]], name: String) {
@@ -20,4 +22,6 @@ abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: St
 	def getName: String = name
 
 	private[workflow] def getTasks: List[Task[T, R]] = tasks
+
+	def toXml: Elem
 }

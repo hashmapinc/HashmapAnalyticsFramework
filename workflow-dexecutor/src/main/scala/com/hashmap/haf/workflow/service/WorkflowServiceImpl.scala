@@ -11,8 +11,16 @@ import org.springframework.stereotype.Service
 class WorkflowServiceImpl @Autowired()(private val workflowBuilder: WorkflowBuilder[UUID, String],
                                        private val workflowDao: WorkflowDao) extends WorkflowService {
 
-  override def saveWorkflow(workflowXml: String): Workflow[UUID, String] = {
+  override def  saveOrUpdate(workflowXml: String): Workflow[UUID, String] = {
     val workflow: Workflow[UUID, String] = workflowBuilder.build(workflowXml)
-    workflowDao.saveWorkflow(workflow)
+    workflowDao.saveOrUpdate(workflow)
+  }
+
+  override def findById(id: UUID): Workflow[UUID, String] = {
+      workflowDao.findById(id)
+  }
+
+  override def delete(id: UUID): Unit = {
+    workflowDao.deleteById(id)
   }
 }

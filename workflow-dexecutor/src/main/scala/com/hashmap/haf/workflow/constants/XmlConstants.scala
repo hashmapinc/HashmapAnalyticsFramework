@@ -1,6 +1,7 @@
 package com.hashmap.haf.workflow.constants
 
 object XmlConstants {
+	val WORKFLOW = "workflow"
 	val CONFIGURATIONS = "configurations"
 	val CONFIGURATION = "configuration"
 	val CONFIGURATION_KEY = "key"
@@ -12,6 +13,8 @@ object XmlConstants {
 	val TO_TASK = "to"
 	val TO_TASK_ATTRIBUTE = "@task"
 	val NAME_ATTRIBUTE = "@name"
+	val ID_ATTRIBUTE = "@id"
+	val CLASSNAME_ATTRIBUTE = "@className"
 	val TASK = "task"
 	val JAR = "jar"
 	val MAIN_CLAZZ = "mainClass"

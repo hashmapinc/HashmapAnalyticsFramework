@@ -15,11 +15,10 @@ abstract class ResourceWorkflowBuilder[T <:Comparable[T] , R] extends WorkflowBu
 
 		//val xml: Elem = XML.load(source)
 		val xml: Elem = XML.loadString(xmlContent)
-		val commonConfigs = (xml \ CONFIGURATIONS \ CONFIGURATION).map(n => ((n \ CONFIGURATION_KEY).text, (n \ CONFIGURATION_VALUE).text)).toMap
-		newWorkflow(xml, commonConfigs)
+		newWorkflow(xml)
 	}
 
-	protected def newWorkflow(xml: Elem, commonConfigs: Map[String, String]): Workflow[T, R]
+	protected def newWorkflow(xml: Elem): Workflow[T, R]
 
 	override def build(xmlContent: String): Workflow[T, R] = buildFromResource(xmlContent)
 }

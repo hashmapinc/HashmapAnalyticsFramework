@@ -15,18 +15,18 @@ object Factory{
 	trait WorkflowTask[T <: Comparable[T], R] extends Task[T, R]
 
 	trait TaskFactory[T <: Comparable[T], R] {
-		def create(xml: Node, commonConfigs: Map[String, String]): WorkflowTask[T, R]
+		def create(xml: Node): WorkflowTask[T, R]
 	}
 
 	object TaskFactory {
-		def apply[T <: Comparable[T], R](xml: Node, commonConfigs: Map[String, String])(implicit ev: TaskFactory[T, R]): Task[T, R] = ev.create(xml, commonConfigs)
+		def apply[T <: Comparable[T], R](xml: Node)(implicit ev: TaskFactory[T, R]): Task[T, R] = ev.create(xml)
 	}
 
 	implicit object EntityTaskFactory extends TaskFactory[UUID, String] {
-		def create(xml: Node, commonConfigs: Map[String, String]): WorkflowTask[UUID, String] = {
+		def create(xml: Node): WorkflowTask[UUID, String] = {
 			(xml \ "_").headOption.map(_.label) match {
 				case Some(LIVY_TASK) => LivyTask(xml)
-				case Some(SPARK_TASK) => SparkIgniteTask(xml, commonConfigs)
+				case Some(SPARK_TASK) => SparkIgniteTask(xml)
 				case None => throw new IllegalStateException("At least one tak should be defined in a workflow")
 				case _ => throw new IllegalArgumentException("No factory method found for given task")
 			}

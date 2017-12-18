@@ -9,5 +9,5 @@ import scala.xml.Elem
 
 @Service
 class DefaultWorkflowBuilder extends ResourceWorkflowBuilder[UUID, String] {
-	override protected def newWorkflow(xml: Elem, commonConfigs: Map[String, String]) = DefaultWorkflow(xml, commonConfigs)
+	override protected def newWorkflow(xml: Elem) = DefaultWorkflow(xml)
 }

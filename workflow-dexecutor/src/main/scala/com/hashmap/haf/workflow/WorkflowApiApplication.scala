@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan
 @ComponentScan
 class WorkflowApiApplication
 
-object FunctionApiApplication extends App{
+object WorkflowApiApplication extends App{
   private val SPRING_CONFIG_NAME_KEY = "--spring.config.name"
   private val DEFAULT_SPRING_CONFIG_PARAM = SPRING_CONFIG_NAME_KEY + "=" + "workflow-dexecutor"
 

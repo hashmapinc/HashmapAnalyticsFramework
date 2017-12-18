@@ -6,5 +6,9 @@ import com.hashmap.haf.workflow.models.Workflow
 
 
 trait WorkflowDao {
-  def saveWorkflow(workflow: Workflow[UUID, String]): Workflow[UUID, String]
+  def saveOrUpdate(workflow: Workflow[UUID, String]): Workflow[UUID, String]
+
+  def findById(id: UUID): Workflow[UUID, String]
+
+  def deleteById(id: UUID)
 }

@@ -7,6 +7,9 @@ import com.hashmap.haf.workflow.models.Workflow
 
 trait WorkflowService {
 
-  def saveWorkflow(workflowXml: String): Workflow[UUID, String]
+  def saveOrUpdate(workflowXml: String): Workflow[UUID, String]
 
+  def findById(id: UUID): Workflow[UUID, String]
+
+  def delete(id: UUID): Unit
 }

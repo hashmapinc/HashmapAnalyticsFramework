@@ -9,11 +9,12 @@ import beans.BeanProperty
 
 @Entity
 class SparkIgniteTaskEntity(
+                             @BeanProperty val className: String,
                              @BeanProperty val inputCache: String,
                              @BeanProperty val outputCache: String
                            ) extends BaseTaskEntity[String] {
 
-  private def this() = this(null, null)
+  private def this() = this(null, null, null)
 
   @BeanProperty
   @ElementCollection
@@ -30,13 +31,14 @@ class SparkIgniteTaskEntity(
   var configurations: java.util.Map[String, String] = _
 
   override def toData(): SparkIgniteTask = {
-    new SparkIgniteTask(name,
-      getId,
-      inputCache,
-      outputCache,
-      functionArguments.asScala.toMap,
-      configurations.asScala.toMap,
-      getTo.asScala.toList
+    new SparkIgniteTask(name = name,
+      id = getId,
+      className = className,
+      inputCache = inputCache,
+      outputCache = outputCache,
+      functionArguments = functionArguments.asScala.toMap,
+      configurations = configurations.asScala.toMap,
+      to = getTo.asScala.toList
     )
   }
 }
@@ -44,8 +46,9 @@ class SparkIgniteTaskEntity(
 object SparkIgniteTaskEntity {
   def apply(sparkIgniteTask: SparkIgniteTask): SparkIgniteTaskEntity = {
     val sparkIgniteTaskEntity = new SparkIgniteTaskEntity(
-      sparkIgniteTask.inputCache,
-      sparkIgniteTask.outputCache
+      className = sparkIgniteTask.className,
+      inputCache = sparkIgniteTask.inputCache,
+      outputCache = sparkIgniteTask.outputCache
     )
     sparkIgniteTaskEntity.setId(sparkIgniteTask.id)
     sparkIgniteTaskEntity.setName(sparkIgniteTask.name)
