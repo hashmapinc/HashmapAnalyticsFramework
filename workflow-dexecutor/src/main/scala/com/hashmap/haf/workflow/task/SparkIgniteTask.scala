@@ -1,10 +1,9 @@
 package com.hashmap.haf.workflow.task
 
 import java.util.UUID
-
 import com.hashmap.haf.workflow.util.UUIDConverter
-
 import scala.xml.{Elem, NodeSeq}
+import com.hashmap.haf.workflow.constants.XmlConstants._
 
 case class SparkIgniteTask(override val name: String,
                            override val id: UUID = UUID.randomUUID(),
@@ -14,6 +13,19 @@ case class SparkIgniteTask(override val name: String,
                            functionArguments: Map[String, String],
                            configurations: Map[String, String],
                            override val to: List[String] = Nil) extends BaseTask[String](name, id, to){
+
+
+  def this(xml: NodeSeq) = this (
+    name = (xml \ NAME_ATTRIBUTE).text,
+    id = if ((xml \ ID_ATTRIBUTE).text != null && (xml \ ID_ATTRIBUTE).text.nonEmpty) UUIDConverter.fromString((xml \ ID_ATTRIBUTE).text) else UUID.randomUUID(),
+    className = (xml \ CLASSNAME_ATTRIBUTE).text,
+    inputCache = (xml \ SPARK_TASK \ INPUT_CACHE).text,
+    outputCache = (xml \ SPARK_TASK \ OUTPUT_CACHE).text,
+    functionArguments = (xml \ SPARK_TASK \ ARGS \ ARG).map(a => ((a \ KEY_ATTRIBUTE).text, a.text)).toMap,
+    configurations = (xml \ SPARK_TASK \ CONFIGURATIONS \ CONFIGURATION).map(n => ((n \ CONFIGURATION_KEY).text, (n \ CONFIGURATION_VALUE).text)).toMap,
+    to = (xml \ SPARK_TASK \ TO_TASK).map(a => (a \ TO_TASK_ATTRIBUTE).text).toList
+  )
+
 
   //@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
   //protected val mapSvc = _
@@ -61,19 +73,6 @@ case class SparkIgniteTask(override val name: String,
 }
 
 object SparkIgniteTask {
-  import com.hashmap.haf.workflow.constants.XmlConstants._
-
-  def apply(xml: NodeSeq): SparkIgniteTask = {
-    val idString = (xml \ ID_ATTRIBUTE).text
-    new SparkIgniteTask(
-      name = (xml \ NAME_ATTRIBUTE).text,
-      id = if(idString != null && idString.nonEmpty) UUIDConverter.fromString(idString) else UUID.randomUUID(),
-      className = (xml \ CLASSNAME_ATTRIBUTE).text,
-      inputCache = (xml \ SPARK_TASK \ INPUT_CACHE).text,
-      outputCache = (xml \ SPARK_TASK \ OUTPUT_CACHE).text,
-      functionArguments = (xml \ SPARK_TASK \ ARGS \ ARG).map(a => ((a \ KEY_ATTRIBUTE).text, a.text)).toMap,
-      configurations = (xml \ SPARK_TASK \ CONFIGURATIONS \ CONFIGURATION).map(n => ((n \ CONFIGURATION_KEY).text, (n \ CONFIGURATION_VALUE).text)).toMap,
-      to = (xml \ SPARK_TASK \ TO_TASK).map(a =>(a \ TO_TASK_ATTRIBUTE).text).toList
-    )
-  }
+  def apply(xml: NodeSeq): SparkIgniteTask = new SparkIgniteTask(xml)
 }
+
