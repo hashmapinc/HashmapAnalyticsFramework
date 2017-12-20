@@ -4,6 +4,7 @@ import java.io.File
 import java.net.URI
 import java.nio.file.Path
 import javax.annotation.PostConstruct
+
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.deployment.{DefaultDeploymentService, DeploymentService}
@@ -34,7 +35,7 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 	@PostConstruct
 	def init(): Unit ={
 		Option(serviceConfig) match {
-			case Some(c) => deploymentService = DefaultDeploymentService(serviceConfig)
+			case Some(c) => deploymentService = DefaultDeploymentService(c)
 			case _ => deploymentService = DefaultDeploymentService()
 		}
 	}
@@ -108,4 +109,6 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 			println(" File deleted ")
 		}
 	}
+
+	override def loadClazz(name: String): Option[Class[_]] = compiler.loadClazz(name)
 }
