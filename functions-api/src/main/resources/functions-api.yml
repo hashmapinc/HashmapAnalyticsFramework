@@ -4,5 +4,7 @@ functions:
   output:
     location: "file:///home/functions"
   protocol: "file"
+  ignite:
+    config: "cache.xml"
 
   #Other options are s3, ftp, ftps, https etc
