@@ -2,13 +2,11 @@ package com.hashmap.haf.functions.processors
 
 import java.io.StringWriter
 import java.util.Properties
-
 import com.hashmap.haf.models.IgniteFunctionType
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-
 import scala.util.{Failure, Success, Try}
 
 trait SourceGenerator[T] {

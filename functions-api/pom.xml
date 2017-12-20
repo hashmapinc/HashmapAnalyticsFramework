@@ -33,6 +33,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>functions-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

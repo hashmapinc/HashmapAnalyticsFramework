@@ -6,6 +6,4 @@ trait FunctionsDiscoveryService {
 
 	def discoverFunctions(uri: URI)
 
-	def loadClazz(name: String): Option[Class[_]]
-
 }

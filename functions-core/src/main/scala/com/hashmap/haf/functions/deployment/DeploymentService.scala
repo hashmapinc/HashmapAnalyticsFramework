@@ -1,13 +1,11 @@
 package com.hashmap.haf.functions.deployment
 
-import com.hashmap.haf.functions.services.ServiceFunction
+import org.apache.ignite.services.ServiceConfiguration
 import org.apache.ignite.{Ignite, IgniteServices, Ignition}
 
 trait DeploymentService {
 
-	def deployNodeSingleton(serviceName: String, function: ServiceFunction)
-
-	def deployClusterSingleton(serviceName: String, function: ServiceFunction)
+	def deploy(cfg: ServiceConfiguration)
 
 }
 
@@ -15,21 +13,13 @@ class DefaultDeploymentService(configurationPath: String) extends DeploymentServ
 
 	private val igConfig = getClass.getResource(configurationPath).getPath
 
-	override def deployNodeSingleton(serviceName: String, function: ServiceFunction): Unit = {
+	override def deploy(cfg: ServiceConfiguration): Unit = {
 
 		val ignite: Ignite = Ignition.start(igConfig)
 
 		val igServices: IgniteServices = ignite.services
 
-		igServices.deployNodeSingleton(serviceName, function)
-	}
-
-	override def deployClusterSingleton(serviceName: String, function: ServiceFunction): Unit = {
-		val ignite: Ignite = Ignition.start(igConfig)
-
-		val igServices: IgniteServices = ignite.services
-
-		igServices.deployClusterSingleton(serviceName, function)
+		igServices.deploy(cfg)
 	}
 }
 
