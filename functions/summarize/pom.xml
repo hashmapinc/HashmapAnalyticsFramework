@@ -37,6 +37,10 @@
             <groupId>com.hashmap.haf</groupId>
             <artifactId>datastore</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>function-annotations</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>

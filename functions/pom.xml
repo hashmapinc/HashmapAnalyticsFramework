@@ -25,8 +25,8 @@
         <dependencies>
             <dependency>
                 <groupId>com.hashmap.haf.functions.api</groupId>
-                <artifactId>functions-api</artifactId>
-                <version>${functions-api}</version>
+                <artifactId>functions-core</artifactId>
+                <version>${functions-core}</version>
             </dependency>
             <dependency>
                 <groupId>com.hashmap.haf.datastore</groupId>
