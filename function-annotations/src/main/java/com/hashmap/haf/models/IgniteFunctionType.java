@@ -1,9 +1,11 @@
 package com.hashmap.haf.models;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class IgniteFunctionType {
+public class IgniteFunctionType implements Serializable{
 
+    private static final long serialVersionUID = -4173993086008058657L;
     private String service;
     private ConfigurationType[] configs;
     private String functionClazz;
