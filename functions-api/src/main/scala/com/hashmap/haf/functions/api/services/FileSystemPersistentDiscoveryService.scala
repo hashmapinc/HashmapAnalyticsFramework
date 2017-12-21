@@ -15,7 +15,7 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Service
 
-@Service
+@Service("discoveryService")
 class FileSystemPersistentDiscoveryService @Autowired()(inputGateway: FunctionsInputGateway,
                                                         igniteFunctionService: IgniteFunctionTypeService)
 	extends AbstractFunctionsDiscoveryService(inputGateway){

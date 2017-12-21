@@ -15,17 +15,17 @@ import java.util.List;
 public class IgniteFunctionTypeDaoImpl implements IgniteFunctionTypeDao{
 
     @Autowired
-    private IgniteFunctionTypeRepository repository;
+    private IgniteFunctionTypeRepository igniteFunctionTypeRepository;
 
     @Override
     public IgniteFunctionType save(IgniteFunctionType igniteFunctionType) {
         IgniteFunctionTypeEntity igniteFunctionTypeEntity = new IgniteFunctionTypeEntity(igniteFunctionType);
-        return repository.save(igniteFunctionTypeEntity).toData();
+        return igniteFunctionTypeRepository.save(igniteFunctionTypeEntity).toData();
     }
 
     @Override
     public IgniteFunctionType findByClazz(String functionClazz) {
-        IgniteFunctionTypeEntity function = repository.findByFunctionClazz(functionClazz);
+        IgniteFunctionTypeEntity function = igniteFunctionTypeRepository.findByFunctionClazz(functionClazz);
         if(function != null){
             return function.toData();
         }
@@ -34,7 +34,7 @@ public class IgniteFunctionTypeDaoImpl implements IgniteFunctionTypeDao{
 
     @Override
     public List<IgniteFunctionType> findAll() {
-        Iterable<IgniteFunctionTypeEntity> all = repository.findAll();
+        Iterable<IgniteFunctionTypeEntity> all = igniteFunctionTypeRepository.findAll();
         List<IgniteFunctionType> list = Collections.emptyList();
         if (all != null && !all.iterator().hasNext()) {
             Iterator<IgniteFunctionTypeEntity> entities = all.iterator();

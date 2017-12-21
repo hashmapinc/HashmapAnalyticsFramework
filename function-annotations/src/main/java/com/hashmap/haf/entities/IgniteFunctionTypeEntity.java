@@ -16,6 +16,7 @@ public class IgniteFunctionTypeEntity {
     @Column(name = "SERVICE")
     private String service;
 
+    @Id
     @Column(name = "functionClazz")
     private String functionClazz;
 

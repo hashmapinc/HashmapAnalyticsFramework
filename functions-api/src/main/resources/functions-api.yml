@@ -1,9 +1,9 @@
+
+spring.application:
+    name: functions-service
+
 server:
   port: ${PORT:2222}
-
-spring:
-  application:
-    name: functions-service
 
 functions:
   input:
@@ -11,8 +11,10 @@ functions:
   output:
     location: "file:///home/functions"
   protocol: "file"
+  source:
+    template: "task.vm"
   ignite:
-    config: "cache.xml"
+    config: "/cache.xml"
 
   #Other options are s3, ftp, ftps, https etc
 
@@ -20,3 +22,21 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+# HSQLDB DAO Configuration
+spring:
+  data:
+    jpa:
+      repositories:
+        enabled: "true"
+  jpa:
+    hibernate:
+      ddl-auto: "create"
+      show_sql: true
+      format_sql: true
+    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
+  datasource:
+    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
+    url: "${SPRING_DATASOURCE_URL:jdbc:hsqldb:file:${SQL_DATA_FOLDER:/tmp}/functions;sql.enforce_size=false}"
+    username: "${SPRING_DATASOURCE_USERNAME:sa}"
+    password: "${SPRING_DATASOURCE_PASSWORD:}"
