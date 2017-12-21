@@ -11,7 +11,7 @@ class FunctionsBootstrapService @Autowired()(discoveryService: FunctionsDiscover
 	@Value("${functions.input.location}")
 	private var functionInputLocation: String = _
 
-	def init(): Unit ={
+	def init(): Unit = {
 		//TODO: Validate specified URI
 		discoveryService.discoverFunctions(new URI(functionInputLocation))
 	}

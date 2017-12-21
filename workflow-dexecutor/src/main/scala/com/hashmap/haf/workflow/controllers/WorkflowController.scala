@@ -15,19 +15,19 @@ import scala.xml.Elem
 @RequestMapping(Array("/api"))
 class WorkflowController @Autowired()(private val workflowService: WorkflowService) {
 
-  @RequestMapping(value = Array("/workflow/{workflowId}"), method = Array(RequestMethod.GET))
+  @RequestMapping(value = Array("/workflows/{workflowId}"), method = Array(RequestMethod.GET))
   @ResponseBody
   def findById(@PathVariable("workflowId") workflowId: String): String = {
      workflowService.findById(UUIDConverter.fromString(workflowId)).toXml.toString
   }
 
-  @RequestMapping(value = Array("/workflow"), method = Array(RequestMethod.PUT), consumes = Array("text/xml"))
+  @RequestMapping(value = Array("/workflows"), method = Array(RequestMethod.PUT), consumes = Array("text/xml"))
   @ResponseBody
   def saveOrUpdate(@RequestBody workflowXml: String): String = {
      workflowService.saveOrUpdate(workflowXml).toXml.toString
   }
 
-  @RequestMapping(value = Array("/workflow/{workflowId}"), method = Array(RequestMethod.DELETE))
+  @RequestMapping(value = Array("/workflows/{workflowId}"), method = Array(RequestMethod.DELETE))
   @ResponseStatus(value = HttpStatus.OK)
   def delete(@PathVariable("workflowId") workflowId: String): Unit = {
     workflowService.delete(UUIDConverter.fromString(workflowId))

@@ -32,6 +32,8 @@
         <module>functions-core</module>
         <module>functions-api</module>
         <module>workflow-dexecutor</module>
+        <module>api-gateway</module>
+        <module>api-discovery</module>
         <module>functions</module>
         <module>metadata-edit</module>
     </modules>
@@ -116,6 +118,13 @@
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-compiler</artifactId>
                 <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-parent</artifactId>
+                <version>Edgware.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>

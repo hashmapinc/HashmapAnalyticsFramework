@@ -3,9 +3,11 @@ package com.hashmap.haf.workflow
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
+@EnableDiscoveryClient
 @EnableAutoConfiguration
 @ComponentScan
 class WorkflowApiApplication
