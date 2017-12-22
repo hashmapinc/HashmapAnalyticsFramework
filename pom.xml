@@ -19,7 +19,10 @@
         <play2.version>2.6.7</play2.version>
         <ignite.version>2.3.0</ignite.version>
         <spark.version>2.1.1</spark.version>
+        <spring.version>4.3.13.RELEASE</spring.version>
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
+        <spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+        <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
         <velocity.version>1.7</velocity.version>
         <postgresql.driver.version>9.4.1211</postgresql.driver.version>
         <commons-io.version>2.5</commons-io.version>
@@ -31,10 +34,11 @@
         <module>function-archetype</module>
         <module>function-annotations</module>
         <module>functions-core</module>
+        <module>api-discovery</module>
+        <module>api-gateway</module>
+        <module>auth-service</module>
         <module>functions-api</module>
         <module>workflow-dexecutor</module>
-        <module>api-gateway</module>
-        <module>api-discovery</module>
         <module>functions</module>
         <module>metadata-edit</module>
     </modules>
@@ -152,6 +156,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring-security-oauth2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>${spring-security-jwt.version}</version>
             </dependency>
             <dependency>
                 <artifactId>spark-core_${scala.compat.version}</artifactId>

@@ -11,7 +11,7 @@ import collection.JavaConverters._
 class FunctionsController @Autowired()(igniteFunctionService: IgniteFunctionTypeService){
 
 	@GetMapping(path = Array("/functions"))
-	def getAllFunctions(): List[IgniteFunctionType] = {
+	def getAllFunctions: List[IgniteFunctionType] = {
 		igniteFunctionService.findAll().asScala.toList
 	}
 
