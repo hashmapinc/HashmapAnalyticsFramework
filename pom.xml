@@ -18,15 +18,18 @@
         <scala.compat.version>2.11</scala.compat.version>
         <play2.version>2.6.7</play2.version>
         <ignite.version>2.3.0</ignite.version>
+        <joda-time.version>2.4</joda-time.version>
         <spark.version>2.1.1</spark.version>
         <spring.version>4.3.13.RELEASE</spring.version>
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
         <spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
         <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
+        <jjwt.version>0.7.0</jjwt.version>
         <velocity.version>1.7</velocity.version>
         <postgresql.driver.version>9.4.1211</postgresql.driver.version>
         <commons-io.version>2.5</commons-io.version>
         <hsqldb.version>2.4.0</hsqldb.version>
+        <dexecutor.version>2.0.1</dexecutor.version>
     </properties>
 
     <modules>
@@ -168,6 +171,16 @@
                 <version>${spring-security-jwt.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
                 <artifactId>spark-core_${scala.compat.version}</artifactId>
                 <groupId>org.apache.spark</groupId>
                 <version>${spark.version}</version>
@@ -225,7 +238,7 @@
             <dependency>
                 <groupId>com.github.dexecutor</groupId>
                 <artifactId>dexecutor-core</artifactId>
-                <version>2.0.1</version>
+                <version>${dexecutor.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
