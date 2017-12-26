@@ -93,7 +93,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.hashmap.haf.functions.api.FunctionApiApplication</mainClass>
+                    <mainClass>com.hashmap.haf.workflow.WorkflowApiApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

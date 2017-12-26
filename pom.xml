@@ -44,6 +44,7 @@
         <module>workflow-dexecutor</module>
         <module>functions</module>
         <module>metadata-edit</module>
+        <module>workflow-executor</module>
     </modules>
 
     <repositories>
