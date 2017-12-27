@@ -31,7 +31,6 @@ public class JwtTokenFactory {
     private static final String ENABLED = "enabled";
     private static final String IS_PUBLIC = "isPublic";
     private static final String TENANT_ID = "tenantId";
-    private static final String CUSTOMER_ID = "customerId";
 
     private final JwtSettings settings;
 
@@ -47,7 +46,7 @@ public class JwtTokenFactory {
         if (StringUtils.isBlank(securityUser.getUserName()))
             throw new IllegalArgumentException("Cannot create JWT Token without username");
 
-        if (securityUser.getAuthority() == null)
+        if (securityUser.getAuthorities() == null)
             throw new IllegalArgumentException("User doesn't have any privileges");
 
         UserPrincipal principal = securityUser.getUserPrincipal();
@@ -87,7 +86,7 @@ public class JwtTokenFactory {
 
         SecurityUser securityUser = new SecurityUser(UUID.fromString(claims.get(USER_ID, String.class)));
         securityUser.setUserName(subject);
-        securityUser.setAuthority(Authority.parse(scopes.get(0)));
+        securityUser.setAuthorities(scopes);
         securityUser.setFirstName(claims.get(FIRST_NAME, String.class));
         securityUser.setLastName(claims.get(LAST_NAME, String.class));
         securityUser.setEnabled(claims.get(ENABLED, Boolean.class));

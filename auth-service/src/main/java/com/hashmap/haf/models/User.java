@@ -1,9 +1,10 @@
 package com.hashmap.haf.models;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
-public class User implements Serializable{
+public class User implements UserInformation, Serializable{
     private static final long serialVersionUID = -350874482962054954L;
 
     private UUID id;
@@ -11,7 +12,9 @@ public class User implements Serializable{
     private UUID tenantId;
     private String firstName;
     private String lastName;
-    private Authority authority;
+    private List<String> authorities;
+    private String password;
+    private boolean enabled;
 
     public User(UUID id){
         this.id = id;
@@ -20,10 +23,12 @@ public class User implements Serializable{
     public User(User user) {
         this.id = user.getId();
         this.userName = user.getUserName();
+        this.password = user.getPassword();
         this.tenantId = user.getTenantId();
-        this.authority = user.getAuthority();
+        this.authorities = user.getAuthorities();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.enabled = user.isEnabled();
     }
 
     public static long getSerialVersionUID() {
@@ -70,12 +75,21 @@ public class User implements Serializable{
         this.lastName = lastName;
     }
 
-    public Authority getAuthority() {
-        return authority;
+    public List<String> getAuthorities() {
+        return authorities;
     }
 
-    public void setAuthority(Authority authority) {
-        this.authority = authority;
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public void setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -85,20 +99,26 @@ public class User implements Serializable{
 
         User user = (User) o;
 
-        if (!getId().equals(user.getId())) return false;
-        if (!getUserName().equals(user.getUserName())) return false;
-        if (!getTenantId().equals(user.getTenantId())) return false;
-        if (!getFirstName().equals(user.getFirstName())) return false;
-        return getLastName().equals(user.getLastName());
+        if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) return false;
+        if (getUserName() != null ? !getUserName().equals(user.getUserName()) : user.getUserName() != null)
+            return false;
+        if (getTenantId() != null ? !getTenantId().equals(user.getTenantId()) : user.getTenantId() != null)
+            return false;
+        if (getFirstName() != null ? !getFirstName().equals(user.getFirstName()) : user.getFirstName() != null)
+            return false;
+        if (getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null)
+            return false;
+        return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
-        result = 31 * result + getUserName().hashCode();
-        result = 31 * result + getTenantId().hashCode();
-        result = 31 * result + getFirstName().hashCode();
-        result = 31 * result + getLastName().hashCode();
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getUserName() != null ? getUserName().hashCode() : 0);
+        result = 31 * result + (getTenantId() != null ? getTenantId().hashCode() : 0);
+        result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
+        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
+        result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
         return result;
     }
 }

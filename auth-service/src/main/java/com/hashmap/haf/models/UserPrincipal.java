@@ -1,7 +1,5 @@
 package com.hashmap.haf.models;
 
-import java.util.UUID;
-
 public class UserPrincipal{
     private final Type type;
     private final String value;

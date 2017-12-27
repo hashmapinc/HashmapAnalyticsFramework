@@ -1,6 +1,6 @@
 package com.hashmap.haf.jwt.extractors;
 
-import com.hashmap.haf.configs.HashmapSecurityConfig;
+import com.hashmap.haf.configs.HafSecurityConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class JwtQueryTokenExtractor implements TokenExtractor {
     public String extract(HttpServletRequest request) {
         String token = null;
         if (request.getParameterMap() != null && !request.getParameterMap().isEmpty()) {
-            String[] tokenParamValue = request.getParameterMap().get(HashmapSecurityConfig.JWT_TOKEN_QUERY_PARAM);
+            String[] tokenParamValue = request.getParameterMap().get(HafSecurityConfig.JWT_TOKEN_QUERY_PARAM);
             if (tokenParamValue != null && tokenParamValue.length == 1) {
                 token = tokenParamValue[0];
             }
