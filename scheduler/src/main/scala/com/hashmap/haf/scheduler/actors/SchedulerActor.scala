@@ -1,10 +1,9 @@
 package com.hashmap.haf.scheduler.actors
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{Actor, Props}
 import com.hashmap.haf.scheduler.api.Scheduler
 import com.hashmap.haf.scheduler.consumer.rest.WorkflowEvent
 import com.hashmap.haf.scheduler.datastore.RedisWorkflowEventRepository
-import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor
 import com.hashmap.haf.scheduler.executor.actors.ExecutorActor
 import com.hashmap.haf.scheduler.executor.impl.WorkflowExecutor
 import redis.RedisClient
@@ -21,8 +20,9 @@ object SchedulerActor{
 }
 
 class SchedulerActor(scheduler: Scheduler) extends Actor {
-  import SchedulerActor._
   import ExecutorActor._
+  import SchedulerActor._
+
   import scala.concurrent.ExecutionContext.Implicits.global
   //val datastoreActor = system.actorOf(DatastoreActor.props(RedisWorkflowEventRepository))
   implicit val system = context.system
@@ -39,7 +39,7 @@ class SchedulerActor(scheduler: Scheduler) extends Actor {
     case RemoveJob(id) =>
       redisWorkflowEventRepository.remove(id)
       scheduler.suspendJob(id)
-    case UpdateJob(_, _) => ???
+    case UpdateJob(id, expr) => scheduler.updateJob(id, executorActor, expr, Execute(id))
   }
 
   override def postStop: Unit = {

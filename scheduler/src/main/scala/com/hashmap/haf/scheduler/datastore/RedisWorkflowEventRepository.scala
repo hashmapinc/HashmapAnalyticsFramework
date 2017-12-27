@@ -16,7 +16,7 @@ class RedisWorkflowEventRepository(redis: RedisClient) extends WorkflowEventRepo
   }
 
   def remove(workflowEventId : String): Future[Long]  = {
-    redis.del(workflowEventId) //.hdel(workflowEvent.id.toString, workflowEvent.keySet.toList:_*)
+    redis.del(workflowEventId)
   }
 
   override def getAll = {
