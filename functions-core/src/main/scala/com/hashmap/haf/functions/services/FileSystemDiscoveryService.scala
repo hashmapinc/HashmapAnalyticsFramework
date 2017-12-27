@@ -1,0 +1,77 @@
+package com.hashmap.haf.functions.services
+
+import java.io.File
+import javax.annotation.PostConstruct
+import com.hashmap.haf.annotations.IgniteFunction
+import com.hashmap.haf.functions.compiler.FunctionCompiler
+import com.hashmap.haf.functions.deployment.DefaultDeploymentService
+import com.hashmap.haf.functions.factory.Factories.Processors.ProcessorFactory
+import com.hashmap.haf.functions.gateways.{FunctionsInputGateway, FunctionsOutputGateway}
+import com.hashmap.haf.functions.listeners.FunctionsChangeListener
+import com.hashmap.haf.functions.processors.{AnnotationsProcessor, SourceGenerator}
+import com.hashmap.haf.models.IgniteFunctionType
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.stereotype.Component
+
+@Component
+class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGateway,
+                                              outputGateway: FunctionsOutputGateway,
+                                              sourceGenerator: SourceGenerator[IgniteFunctionType])
+	extends AbstractFunctionsDiscoveryService(inputGateway){
+
+	type T = IgniteFunction
+	type R = IgniteFunctionType
+
+	private val compiler = FunctionCompiler()
+	private val PACKAGE_NAME = "com.hashmap.haf.functions.extension"
+
+	@Value("${functions.ignite.config}")
+	var igniteConfig: String = _
+
+	@PostConstruct
+	def init(): Unit ={
+		Option(igniteConfig) match {
+			case Some(c) => deploymentService = DefaultDeploymentService(c)
+			case _ => deploymentService = DefaultDeploymentService()
+		}
+	}
+
+	override protected def processFunction(function: IgniteFunctionType): Unit = {
+		val source = sourceGenerator.generateSource(function)
+		source match {
+			case Right(s) =>
+				val canonicalClazzName = s"$PACKAGE_NAME.${function.getFunctionClazz}"
+				val directory = canonicalClazzName.replace('.', File.pathSeparatorChar)
+				compiler.compile(canonicalClazzName, s)
+			//compiler.clazzBytes(canonicalClazzName).foreach(c => outputGateway.writeTo(new URI(s"${f.getParentFile.toURI}/$directory.class"), c))
+			case Left(m) => println(s"Error while generating source: ${m._1} exception is ${m._2.getLocalizedMessage} ")
+		}
+	}
+
+	override protected def newListener(): FunctionsChangeListener ={
+		new FileSystemListener
+	}
+
+	override protected def newProcessor: AnnotationsProcessor[IgniteFunction, IgniteFunctionType] ={
+		ProcessorFactory[IgniteFunction, IgniteFunctionType]
+	}
+
+	override protected def serviceNameFunction(r: IgniteFunctionType): String = r.getService
+
+	class FileSystemListener extends FileAlterationListenerAdaptor with FunctionsChangeListener{
+		override def onFileCreate(file: File): Unit = {
+			println(" File created ", file.getAbsolutePath)
+			processAnnotations(newProcessor, file)
+		}
+
+		override def onFileChange(file: File): Unit = {
+			println(" File changed ", file.getAbsolutePath)
+			processAnnotations(newProcessor, file)
+		}
+
+		override def onFileDelete(file: File): Unit = {
+			println(" File deleted ")
+		}
+	}
+}

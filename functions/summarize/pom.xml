@@ -30,12 +30,16 @@
             <artifactId>ignite-spark</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hashmap.haf.functions.api</groupId>
-            <artifactId>functions-api</artifactId>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>functions-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hashmap.haf.datastore</groupId>
+            <groupId>com.hashmap.haf</groupId>
             <artifactId>datastore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>function-annotations</artifactId>
         </dependency>
     </dependencies>
     <build>

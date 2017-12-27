@@ -1,0 +1,27 @@
+server:
+  port: ${GATEWAY_PORT:8765}
+
+spring:
+  application:
+    name: gateway-server
+
+zuul:
+  routes:
+    functions:
+      path: /functions/**
+      sensitiveHeaders:
+      serviceId: functions-service
+    workflow:
+      path: /workflows/**
+      sensitiveHeaders:
+      serviceId: workflow-service
+    scheduler:
+      path: /scheduler/**
+      sensitiveHeaders:
+      serviceId: scheduler
+
+eureka:
+  client:
+    registerWithEureka: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

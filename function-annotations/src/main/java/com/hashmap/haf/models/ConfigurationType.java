@@ -1,6 +1,9 @@
 package com.hashmap.haf.models;
 
-public class ConfigurationType {
+import java.io.Serializable;
+
+public class ConfigurationType implements Serializable{
+    private static final long serialVersionUID = 5288224904538609601L;
     private final String key;
     private final String value;
 

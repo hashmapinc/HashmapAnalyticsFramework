@@ -7,7 +7,8 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor
-import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.AddJob
+import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.{AddJob, DropJob}
+import org.springframework.stereotype.Component
 import spray.json.DefaultJsonProtocol
 
 import scala.io.StdIn
@@ -28,40 +29,46 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val workflowEventFormat = jsonFormat2(WorkflowEvent)
 }
 
+@Component
+class EventConsumer {
+  def start() =  EventConsumer._start
+}
 
-object EventConsumer extends App with JsonSupport {
-  //WebServer.startServer("localhost", 8181)
-  implicit val system = ActorSystem("Scheduler App")
-  implicit val materializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
+object EventConsumer extends JsonSupport {
+  def _start = {
+    //WebServer.startServer("localhost", 8181)
+    implicit val system = ActorSystem("SchedulerApp")
+    implicit val materializer = ActorMaterializer()
+    implicit val executionContext = system.dispatcher
 
-  val workflowEventListenerActor = system.actorOf(WorkflowEventListenerActor.props)
+    val workflowEventListenerActor = system.actorOf(WorkflowEventListenerActor.props)
 
-  val route =
-    path("workflow") {
-      get {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Please submit workflow</h1>"))
-      } ~
-        post {
-          entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
-            workflowEventListenerActor ! AddJob(workflowEvent.id, workflowEvent.cronExpression)
-            complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
-          }
+    val route =
+      path("workflow") {
+        get {
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Please submit workflow</h1>"))
         } ~
-        delete {
-          entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
-            workflowEventListenerActor ! AddJob(workflowEvent.id, workflowEvent.cronExpression)
-            complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
+          post {
+            entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
+              workflowEventListenerActor ! AddJob(workflowEvent.id, workflowEvent.cronExpression)
+              complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
+            }
+          } ~
+          delete {
+            entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
+              workflowEventListenerActor ! DropJob(workflowEvent.id)
+              complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
+            }
           }
-        }
-    }
-  val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+      }
+    val bindingFuture = Http().bindAndHandle(route, "localhost", 8081)
 
-  println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
-  StdIn.readLine() // let it run until user presses return
-  bindingFuture
-    .flatMap(_.unbind()) // trigger unbinding from the port
-    .onComplete(_ => system.terminate()) // and shutdown when done
+    println(s"Server online at http://localhost:8081/\nPress RETURN to stop...")
+    StdIn.readLine() // let it run until user presses return
+    bindingFuture
+      .flatMap(_.unbind()) // trigger unbinding from the port
+      .onComplete(_ => system.terminate()) // and shutdown when done
+  }
 }
 
 

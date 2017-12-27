@@ -16,7 +16,7 @@ class DatastoreActor(repository:  WorkflowEventRepository) extends Actor {
   import DatastoreActor._
   override def receive = {
     case AddEvent(we) => repository.addOrUpdate(we)
-    case RemoveEvent(we) => repository.remove(we)
+    case RemoveEvent(we) => repository.remove(we.id.toString)
     case RemoveAll => repository.removeAll
   }
 }

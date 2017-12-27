@@ -1,14 +1,15 @@
 package com.hashmap.haf.functions.summarize
 
+import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.datastore.DataframeIgniteCache
-import com.hashmap.haf.functions.api.service.ServiceFunction
+import com.hashmap.haf.functions.services.ServiceFunction
 import org.apache.ignite.services.ServiceContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 
-
+@IgniteFunction(functionClazz = "SummarizeSparkTask", service = "summarizeService", configs = Array())
 class SparkSummarizeService extends ServiceFunction{
 
   var appName = ""

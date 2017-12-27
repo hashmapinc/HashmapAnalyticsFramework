@@ -10,9 +10,7 @@
         <artifactId>hashmap-analytics</artifactId>
     </parent>
 
-    <groupId>com.hashmap.haf.functions.api</groupId>
     <artifactId>functions-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -34,6 +32,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>functions-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
         </dependency>
     </dependencies>
 

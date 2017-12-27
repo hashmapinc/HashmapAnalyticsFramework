@@ -1,0 +1,27 @@
+server:
+  port: ${PORT:9000}
+
+spring:
+  application:
+    name: workflow-service
+  data:
+    jpa:
+      repositories:
+        enabled: "true"
+  jpa:
+    hibernate:
+      ddl-auto: "create"
+      show_sql: true
+      format_sql: true
+    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}"
+  datasource:
+    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
+    #change url accordingly
+    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/thingsboard}"
+    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
+    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

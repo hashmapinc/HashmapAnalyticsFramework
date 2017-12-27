@@ -1,0 +1,50 @@
+<workflow name="Sample Workflow">
+    <configurations>
+        <configuration>
+            <key>spark.driver.memory</key>
+            <value>1g</value>
+        </configuration>
+        <configuration>
+            <key>spark.driver.cores</key>
+            <value>1</value>
+        </configuration>
+    </configurations>
+    <task name = "forked_edit_metadata" className="com.hashmap.haf.tasks.MetaDataIgniteTask">
+        <spark>
+            <inputCache>output_postgres</inputCache>
+            <outputCache>output_metadata</outputCache>
+            <args>
+                <arg key="someargs">someargsvalues</arg>
+            </args>
+            <to task="forked_deduplication"/>
+            <to task="forked_summarize"/>
+        </spark>
+    </task>
+    <task name = "forked_deduplication" className="com.hashmap.haf.tasks.DeduplicateSparkIgniteTask">
+        <spark>
+            <configurations>
+                <configuration>
+                    <key>spark.driver.memory</key>
+                    <value>2g</value>
+                </configuration>
+            </configurations>
+            <inputCache>output_metadata</inputCache>
+            <outputCache>output_deduplicate</outputCache>
+            <args>
+                <arg key="retainlast">true</arg>
+            </args>
+        </spark>
+    </task>
+    <task name = "forked_summarize" className="com.hashmap.haf.tasks.SummarizeIgniteTask">
+        <spark>
+            <inputCache>output_metadata</inputCache>
+            <outputCache>output_summarize</outputCache>
+            <args>
+                <arg key="aggregates">min,max,avg</arg>
+            </args>
+            <to task="end"/>
+        </spark>
+    </task>
+</workflow>
+
+        <!-- TODO: Think about jobs joining -->

@@ -1,9 +1,11 @@
 package com.hashmap.haf.workflow.factory
 
 import java.util.UUID
+
 import com.github.dexecutor.core.task.Task
 import com.hashmap.haf.workflow.constants.XmlConstants
-import com.hashmap.haf.workflow.task.LivyTask
+import com.hashmap.haf.workflow.task.{LivyTask, SparkIgniteTask}
+
 import scala.language.higherKinds
 import scala.xml.Node
 
@@ -24,6 +26,7 @@ object Factory{
 		def create(xml: Node): WorkflowTask[UUID, String] = {
 			(xml \ "_").headOption.map(_.label) match {
 				case Some(LIVY_TASK) => LivyTask(xml)
+				case Some(SPARK_TASK) => SparkIgniteTask(xml)
 				case None => throw new IllegalStateException("At least one tak should be defined in a workflow")
 				case _ => throw new IllegalArgumentException("No factory method found for given task")
 			}
