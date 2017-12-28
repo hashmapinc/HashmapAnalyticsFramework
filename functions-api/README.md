@@ -1,4 +1,4 @@
-#Functions API
+# Functions API
 
 ## Introduction
 This service is responsible for
