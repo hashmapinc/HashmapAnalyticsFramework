@@ -91,6 +91,14 @@ public class User implements UserInformation, Serializable{
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
