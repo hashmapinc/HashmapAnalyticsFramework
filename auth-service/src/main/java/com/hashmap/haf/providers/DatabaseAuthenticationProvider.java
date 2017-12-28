@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 import javax.naming.NamingException;
 
 @Component
-@ConditionalOnProperty(name = {"security.client"}, havingValue = "oauth2-local")
+@ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
 
     private final DatabaseUserDetailsService userDetailsService;

@@ -7,7 +7,6 @@ import com.hashmap.haf.models.UserPrincipal;
 import com.hashmap.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,11 +14,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.kerberos.authentication.KerberosClient;
 import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosClient;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 
 @Component
-@ConditionalOnProperty(name = {"security.client"}, havingValue = "kerberos")
+@ConditionalOnProperty(value = "security.client", havingValue = "kerberos")
 public class KerberosIdentityProvider extends CustomAuthenticationProvider{
 
     private KerberosClient kerberosClient;
@@ -48,11 +46,6 @@ public class KerberosIdentityProvider extends CustomAuthenticationProvider{
         UserInformation userDetails = this.userDetailsService.loadUserByUsername(validatedUsername);
         SecurityUser securityUser = mapper.map(userDetails, userPrincipal);
         return new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
-    }
-
-    @Override
-    public boolean supports(Class<? extends Object> authentication) {
-        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 
 }

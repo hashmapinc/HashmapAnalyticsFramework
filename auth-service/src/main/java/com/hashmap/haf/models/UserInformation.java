@@ -9,4 +9,14 @@ public interface UserInformation {
     boolean isEnabled();
 
     String getPassword();
+
+    String getUserName();
+
+    String getId();
+
+    String getFirstName();
+
+    String getLastName();
+
+    String getTenantId();
 }

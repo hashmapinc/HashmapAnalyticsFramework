@@ -46,4 +46,8 @@ public class SecurityUser implements Serializable{
     public void setUserPrincipal(UserPrincipal userPrincipal) {
         this.userPrincipal = userPrincipal;
     }
+
+    public UserInformation getUser() {
+        return user;
+    }
 }

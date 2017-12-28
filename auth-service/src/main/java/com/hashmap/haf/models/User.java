@@ -2,21 +2,20 @@ package com.hashmap.haf.models;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 public class User implements UserInformation, Serializable{
     private static final long serialVersionUID = -350874482962054954L;
 
-    private UUID id;
+    private String id;
     private String userName;
-    private UUID tenantId;
+    private String tenantId;
     private String firstName;
     private String lastName;
     private List<String> authorities;
     private String password;
     private boolean enabled;
 
-    public User(UUID id){
+    public User(String id){
         this.id = id;
     }
 
@@ -35,11 +34,11 @@ public class User implements UserInformation, Serializable{
         return serialVersionUID;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -51,11 +50,11 @@ public class User implements UserInformation, Serializable{
         this.userName = userName;
     }
 
-    public UUID getTenantId() {
+    public String getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(UUID tenantId) {
+    public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
 

@@ -1,13 +1,12 @@
 package com.hashmap.haf.services;
 
 import com.hashmap.haf.models.UserInformation;
-import com.hashmap.haf.providers.DatabaseAuthenticationProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnBean(DatabaseAuthenticationProvider.class)
+@ConditionalOnProperty(value = "users.provider", havingValue = "database")
 public class DatabaseUserDetailsService implements UserDetailsService {
 
     @Override
