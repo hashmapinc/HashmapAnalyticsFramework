@@ -9,4 +9,5 @@ trait Scheduler {
   def suspendJob(name: String): Boolean
   def resumeJob(name: String): Boolean
   def SuspendAll: Boolean
+  def cancelJob(_name: String): Boolean
 }

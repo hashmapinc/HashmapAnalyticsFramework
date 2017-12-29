@@ -10,7 +10,7 @@ import redis.RedisClient
 
 object SchedulerActor{
   def props(scheduler: Scheduler): Props = Props(new SchedulerActor(scheduler))
-  final case class StartJob(name: String, cronExpression: String)
+  final case class StartJob(workflowEvent: WorkflowEvent)
   final case class UpdateJob(_name: String, cronExpression: String)
   final case class SuspendJob(name: String)
   final case class RestartJob(name: String)
@@ -29,16 +29,18 @@ class SchedulerActor(scheduler: Scheduler) extends Actor {
   val executorActor = system.actorOf(ExecutorActor.props(new WorkflowExecutor()))
   val redisWorkflowEventRepository = new RedisWorkflowEventRepository(RedisClient())
   override def receive = {
-    case StartJob(id, expr) =>
+    case StartJob(workflowEvent) =>
       //Question : should we send a message to datastore actor instead ?
-      redisWorkflowEventRepository.addOrUpdate(WorkflowEvent(id.toLong, expr))
-      scheduler.createJob(id, expr)
-      scheduler.submitJob(id, executorActor , Execute(id))
-    case SuspendJob(id) => scheduler.suspendJob(id)
+      redisWorkflowEventRepository.addOrUpdate(workflowEvent).foreach( _ => {
+        scheduler.createJob(workflowEvent.id.toString, workflowEvent.cronExpression)
+        scheduler.submitJob(workflowEvent.id.toString, executorActor , Execute(workflowEvent.id.toString))
+      })
+    case SuspendJob(id) =>
+      redisWorkflowEventRepository.get(id)
+        .map(we => redisWorkflowEventRepository.addOrUpdate(we.copy(isStarted = false)))
+        .foreach(_ => scheduler.suspendJob(id))
     case RestartJob(id) => scheduler.resumeJob(id)
-    case RemoveJob(id) =>
-      redisWorkflowEventRepository.remove(id)
-      scheduler.suspendJob(id)
+    case RemoveJob(id) => redisWorkflowEventRepository.remove(id).foreach(_ => scheduler.cancelJob(id))
     case UpdateJob(id, expr) => scheduler.updateJob(id, executorActor, expr, Execute(id))
   }
 
@@ -48,7 +50,7 @@ class SchedulerActor(scheduler: Scheduler) extends Actor {
 
   override def preStart(): Unit = {
     redisWorkflowEventRepository
-      .getAll.foreach(_.foreach(we => self ! StartJob(we.id.toString, we.cronExpression)))
+      .getAll.foreach(_.foreach(we => self ! StartJob(we)))
 
   }
 }

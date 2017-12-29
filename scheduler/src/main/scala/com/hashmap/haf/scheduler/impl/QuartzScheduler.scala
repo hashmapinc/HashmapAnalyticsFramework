@@ -21,4 +21,6 @@ case class QuartzScheduler(system: ActorSystem) extends Scheduler {
   override def resumeJob(_name: String) = Try(scheduler.resumeJob(_name)).isSuccess
 
   override def SuspendAll = Try(scheduler.suspendAll()).isSuccess
+
+  override def cancelJob(_name: String) = Try(scheduler.cancelJob(_name)).isSuccess
 }

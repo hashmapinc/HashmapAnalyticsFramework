@@ -1,15 +1,17 @@
 package com.hashmap.haf.scheduler.actors
 
 import akka.actor.{Actor, Props}
+import com.hashmap.haf.scheduler.consumer.rest.WorkflowEvent
 import com.hashmap.haf.scheduler.impl.QuartzScheduler
 
 object WorkflowEventListenerActor {
   def props =
     Props[WorkflowEventListenerActor]
 
-  final case class AddJob(workflowId: Long, cronExpression: String)
-  final case class StopJob(workflowId: Long)
-  final case class DropJob(workflowId: Long)
+  final case class AddJob(workflowEvent: WorkflowEvent)
+  final case class StopJob(workflowId: String)
+  final case class DropJob(workflowId: String)
+  final case class JobStatus(workflowId: String)
   final object RemoveAllJobs
 
 }
@@ -21,8 +23,9 @@ class WorkflowEventListenerActor extends Actor {
   val schedulerActor = system.actorOf(SchedulerActor.props(new QuartzScheduler(system)))
 
   override def receive = {
-    case AddJob(id, expr) => schedulerActor ! StartJob(id.toString, expr)
-    case StopJob(id) => schedulerActor ! SuspendJob(id.toString)
-    case DropJob(id) => schedulerActor ! RemoveJob(id.toString)
+    case AddJob(workflowEvent) => schedulerActor ! StartJob(workflowEvent)
+    case StopJob(id) => schedulerActor ! SuspendJob(id)
+    case DropJob(id) => schedulerActor ! RemoveJob(id)
+    case JobStatus(id) => ???
   }
 }

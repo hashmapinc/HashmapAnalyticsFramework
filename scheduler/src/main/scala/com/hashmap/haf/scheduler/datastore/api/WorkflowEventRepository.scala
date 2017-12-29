@@ -6,7 +6,10 @@ import scala.concurrent.Future
 
 trait WorkflowEventRepository {
   def addOrUpdate(workflowEvent : WorkflowEvent): Future[Boolean]
-  def remove(workflowEventId : String): Future[Long]
+
+  def get(workflowEventId: String): Future[WorkflowEvent]
   def getAll: Future[Seq[WorkflowEvent]]
+
+  def remove(workflowEventId : String): Future[Long]
   def removeAll: Unit
 }

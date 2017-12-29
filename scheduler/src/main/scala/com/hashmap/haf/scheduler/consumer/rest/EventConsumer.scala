@@ -7,26 +7,28 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor
-import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.{AddJob, DropJob}
+import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.{AddJob, DropJob, JobStatus}
 import org.springframework.stereotype.Component
 import spray.json.DefaultJsonProtocol
 
 import scala.io.StdIn
 
-final case class WorkflowEvent(id: Long, cronExpression: String)
+final case class WorkflowEvent(id: Long, cronExpression: String, isStarted: Boolean)
 
 object WorkflowEventImplicits {
   implicit def workflowEventToMap(workflowEvent: WorkflowEvent): Map[String, String] = {
-    Map("id" -> workflowEvent.id.toString, "cronExpression" -> workflowEvent.cronExpression)
+    Map("id" -> workflowEvent.id.toString,
+      "cronExpression" -> workflowEvent.cronExpression,
+      "isStarted" -> workflowEvent.isStarted.toString)
   }
   implicit def mapToWorkflowEvent(storedMap: Map[String, String]): WorkflowEvent  = {
-    WorkflowEvent(storedMap("id").toLong, storedMap("cronExpression"))
+    WorkflowEvent(storedMap("id").toLong, storedMap("cronExpression"), storedMap("isStarted").toBoolean)
   }
 }
 
   // collect your json format instances into a support trait:
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val workflowEventFormat = jsonFormat2(WorkflowEvent)
+  implicit val workflowEventFormat = jsonFormat3(WorkflowEvent)
 }
 
 @Component
@@ -48,18 +50,34 @@ object EventConsumer extends JsonSupport {
         get {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Please submit workflow</h1>"))
         } ~
-          post {
-            entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
-              workflowEventListenerActor ! AddJob(workflowEvent.id, workflowEvent.cronExpression)
-              complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
-            }
-          } ~
-          delete {
-            entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
-              workflowEventListenerActor ! DropJob(workflowEvent.id)
-              complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
-            }
+        post {
+          entity(as[WorkflowEvent]) { workflowEvent => // will unmarshal JSON to WorkflowEvent
+            workflowEventListenerActor ! AddJob(workflowEvent)
+            complete(s"Submitted workflow with id ${workflowEvent.id} and expressions ${workflowEvent.cronExpression}")
           }
+        } ~
+        delete {
+          parameter('workflowEventId.as[String]) { workflowEventId =>
+            workflowEventListenerActor ! DropJob(workflowEventId)
+            complete(s"Deleted workflow with id ${workflowEventId}")
+          }
+        }
+      } ~
+      pathPrefix("workflow") {
+        delete {
+          path(IntNumber) { workflowEventId =>
+            workflowEventListenerActor ! DropJob(workflowEventId.toString)
+            complete(s"Deleted workflow with id ${workflowEventId}")
+          }
+        }
+      }
+      path("workflow" / "status") {  // Not yet implemented
+        get {
+          path(IntNumber) { workflowEventId =>
+            workflowEventListenerActor ! JobStatus(workflowEventId.toString)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Please submit workflow</h1>"))
+          }
+        }
       }
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8081)
 
