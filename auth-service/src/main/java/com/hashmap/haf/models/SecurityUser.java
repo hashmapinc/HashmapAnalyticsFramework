@@ -3,37 +3,29 @@ package com.hashmap.haf.models;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class SecurityUser extends User{
+public class SecurityUser implements Serializable{
 
     private static final long serialVersionUID = 4093587665196741372L;
 
     private Collection<GrantedAuthority> authorities;
     private boolean enabled;
     private UserPrincipal userPrincipal;
+    private UserInformation user;
 
-    /*public SecurityUser() {
-        super();
-    }*/
-
-    public SecurityUser(UUID id) {
-        super(id);
-    }
-
-    public SecurityUser(User user, boolean enabled, UserPrincipal userPrincipal) {
-        super(user);
+    public SecurityUser(UserInformation user, boolean enabled, UserPrincipal userPrincipal) {
+        this.user = user;
         this.enabled = enabled;
         this.userPrincipal = userPrincipal;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (authorities == null) {
-            authorities = Stream.of(SecurityUser.this.getAuthority())
-                    .map(authority -> new SimpleGrantedAuthority(authority.name()))
+            authorities = user.getAuthorities().stream()
+                    .map(authority -> new SimpleGrantedAuthority(authority))
                     .collect(Collectors.toList());
         }
         return authorities;
@@ -53,5 +45,9 @@ public class SecurityUser extends User{
 
     public void setUserPrincipal(UserPrincipal userPrincipal) {
         this.userPrincipal = userPrincipal;
+    }
+
+    public UserInformation getUser() {
+        return user;
     }
 }

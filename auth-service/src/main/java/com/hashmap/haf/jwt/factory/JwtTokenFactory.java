@@ -4,9 +4,7 @@ import com.hashmap.haf.configs.JwtSettings;
 import com.hashmap.haf.jwt.models.AccessJwtToken;
 import com.hashmap.haf.jwt.models.JwtToken;
 import com.hashmap.haf.jwt.models.RawAccessJwtToken;
-import com.hashmap.haf.models.Authority;
-import com.hashmap.haf.models.SecurityUser;
-import com.hashmap.haf.models.UserPrincipal;
+import com.hashmap.haf.models.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -31,7 +29,6 @@ public class JwtTokenFactory {
     private static final String ENABLED = "enabled";
     private static final String IS_PUBLIC = "isPublic";
     private static final String TENANT_ID = "tenantId";
-    private static final String CUSTOMER_ID = "customerId";
 
     private final JwtSettings settings;
 
@@ -44,23 +41,24 @@ public class JwtTokenFactory {
      * Factory method for issuing new JWT Tokens.
      */
     public AccessJwtToken createAccessJwtToken(SecurityUser securityUser) {
-        if (StringUtils.isBlank(securityUser.getUserName()))
+        UserInformation user = securityUser.getUser();
+        if (StringUtils.isBlank(user.getUserName()))
             throw new IllegalArgumentException("Cannot create JWT Token without username");
 
-        if (securityUser.getAuthority() == null)
+        if (securityUser.getAuthorities() == null)
             throw new IllegalArgumentException("User doesn't have any privileges");
 
         UserPrincipal principal = securityUser.getUserPrincipal();
         String subject = principal.getValue();
         Claims claims = Jwts.claims().setSubject(subject);
         claims.put(SCOPES, securityUser.getAuthorities().stream().map(s -> s.getAuthority()).collect(Collectors.toList()));
-        claims.put(USER_ID, securityUser.getId().toString());
-        claims.put(FIRST_NAME, securityUser.getFirstName());
-        claims.put(LAST_NAME, securityUser.getLastName());
+        claims.put(USER_ID, user.getId());
+        claims.put(FIRST_NAME, user.getFirstName());
+        claims.put(LAST_NAME, user.getLastName());
         claims.put(ENABLED, securityUser.isEnabled());
         claims.put(IS_PUBLIC, principal.getType() == UserPrincipal.Type.PUBLIC_ID);
-        if (securityUser.getTenantId() != null) {
-            claims.put(TENANT_ID, securityUser.getTenantId().toString());
+        if (user.getTenantId() != null) {
+            claims.put(TENANT_ID, user.getTenantId());
         }
 
         DateTime currentTime = new DateTime();
@@ -85,25 +83,25 @@ public class JwtTokenFactory {
             throw new IllegalArgumentException("JWT Token doesn't have any scopes");
         }
 
-        SecurityUser securityUser = new SecurityUser(UUID.fromString(claims.get(USER_ID, String.class)));
-        securityUser.setUserName(subject);
-        securityUser.setAuthority(Authority.parse(scopes.get(0)));
-        securityUser.setFirstName(claims.get(FIRST_NAME, String.class));
-        securityUser.setLastName(claims.get(LAST_NAME, String.class));
-        securityUser.setEnabled(claims.get(ENABLED, Boolean.class));
-        boolean isPublic = claims.get(IS_PUBLIC, Boolean.class);
-        UserPrincipal principal = new UserPrincipal(isPublic ? UserPrincipal.Type.PUBLIC_ID : UserPrincipal.Type.USER_NAME, subject);
-        securityUser.setUserPrincipal(principal);
+        User user = new User(claims.get(USER_ID, String.class)) ;
+        user.setUserName(subject);
+        user.setAuthorities(scopes);
+        user.setFirstName(claims.get(FIRST_NAME, String.class));
+        user.setLastName(claims.get(LAST_NAME, String.class));
         String tenantId = claims.get(TENANT_ID, String.class);
         if (tenantId != null) {
-            securityUser.setTenantId(UUID.fromString(tenantId));
+            user.setTenantId(tenantId);
         }
 
-        return securityUser;
+        boolean isPublic = claims.get(IS_PUBLIC, Boolean.class);
+        UserPrincipal principal = new UserPrincipal(isPublic ? UserPrincipal.Type.PUBLIC_ID : UserPrincipal.Type.USER_NAME, subject);
+
+        return new SecurityUser(user, claims.get(ENABLED, Boolean.class), principal);
     }
 
     public JwtToken createRefreshToken(SecurityUser securityUser) {
-        if (StringUtils.isBlank(securityUser.getUserName())) {
+        UserInformation user = securityUser.getUser();
+        if (StringUtils.isBlank(user.getUserName())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
 
@@ -112,7 +110,7 @@ public class JwtTokenFactory {
         UserPrincipal principal = securityUser.getUserPrincipal();
         Claims claims = Jwts.claims().setSubject(principal.getValue());
         claims.put(SCOPES, Arrays.asList(Authority.REFRESH_TOKEN.name()));
-        claims.put(USER_ID, securityUser.getId().toString());
+        claims.put(USER_ID, user.getId());
         claims.put(IS_PUBLIC, principal.getType() == UserPrincipal.Type.PUBLIC_ID);
 
         String token = Jwts.builder()
@@ -140,9 +138,7 @@ public class JwtTokenFactory {
         }
         boolean isPublic = claims.get(IS_PUBLIC, Boolean.class);
         UserPrincipal principal = new UserPrincipal(isPublic ? UserPrincipal.Type.PUBLIC_ID : UserPrincipal.Type.USER_NAME, subject);
-        SecurityUser securityUser = new SecurityUser(UUID.fromString(claims.get(USER_ID, String.class)));
-        securityUser.setUserPrincipal(principal);
-        return securityUser;
+        return new SecurityUser(new User(claims.get(USER_ID, String.class)), true, principal);
     }
 
 }

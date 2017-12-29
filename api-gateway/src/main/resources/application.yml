@@ -19,9 +19,20 @@ zuul:
       path: /scheduler/**
       sensitiveHeaders:
       serviceId: scheduler
+    idntity:
+      path: /uaa/**
+      sensitiveHeaders:
+      serviceId: auth-service
 
 eureka:
   client:
     registerWithEureka: false
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+proxy:
+  auth:
+    routes:
+      functions: oauth2
+      workflow: oauth2
+      #identity: passthru
