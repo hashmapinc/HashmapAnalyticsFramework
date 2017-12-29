@@ -30,9 +30,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
-proxy:
-  auth:
-    routes:
-      functions: oauth2
-      workflow: oauth2
-      #identity: passthru
+#proxy:
+#  auth:
+#    routes:
+#      functions: oauth2
+#      workflow: oauth2
+#      identity: passthru

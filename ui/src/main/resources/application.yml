@@ -1,0 +1,5 @@
+server:
+  port: ${UI_PORT:3000}
+
+gateway:
+  url: http://localhost:8765

@@ -47,6 +47,7 @@
         <module>metadata-edit</module>
         <module>workflow-executor</module>
         <module>scheduler</module>
+        <module>ui</module>
     </modules>
 
     <repositories>
