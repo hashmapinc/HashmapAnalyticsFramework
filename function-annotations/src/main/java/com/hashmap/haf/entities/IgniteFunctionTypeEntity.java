@@ -20,11 +20,14 @@ public class IgniteFunctionTypeEntity {
     @Column(name = "functionClazz")
     private String functionClazz;
 
+    @Column(name = "packageName")
+    private String packageName;
+
     @ElementCollection
     @MapKeyColumn(name="KEY")
     @Column(name="VALUE")
     @CollectionTable(name="IGNITE_FUNCTION_CONFIGURATIONS")
-    private Map<String, String> configurations = new HashMap();
+    private Map<String, String> configurations = new HashMap<>();
 
     public String getService() {
         return service;
@@ -50,6 +53,14 @@ public class IgniteFunctionTypeEntity {
         this.configurations = configurations;
     }
 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public IgniteFunctionTypeEntity() {
         super();
     }
@@ -57,6 +68,7 @@ public class IgniteFunctionTypeEntity {
     public IgniteFunctionTypeEntity(IgniteFunctionType igniteFunctionType) {
         this.service = igniteFunctionType.getService();
         this.functionClazz = igniteFunctionType.getFunctionClazz();
+        this.packageName = igniteFunctionType.getPackageName();
         Map<String, String> configs = new HashMap<>();
         for(ConfigurationType config: igniteFunctionType.getConfigs()) {
            configs.put(config.getKey(), config.getStringValue());
@@ -65,13 +77,14 @@ public class IgniteFunctionTypeEntity {
     }
 
     public IgniteFunctionType toData() {
-        //todo fix this - configuration type
-        //List<ConfigurationType> configs = new ArrayList();
-        /*for(Map.Entry<String, String> entry: configurations.entrySet()) {
-            configs.add(new ConfigurationType(entry.getKey(), entry.getValue()));
-        }*/
-        //configs.toArray(new ConfigurationType[configs.size()])
-        return new IgniteFunctionType(service, new ConfigurationType[]{}, functionClazz);
+        List<ConfigurationType> configs = new ArrayList<>();
+        if(configurations != null && !configurations.isEmpty()) {
+            for (Map.Entry<String, String> entry : configurations.entrySet()) {
+                configs.add(new ConfigurationType(entry.getKey(), entry.getValue()));
+            }
+        }
+        ConfigurationType[] configurationTypes = configs.toArray(new ConfigurationType[configs.size()]);
+        return new IgniteFunctionType(service, configurationTypes, functionClazz, getPackageName());
     }
 
 }

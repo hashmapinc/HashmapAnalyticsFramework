@@ -10,6 +10,8 @@ public interface IgniteFunctionTypeDao {
 
     IgniteFunctionType findByClazz(String functionClazz);
 
+    IgniteFunctionType findByClazzAndPackage(String functionClazz, String packageName);
+
     List<IgniteFunctionType> findAll();
 
 }

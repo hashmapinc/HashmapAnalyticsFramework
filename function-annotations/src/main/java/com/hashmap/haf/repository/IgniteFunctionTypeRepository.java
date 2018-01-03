@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface IgniteFunctionTypeRepository extends CrudRepository<IgniteFunctionTypeEntity, String>{
 
     IgniteFunctionTypeEntity findByFunctionClazz(String functionClazz);
+
+    IgniteFunctionTypeEntity findByFunctionClazzAndPackageName(String functionClazz, String packageName);
 }

@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IgniteFunction {
     String functionClazz();
+    String packageName() default "";
     String service();
     Configuration[] configs();
 }

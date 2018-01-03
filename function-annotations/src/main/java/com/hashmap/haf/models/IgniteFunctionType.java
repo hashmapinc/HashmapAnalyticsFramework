@@ -9,11 +9,14 @@ public class IgniteFunctionType implements Serializable{
     private String service;
     private ConfigurationType[] configs;
     private String functionClazz;
+    private String packageName;
 
-    public IgniteFunctionType(String service, ConfigurationType[] configs, String functionClazz){
+    public IgniteFunctionType(String service, ConfigurationType[] configs,
+                              String functionClazz, String packageName){
         this.service = service;
         this.configs = configs;
         this.functionClazz = functionClazz;
+        this.packageName = packageName;
     }
 
     public IgniteFunctionType(){
@@ -44,6 +47,14 @@ public class IgniteFunctionType implements Serializable{
         return functionClazz;
     }
 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,17 +62,20 @@ public class IgniteFunctionType implements Serializable{
 
         IgniteFunctionType that = (IgniteFunctionType) o;
 
-        if (!getService().equals(that.getService())) return false;
+        if (getService() != null ? !getService().equals(that.getService()) : that.getService() != null) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
         if (!Arrays.equals(getConfigs(), that.getConfigs())) return false;
-        return getFunctionClazz().equals(that.getFunctionClazz());
+        if (getFunctionClazz() != null ? !getFunctionClazz().equals(that.getFunctionClazz()) : that.getFunctionClazz() != null)
+            return false;
+        return getPackageName() != null ? getPackageName().equals(that.getPackageName()) : that.getPackageName() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getService().hashCode();
+        int result = getService() != null ? getService().hashCode() : 0;
         result = 31 * result + Arrays.hashCode(getConfigs());
-        result = 31 * result + getFunctionClazz().hashCode();
+        result = 31 * result + (getFunctionClazz() != null ? getFunctionClazz().hashCode() : 0);
+        result = 31 * result + (getPackageName() != null ? getPackageName().hashCode() : 0);
         return result;
     }
 }

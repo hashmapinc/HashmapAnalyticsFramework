@@ -33,6 +33,15 @@ public class IgniteFunctionTypeDaoImpl implements IgniteFunctionTypeDao{
     }
 
     @Override
+    public IgniteFunctionType findByClazzAndPackage(String functionClazz, String packageName) {
+        IgniteFunctionTypeEntity function = igniteFunctionTypeRepository.findByFunctionClazzAndPackageName(functionClazz, packageName);
+        if(function != null){
+            return function.toData();
+        }
+        return null;
+    }
+
+    @Override
     public List<IgniteFunctionType> findAll() {
         Iterable<IgniteFunctionTypeEntity> all = igniteFunctionTypeRepository.findAll();
         List<IgniteFunctionType> list = Collections.emptyList();
