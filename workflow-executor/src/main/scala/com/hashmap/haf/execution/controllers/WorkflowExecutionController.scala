@@ -11,17 +11,15 @@ import com.hashmap.haf.execution.ignite.IgniteContext
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.processors.VelocitySourceGenerator
 import com.hashmap.haf.models.IgniteFunctionType
-import com.hashmap.haf.workflow.builder.DefaultWorkflowBuilder
 import com.hashmap.haf.workflow.constants.XmlConstants.{LIVY_TASK, SPARK_TASK}
-import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.factory.Factory.{TaskFactory, WorkflowTask}
 import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
-import com.hashmap.haf.workflow.service.WorkflowService
 import com.hashmap.haf.workflow.task.{DefaultTaskProvider, SparkIgniteTask}
 import org.apache.ignite.Ignite
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
 import com.hashmap.haf.workflow.constants.XmlConstants._
+import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 
 import scala.xml.{Node, NodeSeq}
 
@@ -29,8 +27,6 @@ import scala.xml.{Node, NodeSeq}
 @RequestMapping(Array("/api"))
 class WorkflowExecutionController @Autowired()(functionsServiceClient: FunctionsServiceClient,
                                                workflowServiceClient: WorkflowServiceClient,
-                                               workflowBuilder: DefaultWorkflowBuilder,
-                                               workflowService: WorkflowService,
                                                sourceGenerator: VelocitySourceGenerator,
                                                functionCompiler: FunctionCompiler) {
 
@@ -86,7 +82,7 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
 
   private def newTaskExecutor(workflow: Workflow[UUID, String]) = {
     val executorState = new IgniteDexecutorState[UUID, String](workflow.getId.toString, ignite)
-    val config = new DexecutorConfig[UUID, String](new IgniteSparkExecutionEngine[UUID, String](executorState, ignite.compute), DefaultTaskProvider(workflow))
+    val config = new DexecutorConfig[UUID, String](new IgniteSparkExecutionEngine[UUID, String](executorState), DefaultTaskProvider(workflow))
     config.setDexecutorState(executorState)
     new DefaultDexecutor[UUID, String](config)
   }

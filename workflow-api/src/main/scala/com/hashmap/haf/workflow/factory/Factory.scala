@@ -33,9 +33,4 @@ object Factory{
 		}
 	}
 
-	/*//Example for other types
-	implicit object IntTaskFactory extends TaskFactory[Int, String]{
-		override def create(xml: Node): WorkflowTask[Int, String] = ???
-	}*/
-
 }

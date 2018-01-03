@@ -1,15 +1,9 @@
 package com.hashmap.haf.workflow.controllers
-
-import java.util.UUID
-
-import com.hashmap.haf.workflow.models.Workflow
 import com.hashmap.haf.workflow.service.WorkflowService
 import com.hashmap.haf.workflow.util.UUIDConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
-
-import scala.xml.Elem
 
 @RestController
 @RequestMapping(Array("/api"))

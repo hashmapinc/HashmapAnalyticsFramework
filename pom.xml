@@ -48,6 +48,7 @@
         <module>workflow-executor</module>
         <module>scheduler</module>
         <module>ui</module>
+        <module>workflow-api</module>
     </modules>
 
     <repositories>
@@ -272,6 +273,11 @@
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
                 <artifactId>functions-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>workflow-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

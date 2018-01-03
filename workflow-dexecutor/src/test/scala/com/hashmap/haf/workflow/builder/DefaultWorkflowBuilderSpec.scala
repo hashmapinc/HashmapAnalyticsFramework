@@ -1,3 +1,4 @@
+/*
 package com.hashmap.haf.workflow.builder
 
 import java.util.UUID
@@ -73,3 +74,4 @@ class DefaultWorkflowBuilderSpec extends Specification {
 		}
 	}
 }
+*/

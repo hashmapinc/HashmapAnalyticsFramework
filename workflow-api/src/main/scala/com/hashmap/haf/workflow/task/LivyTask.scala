@@ -3,8 +3,6 @@ package com.hashmap.haf.workflow.task
 import java.util.UUID
 
 import com.hashmap.haf.workflow.util.UUIDConverter
-import org.apache.ignite.resources.ServiceResource
-
 import scala.xml.{Elem, NodeSeq}
 
 case class LivyTask(override val name: String,

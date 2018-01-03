@@ -8,7 +8,7 @@ import com.hashmap.haf.workflow.task.BaseTask
 import com.hashmap.haf.workflow.factory.Factory._
 import com.hashmap.haf.workflow.util.UUIDConverter
 
-import scala.xml.{Elem, Node, XML}
+import scala.xml.{Elem, XML}
 
 case class DefaultWorkflow(
 														tasks: List[BaseTask[String]],
@@ -63,7 +63,8 @@ object DefaultWorkflow{
 
 	def apply(): DefaultWorkflow = new DefaultWorkflow(Nil, "EmptyWorkflow", Map())
 
-	def apply(xml: Node): DefaultWorkflow = {
+	def apply(xmlContent: String): DefaultWorkflow = {
+		val xml = XML.loadString(xmlContent)
 		val idString = (xml \ ID_ATTRIBUTE).text
 		new DefaultWorkflow(
 			name = (xml \ NAME_ATTRIBUTE).text,
