@@ -20,6 +20,14 @@ public class ConfigurationType implements Serializable{
         return value;
     }
 
+    public Integer getIntValue(){
+        try{
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -4,13 +4,11 @@ import java.io.File
 import java.lang.annotation.Annotation
 import java.net.{URI, URL, URLClassLoader}
 import java.nio.file.Path
-
 import com.hashmap.haf.functions.deployment.DeploymentService
 import com.hashmap.haf.functions.gateways.FunctionsInputGateway
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import com.hashmap.haf.functions.processors.AnnotationsProcessor
 import org.apache.ignite.services.ServiceConfiguration
-
 import scala.util.{Failure, Success, Try}
 
 abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGateway) extends FunctionsDiscoveryService{
@@ -57,7 +55,7 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 	                                                     f: File): Unit ={
 		if(isJar(f.toPath)) {
 			processor.detect(f).foreach { case (serviceName, r) =>
-				deployService(serviceName, serviceNameFunction(r))
+				deployService(serviceName, r)
 				processFunction(r)
 			}
 		}
@@ -65,15 +63,14 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 
 	protected def processFunction(r: R): Unit
 
-	protected def deployService(clazz: String, serviceName: String): Unit ={
+	protected def deployService(clazz: String, r: R): Unit ={
 		Try(Class.forName(clazz)) match {
 			case Success(c) =>
 				val instance = c.newInstance().asInstanceOf[ServiceFunction]
-				//TODO: get configs from annotations
-				val cfg = new ServiceConfiguration()
-				cfg.setName(serviceName)
-				cfg.setMaxPerNodeCount(1)
-				//cfg.setTotalCount(1)
+				val svcfg = new ServiceConfiguration()
+				svcfg.setTotalCount(1) //Start with 1 count of node, will be overridden
+				val cfg = addConfigurations(r, svcfg)
+				cfg.setName(serviceNameFunction(r))
 				cfg.setService(instance)
 				deploymentService.deploy(cfg)
 			case Failure(e) => throw new IllegalStateException("Error while deploying service", e)
@@ -83,6 +80,8 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 	protected def isJar(f: Path): Boolean = {
 		f.toString.endsWith(".jar")
 	}
+
+	protected def addConfigurations(r: R, cfg: ServiceConfiguration): ServiceConfiguration
 
 	protected def newListener(): FunctionsChangeListener
 

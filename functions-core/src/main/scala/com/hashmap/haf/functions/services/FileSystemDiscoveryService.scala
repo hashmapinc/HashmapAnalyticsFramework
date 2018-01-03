@@ -2,6 +2,7 @@ package com.hashmap.haf.functions.services
 
 import java.io.File
 import javax.annotation.PostConstruct
+
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.deployment.DefaultDeploymentService
@@ -9,8 +10,9 @@ import com.hashmap.haf.functions.factory.Factories.Processors.ProcessorFactory
 import com.hashmap.haf.functions.gateways.{FunctionsInputGateway, FunctionsOutputGateway}
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import com.hashmap.haf.functions.processors.{AnnotationsProcessor, SourceGenerator}
-import com.hashmap.haf.models.IgniteFunctionType
+import com.hashmap.haf.models.{ConfigurationType, IgniteFunctionType}
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
+import org.apache.ignite.services.ServiceConfiguration
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Component
 
@@ -73,5 +75,16 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 		override def onFileDelete(file: File): Unit = {
 			println(" File deleted ")
 		}
+	}
+
+	override protected def addConfigurations(r: IgniteFunctionType, cfg: ServiceConfiguration): ServiceConfiguration = {
+		val configs: Array[ConfigurationType] = r.getConfigs
+		val applyConfig = (k: String, f: (ConfigurationType) => Unit) => configs.find(_.getKey.equalsIgnoreCase(k)).foreach(f)
+		if(configs != null){
+			applyConfig(ConfigurationKeys.TOTAL_COUNT, c => cfg.setTotalCount(c.getIntValue))
+			applyConfig(ConfigurationKeys.MAX_PER_NODE_COUNT, c => cfg.setMaxPerNodeCount(c.getIntValue))
+			applyConfig(ConfigurationKeys.CACHE_NAME, c => cfg.setCacheName(c.getStringValue))
+		}
+		cfg
 	}
 }
