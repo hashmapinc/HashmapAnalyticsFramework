@@ -5,7 +5,7 @@ import com.hashmap.haf.exceptions.AuthMethodNotSupportedException;
 import com.hashmap.haf.jwt.models.RawAccessJwtToken;
 import com.hashmap.haf.jwt.models.RefreshAuthenticationToken;
 import com.hashmap.haf.jwt.models.RefreshTokenRequest;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;

@@ -1,7 +1,7 @@
 package com.hashmap.haf.jwt.extractors;
 
 import com.hashmap.haf.configs.HafSecurityConfig;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 

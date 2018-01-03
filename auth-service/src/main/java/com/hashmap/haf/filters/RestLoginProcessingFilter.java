@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.exceptions.AuthMethodNotSupportedException;
 import com.hashmap.haf.models.LoginRequest;
 import com.hashmap.haf.models.UserPrincipal;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;

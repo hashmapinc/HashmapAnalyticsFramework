@@ -25,14 +25,14 @@ class VelocitySourceGeneratorSpec extends Specification{
 
 			val v = new VelocitySourceGenerator
 			v.template = "test.vm"
-			val source = v.generateSource(new IgniteFunctionType("testService", Array(), "TestTask"))
+			val source = v.generateSource(new IgniteFunctionType("testService", Array(), "TestTask", "com.hashmap.haf.functions.extension"))
 			source shouldEqual Right(result)
 		}
 
 		"error out when non existing template given" in {
 			val v = new VelocitySourceGenerator
 			v.template = "doesNotExist.vm"
-			val source = v.generateSource(new IgniteFunctionType("testService", Array(), "TestTask"))
+			val source = v.generateSource(new IgniteFunctionType("testService", Array(), "TestTask", "com.hashmap.haf.functions.extension"))
 			source.isLeft shouldEqual true
 			source.left.toOption.get._1 shouldEqual "Error while loading template"
 		}
