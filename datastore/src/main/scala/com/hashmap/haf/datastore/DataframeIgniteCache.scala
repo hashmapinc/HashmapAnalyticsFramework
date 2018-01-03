@@ -12,8 +12,8 @@ object DataframeIgniteCache {
 
   private var CONFIG:String = _ // Configuration to create ignite cache
 
-  def create(configPath: String):Datastore = {
-    CONFIG = configPath
+  def create(configUrl: String):Datastore = {
+    CONFIG = configUrl
     IgniteCacheInstance
   }
 

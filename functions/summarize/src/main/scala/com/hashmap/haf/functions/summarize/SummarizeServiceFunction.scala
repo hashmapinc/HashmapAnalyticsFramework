@@ -13,10 +13,9 @@ import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 class SparkSummarizeService extends ServiceFunction{
 
   var appName = ""
-  val CONFIG = getClass.getResource("/examples/cache.xml").getPath
-  override def run(inputKey: String, outputKey: String, config: Any): Unit = {
-    println("Running service")
-    val spark = SparkSession
+  //val CONFIG = getClass.getResource("/examples/cache.xml").toURI.toURL.toString
+  override def run(inputKey: String, outputKey: String, config: Any): String = {
+    /*val spark = SparkSession
       .builder()
       .appName("Spark Summarize Service")
       .master("local")
@@ -39,8 +38,8 @@ class SparkSummarizeService extends ServiceFunction{
     println("DF with following schema has been saved: ")
     newDs.schema.foreach(field => println(s"${field.name}: metadata=${field.metadata}"))
 
-    spark.close()
-
+    spark.close()*/
+    "successful"
   }
 
   override def cancel(ctx: ServiceContext) = println("Cancelled")

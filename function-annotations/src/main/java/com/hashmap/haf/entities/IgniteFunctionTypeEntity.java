@@ -24,7 +24,31 @@ public class IgniteFunctionTypeEntity {
     @MapKeyColumn(name="KEY")
     @Column(name="VALUE")
     @CollectionTable(name="IGNITE_FUNCTION_CONFIGURATIONS")
-    private Map<String, String> configurations = new HashMap<>();
+    private Map<String, String> configurations = new HashMap();
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getFunctionClazz() {
+        return functionClazz;
+    }
+
+    public void setFunctionClazz(String functionClazz) {
+        this.functionClazz = functionClazz;
+    }
+
+    public Map<String, String> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Map<String, String> configurations) {
+        this.configurations = configurations;
+    }
 
     public IgniteFunctionTypeEntity() {
         super();
@@ -41,11 +65,13 @@ public class IgniteFunctionTypeEntity {
     }
 
     public IgniteFunctionType toData() {
-        List<ConfigurationType> configs = new ArrayList();
-        for(Map.Entry<String, String> entry: configurations.entrySet()) {
+        //todo fix this - configuration type
+        //List<ConfigurationType> configs = new ArrayList();
+        /*for(Map.Entry<String, String> entry: configurations.entrySet()) {
             configs.add(new ConfigurationType(entry.getKey(), entry.getValue()));
-        }
-        return new IgniteFunctionType(service, configs.toArray(new ConfigurationType[configs.size()]), functionClazz);
+        }*/
+        //configs.toArray(new ConfigurationType[configs.size()])
+        return new IgniteFunctionType(service, new ConfigurationType[]{}, functionClazz);
     }
 
 }

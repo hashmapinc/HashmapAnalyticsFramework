@@ -31,6 +31,7 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <!--<property name="clientMode" value="true"/>-->
         <property name="cacheConfiguration">
             <!-- SharedRDD cache example configuration (Atomic mode). -->
             <bean class="org.apache.ignite.configuration.CacheConfiguration">
@@ -73,7 +74,7 @@
                         <property name="addresses">
                             <list>
                                 <!-- In distributed environment, replace with actual host IP address. -->
-                                <value>127.0.0.1:47500..47509</value>
+                                <value>192.168.0.2:47500..47509</value>
                             </list>
                         </property>
                     </bean>

@@ -16,6 +16,22 @@ public class IgniteFunctionType implements Serializable{
         this.functionClazz = functionClazz;
     }
 
+    public IgniteFunctionType(){
+
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public void setConfigs(ConfigurationType[] configs) {
+        this.configs = configs;
+    }
+
+    public void setFunctionClazz(String functionClazz) {
+        this.functionClazz = functionClazz;
+    }
+
     public ConfigurationType[] getConfigs() {
         return configs;
     }

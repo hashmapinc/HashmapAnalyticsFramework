@@ -280,6 +280,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>workflow-dexecutor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
@@ -289,7 +294,7 @@
                 <artifactId>function-annotations</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.github.dexecutor</groupId>
                 <artifactId>dexecutor-ignite</artifactId>
                 <version>1.0.1</version>
@@ -299,7 +304,7 @@
                         <artifactId>ignite-core</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>
@@ -398,6 +403,21 @@
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                    <!--
+                                      <exclude>com/google/common/**</exclude>
+        -->
+                                </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.springframework.boot</groupId>

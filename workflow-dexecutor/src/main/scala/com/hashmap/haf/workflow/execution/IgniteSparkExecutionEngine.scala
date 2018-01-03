@@ -1,11 +1,13 @@
 package com.hashmap.haf.workflow.execution
 
 import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
+
 import com.github.dexecutor.core.task.{ExecutionResult, Task, TaskExecutionException}
 import com.github.dexecutor.core.{DexecutorState, ExecutionEngine}
-import com.hashmap.haf.workflow.closure.SparkTaskClosure
 import org.apache.ignite.IgniteCompute
 import org.apache.ignite.lang.{IgniteFuture, IgniteInClosure}
+
+import scala.util.{Failure, Success, Try}
 
 class IgniteSparkExecutionEngine[T <: Comparable[T], R](executorState: DexecutorState[T, R],
                                                         igniteCompute: IgniteCompute,
@@ -16,10 +18,22 @@ class IgniteSparkExecutionEngine[T <: Comparable[T], R](executorState: Dexecutor
 		this(dexecutorState, igniteCompute, new LinkedBlockingQueue[ExecutionResult[T, R]]())
 	}
 
+	def defaultValue[U]: U = {
+		class Default[U] {
+			var default: U = _
+		}
+		new Default[U].default
+	}
+
 	override def submit(task: Task[T, R]): Unit = {
 		//logger.debug("Received Task {}", task.getId)
-		val result = igniteCompute.callAsync(task.asInstanceOf[SparkTaskClosure[T, R]])
-		result.listen(newListener)
+		//val result = igniteCompute.callAsync(SparkTaskClosure(task))
+		val result = Try(task.execute()) match {
+			case Success(r) => ExecutionResult.success(task.getId, r)
+			case Failure(e) => ExecutionResult.errored(task.getId, defaultValue[R] : R, s"Error occurred ${e.getMessage}")
+		}
+		completionQueue.put(result)
+		//result.listen(newListener)
 	}
 
 	private def newListener: IgniteInClosure[IgniteFuture[ExecutionResult[T, R]]] = {

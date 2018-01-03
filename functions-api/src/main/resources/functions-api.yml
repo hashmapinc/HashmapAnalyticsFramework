@@ -7,7 +7,7 @@ server:
 
 functions:
   input:
-    location: "file:///home"
+    location: "file:///Users/jetinder/ignite-functions"
   output:
     location: "file:///home/functions"
   protocol: "file"
@@ -24,6 +24,23 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 # HSQLDB DAO Configuration
+#spring:
+#  data:
+#    jpa:
+#      repositories:
+#        enabled: "true"
+#  jpa:
+#    hibernate:
+#      ddl-auto: "create"
+#      show_sql: true
+#      format_sql: true
+#    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
+#  datasource:
+#    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
+#    url: "${SPRING_DATASOURCE_URL:jdbc:hsqldb:file:${SQL_DATA_FOLDER:/tmp}/functions;sql.enforce_size=false}"
+#    username: "${SPRING_DATASOURCE_USERNAME:sa}"
+#    password: "${SPRING_DATASOURCE_PASSWORD:}"
+
 spring:
   data:
     jpa:
@@ -34,9 +51,10 @@ spring:
       ddl-auto: "create"
       show_sql: true
       format_sql: true
-    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
+    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}"
   datasource:
-    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
-    url: "${SPRING_DATASOURCE_URL:jdbc:hsqldb:file:${SQL_DATA_FOLDER:/tmp}/functions;sql.enforce_size=false}"
-    username: "${SPRING_DATASOURCE_USERNAME:sa}"
-    password: "${SPRING_DATASOURCE_PASSWORD:}"
+    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
+    #change url accordingly
+    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://192.168.0.2:5432/thingsboard}"
+    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
+    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"

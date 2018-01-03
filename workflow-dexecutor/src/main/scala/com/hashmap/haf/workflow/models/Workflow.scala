@@ -21,7 +21,7 @@ abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: St
 
 	def getName: String = name
 
-	private[workflow] def getTasks: List[Task[T, R]] = tasks
+	def getTasks: List[Task[T, R]] = tasks
 
 	def toXml: Elem
 }

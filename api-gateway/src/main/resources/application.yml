@@ -8,13 +8,14 @@ spring:
 zuul:
   routes:
     functions:
-      path: /functions/**
+      path: /functions-api/**
       sensitiveHeaders:
       serviceId: functions-service
     workflow:
-      path: /workflows/**
+      path: /workflows-api/**
       sensitiveHeaders:
       serviceId: workflow-service
+      #stripPrefix: true
     scheduler:
       path: /scheduler/**
       sensitiveHeaders:
@@ -23,6 +24,10 @@ zuul:
       path: /uaa/**
       sensitiveHeaders:
       serviceId: auth-service
+    executor:
+      path: /workflow-executor-api/**
+      sensitiveHeaders:
+      serviceId: workflow-executor
 
 eureka:
   client:

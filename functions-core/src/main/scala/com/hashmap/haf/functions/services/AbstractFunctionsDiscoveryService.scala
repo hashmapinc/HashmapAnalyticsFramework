@@ -2,13 +2,15 @@ package com.hashmap.haf.functions.services
 
 import java.io.File
 import java.lang.annotation.Annotation
-import java.net.URI
+import java.net.{URI, URL, URLClassLoader}
 import java.nio.file.Path
+
 import com.hashmap.haf.functions.deployment.DeploymentService
 import com.hashmap.haf.functions.gateways.FunctionsInputGateway
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import com.hashmap.haf.functions.processors.AnnotationsProcessor
 import org.apache.ignite.services.ServiceConfiguration
+
 import scala.util.{Failure, Success, Try}
 
 abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGateway) extends FunctionsDiscoveryService{
@@ -25,10 +27,29 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 	}
 
 	def process(uri: URI, files: List[Path]): Unit ={
-		files.filter(isJar).foreach{ p =>
+		val jars = files.filter(isJar)
+		addJarsToClassPath(jars.map(_.toUri.toURL).toArray)
+		jars.foreach{ p =>
 			inputGateway.readFileFrom(p.toUri).foreach{ f =>
 				processAnnotations(newProcessor, f)
 			}
+		}
+	}
+
+	private def addJarsToClassPath(urls: Array[URL]) = {
+		try {
+			val contextClassLoader = getClass.getClassLoader
+
+			contextClassLoader match {
+				case c: URLClassLoader =>
+					val method = classOf[URLClassLoader].getDeclaredMethod("addURL", classOf[URL])
+					method.setAccessible(true)
+					urls.foreach(u => method.invoke(c, u))
+				case _ => println("URLS not added on classpath")
+			}
+		} catch {
+			case e: Exception =>
+				println("Error occurred")
 		}
 	}
 
@@ -51,16 +72,16 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 				//TODO: get configs from annotations
 				val cfg = new ServiceConfiguration()
 				cfg.setName(serviceName)
-				cfg.setTotalCount(1)
+				cfg.setMaxPerNodeCount(1)
+				//cfg.setTotalCount(1)
 				cfg.setService(instance)
 				deploymentService.deploy(cfg)
-
 			case Failure(e) => throw new IllegalStateException("Error while deploying service", e)
 		}
 	}
 
 	protected def isJar(f: Path): Boolean = {
-		f.endsWith(".jar")
+		f.toString.endsWith(".jar")
 	}
 
 	protected def newListener(): FunctionsChangeListener

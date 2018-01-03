@@ -1,10 +1,13 @@
 package com.hashmap.haf.functions.compiler
 
+import org.springframework.stereotype.Service
+
 import scala.reflect.internal.util.{AbstractFileClassLoader, BatchSourceFile}
 import scala.reflect.io.VirtualDirectory
 import scala.tools.nsc.{Global, Settings}
 import scala.util.{Failure, Success, Try}
 
+@Service
 class FunctionCompiler {
 
 	private val target = new VirtualDirectory("(memory)", None)

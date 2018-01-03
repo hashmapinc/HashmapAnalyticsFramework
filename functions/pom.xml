@@ -27,6 +27,12 @@
                 <groupId>com.hashmap.haf.functions.api</groupId>
                 <artifactId>functions-core</artifactId>
                 <version>${functions-core}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>log4j-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.hashmap.haf.datastore</groupId>
