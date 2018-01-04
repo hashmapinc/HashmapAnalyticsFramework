@@ -59,6 +59,20 @@
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-spark</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>functions-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>datastore</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>

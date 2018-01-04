@@ -19,11 +19,11 @@ trait SparkFunctionContext {
 	registry.registerBuiltInFunctions(spark.sqlContext)
 	ssc.sparkContext.setLogLevel("WARN")
 
-	val igniteContext = new IgniteContext(spark.sparkContext, () => {
+	lazy val igniteContext = new IgniteContext(spark.sparkContext, () => {
 		val configuration = new IgniteConfiguration()
 		val spi = new TcpDiscoverySpi()
 		val finder = new TcpDiscoveryVmIpFinder()
-		finder.setAddresses(util.Arrays.asList("192.168.1.67:47500..47510"))
+		finder.setAddresses(util.Arrays.asList("192.168.1.88:47500..47510"))
 		spi.setIpFinder(finder)
 		configuration.setDiscoverySpi(spi)
 		configuration

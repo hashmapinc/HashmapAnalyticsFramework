@@ -22,9 +22,6 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 
 	assert(args.length == 1, println("Application accepts one parameter with JSON"))
 
-	val schema: Schema = AvroSchema[DataSource]
-	println(schema)
-
 	private val value: RDD[(String, String)] = spark.sparkContext.wholeTextFiles("resources/a")
 
 
@@ -46,7 +43,6 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 				tableStream.show(5)
 				println(tableStream.schema.json)
 				val frame = tableStream.selectExpr(buildExpression(d.columns): _*)
-				//frame.select(col("a").as("a", Metadata.fromJson("")))
 				frame.printSchema()
 				frame.columns.foreach(println)
 				frame.show(5)
