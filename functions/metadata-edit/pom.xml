@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.hashmap.haf</groupId>
+        <artifactId>functions</artifactId>
+        <groupId>com.hashmap.haf.functions</groupId>
         <version>1.0.0-SNAPSHOT</version>
-        <artifactId>hashmap-analytics</artifactId>
     </parent>
 
     <artifactId>metadata-edit</artifactId>
@@ -23,19 +23,7 @@
             <artifactId>scala-reflect</artifactId>
         </dependency>
         <dependency>
-            <artifactId>spark-core_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
             <artifactId>spark-sql_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-streaming_${scala.compat.version}</artifactId>
             <groupId>org.apache.spark</groupId>
         </dependency>
         <dependency>
@@ -45,10 +33,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sksamuel.avro4s</groupId>
-            <artifactId>avro4s-core_${scala.compat.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.play</groupId>

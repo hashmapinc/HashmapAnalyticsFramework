@@ -10,6 +10,8 @@ import org.apache.ignite.Ignite
 import org.apache.ignite.resources.IgniteInstanceResource
 import org.apache.ignite.services.ServiceContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql
+import org.apache.spark.sql.functions.{col, struct, to_json}
 import org.apache.spark.sql.{Row, SparkSession}
 
 @IgniteFunction(functionClazz = "MetadataEditSparkTask",
@@ -17,13 +19,13 @@ import org.apache.spark.sql.{Row, SparkSession}
 	configs = Array())
 class MetadataEditService extends ServiceFunction with SparkFunctionContext{
 
-	//@IgniteInstanceResource
-	//private var ignite: Ignite = _
+	@IgniteInstanceResource
+	private var ignite: Ignite = _
 
-	//val igniteConfig: String = getClass.getResource("/examples/cache.xml").toURI.toURL.toString
+	var svcName: String = _
 
 	override def run(inputKey: String, outputKey: String, config: Any): String = {
-		//println("Ignite ", ignite.services().serviceDescriptors())
+		println("Ignite ", ignite.services().serviceDescriptors())
 
 		/*val spark = SparkSession
 			.builder()
@@ -54,6 +56,7 @@ class MetadataEditService extends ServiceFunction with SparkFunctionContext{
 
 	override def init(ctx: ServiceContext): Unit = {
 		println("Metadata service function executing with ", ctx.executionId())
+		svcName = ctx.name()
 	}
 
 	override def execute(ctx: ServiceContext): Unit = {
@@ -80,5 +83,11 @@ class MetadataEditService extends ServiceFunction with SparkFunctionContext{
 			case Some(f) => s"$f($columnName)"
 			case None => s"cast($columnName as $to)"
 		}
+	}
+
+	//Use In case of composite key
+	private def keyFor(dataSet: DataSet): sql.Column ={
+		if(dataSet.keyColumns.length > 1) to_json(struct(dataSet.keyColumns.head, dataSet.keyColumns.tail: _*)).alias("key")
+		else col(dataSet.keyColumns.head).cast("string").alias("key")
 	}
 }

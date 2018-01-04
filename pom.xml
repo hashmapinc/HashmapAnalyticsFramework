@@ -46,7 +46,6 @@
         <module>workflow-api</module>
         <module>workflow-executor</module>
         <module>functions</module>
-        <module>metadata-edit</module>
         <module>scheduler</module>
         <!--<module>ui</module>-->
     </modules>

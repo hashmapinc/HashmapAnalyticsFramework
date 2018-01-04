@@ -4,7 +4,7 @@ import java.util.{Properties, UUID}
 
 import com.hashmap.haf.models.{Column, DataSet, DataSource}
 import com.hashmap.haf.utils.SparkFunctionContext
-import com.sksamuel.avro4s.AvroSchema
+//import com.sksamuel.avro4s.AvroSchema
 import org.apache.avro.Schema
 import org.apache.ignite.cache.affinity.Affinity
 import org.apache.ignite.spark.IgniteRDD
@@ -14,18 +14,18 @@ import org.apache.spark.sql
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.Metadata
-import play.api.libs.json.Json
+//import play.api.libs.json.Json
 
 import scala.util.{Failure, Success, Try}
 
-object EditMetadataFunction extends App with SparkFunctionContext{
+object EditMetadataFunction extends SparkFunctionContext{
 
-	assert(args.length == 1, println("Application accepts one parameter with JSON"))
+	//assert(args.length == 1, println("Application accepts one parameter with JSON"))
 
 	private val value: RDD[(String, String)] = spark.sparkContext.wholeTextFiles("resources/a")
 
 
-	parseArgument(args(0)) match {
+	/*parseArgument(args(0)) match {
 		case Success(source: DataSource) =>
 			val connectionProperties = new Properties()
 			connectionProperties.put("user", "postgres")
@@ -52,11 +52,11 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 			}
 
 		case Failure(e) => println("Exception occurred while parsing json parameter ", e)
-	}
+	}*/
 
-	def parseArgument(metadata: String): Try[DataSource] = Try {
+	/*def parseArgument(metadata: String): Try[DataSource] = Try {
 		Json.parse(metadata).as[DataSource]
-	}
+	}*/
 
 	def buildExpression(columns: List[Column]): List[String] ={
 		columns.map{ column =>
@@ -96,8 +96,8 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 					.option("checkpointLocation", "/path/to/HDFS/dir")
 					.outputMode("complete")
 					.start()*/
-		val savedRdd: IgniteRDD[Affinity[UUID], String] = igniteContext.fromCache[Affinity[UUID], String]("metadataEdit")
-		savedRdd.foreach(p => println("Before: ", p))
+		//val savedRdd: IgniteRDD[Affinity[UUID], String] = igniteContext.fromCache[Affinity[UUID], String]("metadataEdit")
+		//savedRdd.foreach(p => println("Before: ", p))
 		/*val s = stream
 			.select(keyFor(dataSet),
 				to_json(struct(columns.head, columns.tail: _*)).alias("value"))
@@ -107,9 +107,9 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 			.select(to_json(struct(columns.head, columns.tail: _*)).alias("value"))
 			.map(_.getAs[String]("value"))
 			.toJavaRDD
-		savedRdd.saveValues(rdd)
+		//savedRdd.saveValues(rdd)
 		//savedRdd.savePairs(rddPair, overwrite = true)
-		savedRdd.foreach(p => println("After: ", p))
+		//savedRdd.foreach(p => println("After: ", p))
 		/*stream
 			.select(keyFor(dataSet),
 				to_json(struct(columns.head, columns.tail: _*)).alias("value"))
@@ -130,7 +130,7 @@ object EditMetadataFunction extends App with SparkFunctionContext{
 		else col(dataSet.keyColumns.head).cast("string").alias("key")
 	}
 
-	ssc.awaitTermination()
+	//ssc.awaitTermination()
 
 }
 
