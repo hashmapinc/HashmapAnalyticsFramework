@@ -19,7 +19,7 @@ object TestIgniteServices extends App{
   val configuration = new IgniteConfiguration()
   val spi = new TcpDiscoverySpi()
   val finder = new TcpDiscoveryVmIpFinder()
-  finder.setAddresses(util.Arrays.asList("192.168.0.2:47500..47510"))
+  finder.setAddresses(util.Arrays.asList("192.168.1.67:47500..47510"))
   spi.setIpFinder(finder)
   configuration.setDiscoverySpi(spi)
   configuration.setClientMode(true)

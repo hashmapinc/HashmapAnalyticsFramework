@@ -12,7 +12,7 @@ trait FunctionsServiceClient {
 
 }
 
-@FeignClient(name = "workflow-service")
+@FeignClient(name = "workflow-api")
 trait WorkflowServiceClient {
 
   @GetMapping(path = Array("/api/workflows/{workflowId}"))

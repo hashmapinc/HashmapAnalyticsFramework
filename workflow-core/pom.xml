@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>workflow-executor</artifactId>
+    <artifactId>workflow-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -29,28 +29,8 @@
             <artifactId>play-specs2_${scala.compat.version}</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hashmap.haf</groupId>
-            <artifactId>functions-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hashmap.haf</groupId>
-            <artifactId>workflow-core</artifactId>
+            <groupId>com.github.dexecutor</groupId>
+            <artifactId>dexecutor-core</artifactId>
         </dependency>
     </dependencies>
 
@@ -80,14 +60,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.hashmap.haf.execution.WorkflowExecutorApplication</mainClass>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
 </project>
