@@ -2,7 +2,6 @@ package com.hashmap.haf.functions.api.services
 
 import java.io.File
 import javax.annotation.PostConstruct
-
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.functions.deployment.DefaultDeploymentService
 import com.hashmap.haf.functions.factory.Factories.Processors.ProcessorFactory
@@ -47,6 +46,7 @@ class FileSystemPersistentDiscoveryService @Autowired()(inputGateway: FunctionsI
 
 	class FileSystemListener extends FileAlterationListenerAdaptor with FunctionsChangeListener{
 		override def onFileCreate(file: File): Unit = {
+			addJarsToClassPath(Array(file.toURI.toURL))
 			processAnnotations(newProcessor, file)
 		}
 

@@ -34,7 +34,7 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 		}
 	}
 
-	private def addJarsToClassPath(urls: Array[URL]) = {
+	protected def addJarsToClassPath(urls: Array[URL]): Unit = synchronized {
 		try {
 			val contextClassLoader = getClass.getClassLoader
 
