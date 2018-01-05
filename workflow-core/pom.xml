@@ -2,16 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
+        <artifactId>hashmap-analytics</artifactId>
         <groupId>com.hashmap.haf</groupId>
         <version>1.0.0-SNAPSHOT</version>
-        <artifactId>hashmap-analytics</artifactId>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>metadata-edit</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <artifactId>workflow-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -23,43 +21,19 @@
             <artifactId>scala-reflect</artifactId>
         </dependency>
         <dependency>
-            <artifactId>spark-core_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-sql_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>spark-streaming_${scala.compat.version}</artifactId>
-            <groupId>org.apache.spark</groupId>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-xml_${scala.compat.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>play-json_${scala.compat.version}</artifactId>
+            <artifactId>play-specs2_${scala.compat.version}</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sksamuel.avro4s</groupId>
-            <artifactId>avro4s-core_${scala.compat.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.play</groupId>
-            <artifactId>play-specs2_2.11</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-spark</artifactId>
+            <groupId>com.github.dexecutor</groupId>
+            <artifactId>dexecutor-core</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
         <resources>
@@ -67,12 +41,12 @@
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
-        <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>${project.basedir}/src/test-resources</directory>
+                <directory>${project.basedir}/src/test/resources</directory>
             </testResource>
         </testResources>
+        <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

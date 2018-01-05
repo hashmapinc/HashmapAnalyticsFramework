@@ -42,13 +42,12 @@
         <module>api-gateway</module>
         <module>auth-service</module>
         <module>functions-api</module>
-        <module>workflow-dexecutor</module>
-        <module>functions</module>
-        <module>metadata-edit</module>
-        <module>workflow-executor</module>
-        <module>scheduler</module>
-        <module>ui</module>
+        <module>workflow-core</module>
         <module>workflow-api</module>
+        <module>workflow-executor</module>
+        <module>functions</module>
+        <module>scheduler</module>
+        <!--<module>ui</module>-->
     </modules>
 
     <repositories>
@@ -277,7 +276,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
-                <artifactId>workflow-api</artifactId>
+                <artifactId>workflow-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -287,7 +286,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
-                <artifactId>workflow-dexecutor</artifactId>
+                <artifactId>workflow-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

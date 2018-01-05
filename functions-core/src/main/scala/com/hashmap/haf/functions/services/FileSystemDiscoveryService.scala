@@ -14,9 +14,7 @@ import com.hashmap.haf.models.{ConfigurationType, IgniteFunctionType}
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
 import org.apache.ignite.services.ServiceConfiguration
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.stereotype.Component
 
-@Component
 class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGateway,
                                               outputGateway: FunctionsOutputGateway,
                                               sourceGenerator: SourceGenerator[IgniteFunctionType])

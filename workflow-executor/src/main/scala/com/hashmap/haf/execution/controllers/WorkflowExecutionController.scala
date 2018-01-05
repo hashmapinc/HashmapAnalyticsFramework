@@ -36,16 +36,14 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
   @ResponseBody
   def executeById(@PathVariable("workflowId") workflowId: String): String = {
 
-    object MyTaskFactory extends TaskFactory[UUID, String] {
+    object CustomTaskFactory extends TaskFactory[UUID, String] {
       def create(xml: Node): WorkflowTask[UUID, String] = {
         (xml \ "_").headOption.map(_.label) match {
           case Some(SPARK_TASK) | Some(LIVY_TASK) => {
             val functionClassName = (xml \ CLASSNAME_ATTRIBUTE).text
             functionCompiler.loadClazz(functionClassName) match {
               case Some(c) => {
-                val a: SparkIgniteTask = c.getConstructor(classOf[NodeSeq]).newInstance(xml).asInstanceOf[SparkIgniteTask]
-                a.execute()
-                a
+                c.getConstructor(classOf[NodeSeq]).newInstance(xml).asInstanceOf[SparkIgniteTask]
               }
               case _ => {
                 generateSourceAndCompile(functionClassName).get.getConstructor(classOf[NodeSeq]).newInstance(xml).asInstanceOf[SparkIgniteTask]
@@ -59,12 +57,11 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
     }
 
     val workflowXml: String = workflowServiceClient.getFunction(workflowId)
-    //val workflow: Workflow[UUID, String] = workflowBuilder.build(workflowXml)
-    val workflow = DefaultWorkflow(workflowXml, MyTaskFactory)
+    val workflow = DefaultWorkflow(workflowXml, CustomTaskFactory)
     val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
     workflow.buildTaskGraph(executor)
     executor.execute(new ExecutionConfig().scheduledRetrying(3, new Duration(2, TimeUnit.SECONDS)))
-    "executing"
+    "Done"
   }
 
   private def generateSourceAndCompile(functionClassName: String) = {

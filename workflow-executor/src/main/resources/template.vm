@@ -10,9 +10,6 @@ class ${model.functionClazz}(xml: NodeSeq) extends SparkIgniteTask(xml){
 
   override def execute(): String = {
     val mapSvc = IgniteContext.ignite.services().serviceProxy("${model.service}", classOf[ServiceFunction], false);
-    val a = mapSvc.run(inputCache, outputCache, null)
-    println("$"*100)
-    print(a)
-    a
+    mapSvc.run(inputCache, outputCache, null)
   }
 }

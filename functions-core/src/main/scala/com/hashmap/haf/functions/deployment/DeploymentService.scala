@@ -11,11 +11,10 @@ trait DeploymentService {
 
 class DefaultDeploymentService(configurationPath: String) extends DeploymentService{
 
-	private val igConfig = getClass.getResource(configurationPath).getPath
+	private val igConfig = getClass.getResource(configurationPath).toURI.toURL
+	private val ignite: Ignite = Ignition.start(igConfig)
 
 	override def deploy(cfg: ServiceConfiguration): Unit = {
-
-		val ignite: Ignite = Ignition.start(igConfig)
 
 		val igServices: IgniteServices = ignite.services
 
