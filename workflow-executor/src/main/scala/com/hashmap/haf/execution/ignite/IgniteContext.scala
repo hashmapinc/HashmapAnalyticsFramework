@@ -9,6 +9,7 @@ import org.apache.ignite.{Ignite, Ignition}
 
 object IgniteContext {
 	val configuration = new IgniteConfiguration()
+	configuration.setPeerClassLoadingEnabled(true)
 	val spi = new TcpDiscoverySpi()
 	val finder = new TcpDiscoveryVmIpFinder()
 	finder.setAddresses(util.Arrays.asList("192.168.1.67:47500..47510"))

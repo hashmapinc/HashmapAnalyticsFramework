@@ -13,6 +13,8 @@ object DataframeIgniteCache {
   private var CONFIG:String = _ // Configuration to create ignite cache
 
   def create(configUrl: String):Datastore = {
+    //todo replace with system property on node
+    System.setProperty("IGNITE_HOME", "/Users/jetinder/Downloads/apache-ignite-fabric-2.3.0-bin/")
     CONFIG = configUrl
     IgniteCacheInstance
   }
@@ -25,17 +27,20 @@ object DataframeIgniteCache {
     private val schemaCacheConfig = makeSchemaCacheConfig(SCHEMA_STORE) // Creating dynamic cache configuration for schema store
 
     def set(sc: SparkContext, df: DataFrame, KEY: String){
-      val ic = new IgniteContext(sc, CONFIG, false)
+      //val ic = new IgniteContext(sc, CONFIG, false)
+      val ic = new IgniteContext(sc)
       val sharedRDD = ic.fromCache[String, Row](KEY)
-      val rddSchemaCache = ic.ignite.getOrCreateCache(schemaCacheConfig)
+      val rddSchemaCache = ic.ignite.getOrCreateCache[String, StructType]("schemas")
       rddSchemaCache.put(KEY+SUFFIX_FOR_SCHEMA, df.schema)
       sharedRDD.saveValues(df.rdd)
-      ic.close()
+      //Future(ic.close())
+      //ic.close()
     }
 
     def get(sc: SparkContext, KEY: String): (StructType, IgniteRDD[String, Row]) = {
-      val ic = new IgniteContext(sc, CONFIG, true)
-      val rddSchemaCache = ic.ignite.getOrCreateCache(schemaCacheConfig)
+      //val ic = new IgniteContext(sc, CONFIG, true)
+      val ic = new IgniteContext(sc)
+      val rddSchemaCache = ic.ignite.getOrCreateCache[String, StructType]("schemas")
       val key = ic.fromCache[String, Row](KEY)
       val schema = rddSchemaCache.get(KEY+"_schema")
       val tup = (schema , key)

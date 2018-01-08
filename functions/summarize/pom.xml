@@ -47,6 +47,10 @@
             <groupId>com.github.dexecutor</groupId>
             <artifactId>dexecutor-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>commons-compiler</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
@@ -67,6 +71,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

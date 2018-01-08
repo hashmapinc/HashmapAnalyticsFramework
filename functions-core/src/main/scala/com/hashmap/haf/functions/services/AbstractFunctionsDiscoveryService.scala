@@ -4,11 +4,13 @@ import java.io.File
 import java.lang.annotation.Annotation
 import java.net.{URI, URL, URLClassLoader}
 import java.nio.file.Path
+
 import com.hashmap.haf.functions.deployment.DeploymentService
 import com.hashmap.haf.functions.gateways.FunctionsInputGateway
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import com.hashmap.haf.functions.processors.AnnotationsProcessor
 import org.apache.ignite.services.ServiceConfiguration
+
 import scala.util.{Failure, Success, Try}
 
 abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGateway) extends FunctionsDiscoveryService{
@@ -68,8 +70,9 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 			case Success(c) =>
 				val instance = c.newInstance().asInstanceOf[ServiceFunction]
 				val svcfg = new ServiceConfiguration()
-				svcfg.setTotalCount(1) //Start with 1 count of node, will be overridden
+				//svcfg.setTotalCount(1) //Start with 1 count of node, will be overridden
 				val cfg = addConfigurations(r, svcfg)
+				cfg.setMaxPerNodeCount(1)
 				cfg.setName(serviceNameFunction(r))
 				cfg.setService(instance)
 				deploymentService.deploy(cfg)

@@ -1,5 +1,7 @@
 package com.hashmap.haf.functions.deployment
 
+import org.apache.ignite.cluster.ClusterNode
+import org.apache.ignite.lang.IgnitePredicate
 import org.apache.ignite.services.ServiceConfiguration
 import org.apache.ignite.{Ignite, IgniteServices, Ignition}
 
@@ -15,10 +17,16 @@ class DefaultDeploymentService(configurationPath: String) extends DeploymentServ
 	private val ignite: Ignite = Ignition.start(igConfig)
 
 	override def deploy(cfg: ServiceConfiguration): Unit = {
-
-		val igServices: IgniteServices = ignite.services
+		cfg.setNodeFilter(new ServiceFilter())
+		val igServices: IgniteServices = ignite.services(ignite.cluster().forServers())
 
 		igServices.deploy(cfg)
+	}
+
+	class ServiceFilter extends IgnitePredicate[ClusterNode] {
+		override def apply(node: ClusterNode): Boolean = { // The service will be deployed on non client nodes
+			!node.isClient
+		}
 	}
 }
 

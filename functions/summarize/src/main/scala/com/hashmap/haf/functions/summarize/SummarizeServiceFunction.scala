@@ -3,19 +3,26 @@ package com.hashmap.haf.functions.summarize
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.datastore.DataframeIgniteCache
 import com.hashmap.haf.functions.services.ServiceFunction
+import org.apache.ignite.Ignite
+import org.apache.ignite.resources.IgniteInstanceResource
 import org.apache.ignite.services.ServiceContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 
-@IgniteFunction(functionClazz = "SummarizeSparkTask", service = "summarizeService", configs = Array())
+@IgniteFunction(functionClazz = "SummarizeSparkTask", service = "summarizeService",
+  configs = Array())
 class SparkSummarizeService extends ServiceFunction{
 
   var appName = ""
-  //val CONFIG = getClass.getResource("/examples/cache.xml").toURI.toURL.toString
+  @IgniteInstanceResource
+  var ignite: Ignite = _
+
+  val CONFIG = getClass.getResource("/examples/cache.xml").toURI.toURL.toString
+
   override def run(inputKey: String, outputKey: String, config: Any): String = {
-    /*val spark = SparkSession
+    val spark = SparkSession
       .builder()
       .appName("Spark Summarize Service")
       .master("local")
@@ -23,22 +30,14 @@ class SparkSummarizeService extends ServiceFunction{
     val cache = DataframeIgniteCache.create(CONFIG)
     val (schema, igniteRDD) = cache.get(spark.sparkContext, inputKey)
 
-    println("DF with following schema received: ")
-    schema.foreach(field => println(s"${field.name}: metadata=${field.metadata}"))
-
     val rdd1: RDD[Row] = igniteRDD.map(_._2)
     val df = spark.sqlContext.createDataFrame(rdd1, schema)
     df.cache()
     val metadata = MetadataHandler.get(df)
     val newMetaData = CommonUtils.getAllSummarizeOperations.foldLeft(metadata)((meta, op) => op(meta, df)).build()
     val newDs = MetadataHandler.set(df, newMetaData)
-
     cache.set(spark.sparkContext, newDs, outputKey)
-
-    println("DF with following schema has been saved: ")
-    newDs.schema.foreach(field => println(s"${field.name}: metadata=${field.metadata}"))
-
-    spark.close()*/
+    spark.close()
     "successful"
   }
 

@@ -1,4 +1,4 @@
-package com.hashmap.haf.functions.summarize
+package com.hashmap.haf.functions.jdbcReader
 
 import java.util
 
@@ -28,11 +28,11 @@ object TestIgniteServices extends App{
   val ignite: Ignite = Ignition.start(configuration)
 
   val cfg = new ServiceConfiguration()
-  cfg.setName("summarizeService")
+  cfg.setName("JdbcReaderService")
   cfg.setTotalCount(1)
-  cfg.setService(new SparkSummarizeService())
+  cfg.setService(new JdbcReaderService())
 
-  ignite.services(ignite.cluster().forServers()).deploy(cfg)
+  ignite.services(ignite.cluster().forRemotes().forServers()).deploy(cfg)
 
   Thread.sleep(10000)
 
@@ -43,7 +43,7 @@ object TestIgniteServices extends App{
       println(classOf[ServiceFunction].isAssignableFrom(c.serviceClass()))
       println(c.totalCount(), c.topologySnapshot())
       println(c)
-      val service = ignite.services().serviceProxy("summarizeService", classOf[ServiceFunction], false)
-      println(service.run("output_postgres", "output_postgres", null))
+      val service = ignite.services().serviceProxy("JdbcReaderService", classOf[ServiceFunction], false)
+      println(service.run("", "output_postgres", null))
   }
 }

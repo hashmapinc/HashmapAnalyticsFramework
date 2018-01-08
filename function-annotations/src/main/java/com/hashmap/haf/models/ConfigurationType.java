@@ -4,13 +4,15 @@ import java.io.Serializable;
 
 public class ConfigurationType implements Serializable{
     private static final long serialVersionUID = 5288224904538609601L;
-    private final String key;
-    private final String value;
+    private String key;
+    private String value;
 
     public ConfigurationType(String key, String value){
         this.key = key;
         this.value = value;
     }
+
+    public ConfigurationType(){}
 
     public String getKey() {
         return key;
@@ -26,6 +28,22 @@ public class ConfigurationType implements Serializable{
         }catch (Exception e){
             return 0;
         }
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
