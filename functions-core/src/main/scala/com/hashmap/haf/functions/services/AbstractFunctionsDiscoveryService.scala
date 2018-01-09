@@ -70,7 +70,6 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 			case Success(c) =>
 				val instance = c.newInstance().asInstanceOf[ServiceFunction]
 				val svcfg = new ServiceConfiguration()
-				//svcfg.setTotalCount(1) //Start with 1 count of node, will be overridden
 				val cfg = addConfigurations(r, svcfg)
 				cfg.setMaxPerNodeCount(1)
 				cfg.setName(serviceNameFunction(r))

@@ -3,8 +3,6 @@ package com.hashmap.haf.functions.gateways
 import java.io.{File, FileOutputStream}
 import java.net.URI
 import java.nio.file._
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import com.hashmap.haf.functions.listeners.FunctionsChangeListener
 import org.apache.commons.io.monitor.{FileAlterationListener, FileAlterationMonitor, FileAlterationObserver}
 import org.springframework.stereotype.Component
@@ -13,8 +11,6 @@ import scala.util.{Failure, Success, Try}
 
 @Component
 class FileSystemFunctionsGateway extends FunctionsInputGateway with FunctionsOutputGateway{
-	implicit val system: ActorSystem = ActorSystem()
-	implicit val materializer = ActorMaterializer()
 
 	override def listFilesFrom(uri: URI): List[Path] = {
 		Paths.get(uri).toFile.listFiles().toList.map(_.toPath)

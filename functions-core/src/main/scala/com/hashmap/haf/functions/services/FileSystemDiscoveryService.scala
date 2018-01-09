@@ -83,6 +83,9 @@ class FileSystemDiscoveryService @Autowired()(inputGateway: FunctionsInputGatewa
 			applyConfig(ConfigurationKeys.MAX_PER_NODE_COUNT, c => cfg.setMaxPerNodeCount(c.getIntValue))
 			applyConfig(ConfigurationKeys.CACHE_NAME, c => cfg.setCacheName(c.getStringValue))
 		}
+		if(cfg.getMaxPerNodeCount <= 0 && cfg.getTotalCount <= 0){
+			cfg.setMaxPerNodeCount(1) //Run service as node singleton
+		}
 		cfg
 	}
 }

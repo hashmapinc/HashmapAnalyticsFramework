@@ -30,6 +30,12 @@
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:apache-ignite.properties</value>
+        </property>
+    </bean>
+
     <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <property name="cacheConfiguration">
             <!-- SharedRDD cache example configuration (Atomic mode). -->
@@ -90,10 +96,13 @@
                     <!--<bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">-->
                     <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder">
                         <property name="addresses">
-                            <list>
-                                <!-- In distributed environment, replace with actual host IP address. -->
+                            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                                <constructor-arg type="java.lang.String" value="${ignite.hosts}"/>
+                            </bean>
+                            <!--<list>
+                                &lt;!&ndash; In distributed environment, replace with actual host IP address. &ndash;&gt;
                                 <value>127.0.0.1:47500..47509</value>
-                            </list>
+                            </list>-->
                         </property>
                     </bean>
                 </property>
