@@ -49,6 +49,18 @@
             <artifactId>akka-stream-alpakka-file_${scala.compat.version}</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.cloudera.livy</groupId>
+            <artifactId>livy-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudera.livy</groupId>
+            <artifactId>livy-scala-api_${scala.compat.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudera.livy</groupId>
+            <artifactId>livy-client-http</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-specs2_${scala.compat.version}</artifactId>
             <scope>test</scope>

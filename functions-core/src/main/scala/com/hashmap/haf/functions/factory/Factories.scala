@@ -2,10 +2,10 @@ package com.hashmap.haf.functions.factory
 
 import java.lang.annotation.Annotation
 
-import com.hashmap.haf.annotations.IgniteFunction
+import com.hashmap.haf.annotations.{IgniteFunction, LivyFunction}
 import com.hashmap.haf.functions.processors._
-import com.hashmap.haf.functions.transformers.{IgniteFunctionTransformer, Transformer}
-import com.hashmap.haf.models.IgniteFunctionType
+import com.hashmap.haf.functions.transformers.{IgniteFunctionTransformer, LivyFunctionTransformer, Transformer}
+import com.hashmap.haf.models.{IgniteFunctionType, LivyFunctionType}
 import eu.infomas.annotation.AnnotationDetector
 import eu.infomas.annotation.AnnotationDetector.TypeReporter
 
@@ -23,6 +23,10 @@ object Factories {
 		implicit object IgniteTransformerFactory extends TransformerFactory[IgniteFunction, IgniteFunctionType]{
 			override def build(): Transformer[IgniteFunction, IgniteFunctionType] = new IgniteFunctionTransformer
 		}
+
+		implicit object LivyTransformerFactory extends TransformerFactory[LivyFunction, LivyFunctionType]{
+			override def build(): Transformer[LivyFunction, LivyFunctionType] = new LivyFunctionTransformer
+		}
 	}
 
 	object Reporters{
@@ -39,6 +43,11 @@ object Factories {
 		implicit object IgniteTypeReporterFactory extends TypeReporterFactory[IgniteFunction, IgniteFunctionType] {
 			override def build(): TypeReporter =
 				new IgniteFunctionTypeReporter(TransformerFactory[IgniteFunction, IgniteFunctionType])
+		}
+
+		implicit object LivyTypeReporterFactory extends TypeReporterFactory[LivyFunction, LivyFunctionType] {
+			override def build(): TypeReporter =
+				new LivyFunctionTypeReporter(TransformerFactory[LivyFunction, LivyFunctionType])
 		}
 	}
 
@@ -58,6 +67,15 @@ object Factories {
 				new FunctionsAnnotationsProcessor[IgniteFunction, IgniteFunctionType](
 					new AnnotationDetector(reporter),
 					reporter.asInstanceOf[Reporter[IgniteFunctionType]])
+			}
+		}
+
+		implicit object LivyFunctionProcessorFactory extends ProcessorFactory[LivyFunction, LivyFunctionType]{
+			override def build(): AnnotationsProcessor[LivyFunction, LivyFunctionType] = {
+				val reporter = TypeReporterFactory[LivyFunction, LivyFunctionType]
+				new FunctionsAnnotationsProcessor[LivyFunction, LivyFunctionType](
+					new AnnotationDetector(reporter),
+					reporter.asInstanceOf[Reporter[LivyFunctionType]])
 			}
 		}
 	}

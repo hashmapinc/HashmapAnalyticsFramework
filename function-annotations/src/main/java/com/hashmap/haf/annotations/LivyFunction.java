@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 public @interface LivyFunction {
     String mainClass();
     String jar();
+    String functionClass();
     Configuration[] configs();
 }

@@ -31,6 +31,7 @@
         <hsqldb.version>2.4.0</hsqldb.version>
         <dexecutor.version>2.0.1</dexecutor.version>
         <akka.version>2.4.20</akka.version>
+        <livy.version>0.3.0</livy.version>
     </properties>
 
     <modules>
@@ -299,17 +300,21 @@
                 <artifactId>function-annotations</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>com.github.dexecutor</groupId>
-                <artifactId>dexecutor-ignite</artifactId>
-                <version>1.0.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.ignite</groupId>
-                        <artifactId>ignite-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>-->
+            <dependency>
+                <groupId>com.cloudera.livy</groupId>
+                <artifactId>livy-api</artifactId>
+                <version>${livy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cloudera.livy</groupId>
+                <artifactId>livy-scala-api_${scala.compat.version}</artifactId>
+                <version>${livy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cloudera.livy</groupId>
+                <artifactId>livy-client-http</artifactId>
+                <version>${livy.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>

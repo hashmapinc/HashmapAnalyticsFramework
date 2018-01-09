@@ -17,7 +17,7 @@ public class IgniteFunctionTypeEntity {
     private String service;
 
     @Id
-    @Column(name = "functionClazz")
+    @Column(name = "functionClass")
     private String functionClazz;
 
     @Column(name = "packageName")
