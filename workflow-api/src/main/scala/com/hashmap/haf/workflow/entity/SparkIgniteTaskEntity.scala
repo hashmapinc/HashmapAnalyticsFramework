@@ -1,11 +1,11 @@
 package com.hashmap.haf.workflow.entity
 
-import java.util
 import javax.persistence._
-import collection.JavaConverters._
-import com.hashmap.haf.workflow.task.{BaseTask, SparkIgniteTask}
 
-import beans.BeanProperty
+import com.hashmap.haf.workflow.task.SparkIgniteTask
+
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 @Entity
 class SparkIgniteTaskEntity(
@@ -20,14 +20,14 @@ class SparkIgniteTaskEntity(
   @ElementCollection
   @MapKeyColumn(name="PARAM")
   @Column(name="VALUE")
-  @CollectionTable(name="SPARK_IGNITE_TASKS_ARGUMENTS")
+  @CollectionTable(name="SPARK_IGNITE_TASK_ARGUMENTS")
   var functionArguments: java.util.Map[String, String] = _
 
   @BeanProperty
   @ElementCollection
   @MapKeyColumn(name="PARAM")
   @Column(name="VALUE")
-  @CollectionTable(name="SPARK_IGNITE_TASKS_CONFIGURATIONS")
+  @CollectionTable(name="SPARK_IGNITE_TASK_CONFIGURATIONS")
   var configurations: java.util.Map[String, String] = _
 
   override def toData(): SparkIgniteTask = {
@@ -60,17 +60,4 @@ object SparkIgniteTaskEntity {
 
 }
 
-@Entity
-@Table(name = "WORKFLOW_TASKS")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-abstract class BaseTaskEntity[R] extends BaseSqlEntity[BaseTask[R]]{
 
-  @BeanProperty
-  protected var name: String = _
-
-  @BeanProperty
-  @ElementCollection
-  @CollectionTable(name="TASKS_TO_TASKS_MAPPING")
-  @Column(name="TO_BASE_TASK_ENTITY_ID")
-  var to: java.util.List[String] = new util.ArrayList[String]()
-}

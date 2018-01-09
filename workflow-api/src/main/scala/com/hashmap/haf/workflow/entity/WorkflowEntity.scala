@@ -1,11 +1,12 @@
 package com.hashmap.haf.workflow.entity
 
 import javax.persistence._
-import collection.JavaConverters._
-import com.hashmap.haf.workflow.models.DefaultWorkflow
-import com.hashmap.haf.workflow.task.{BaseTask, SparkIgniteTask}
 
-import beans.BeanProperty
+import com.hashmap.haf.workflow.models.DefaultWorkflow
+import com.hashmap.haf.workflow.task.{LivyTask, SparkIgniteTask}
+
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 
 @Entity
@@ -17,7 +18,7 @@ class WorkflowEntity(@BeanProperty val name: String) extends BaseSqlEntity[Defau
   @BeanProperty
   @OneToMany(cascade = Array(CascadeType.ALL), orphanRemoval = true)
   @JoinColumn(name = "WORKFLOW_ID")
-  var sparkIgniteTaskEntities : java.util.List[BaseTaskEntity[String]] = _
+  var taskEntities : java.util.List[BaseTaskEntity[String]] = _
 
 
   @BeanProperty
@@ -28,7 +29,7 @@ class WorkflowEntity(@BeanProperty val name: String) extends BaseSqlEntity[Defau
   var configurations: java.util.Map[String, String] = _
 
   override def toData(): DefaultWorkflow = {
-    DefaultWorkflow(tasks = sparkIgniteTaskEntities.asScala.map(_.toData()).toList,
+    DefaultWorkflow(tasks = taskEntities.asScala.map(_.toData()).toList,
       name = name,
       configurations = configurations.asScala.toMap,
       id = getId)
@@ -37,9 +38,13 @@ class WorkflowEntity(@BeanProperty val name: String) extends BaseSqlEntity[Defau
 
 object WorkflowEntity {
   def apply(defaultWorkflow: DefaultWorkflow): WorkflowEntity = {
-    val igniteTaskEntities: List[BaseTaskEntity[String]] = defaultWorkflow.tasks.map(a => SparkIgniteTaskEntity(a.asInstanceOf[SparkIgniteTask]))
+    val taskEntities: List[BaseTaskEntity[String]] = defaultWorkflow.tasks.map {
+      case task: SparkIgniteTask => SparkIgniteTaskEntity(task)
+      case task: LivyTask => LivyTaskEntity(task)
+      case _ => throw new IllegalArgumentException("Task is not of any specified type")
+    }
     val workflowEntity = new WorkflowEntity(defaultWorkflow.getName)
-    workflowEntity.setSparkIgniteTaskEntities(igniteTaskEntities.asJava)
+    workflowEntity.setTaskEntities(taskEntities.asJava)
     workflowEntity.setConfigurations(defaultWorkflow.configurations.asJava)
     workflowEntity.setId(defaultWorkflow.id)
     workflowEntity

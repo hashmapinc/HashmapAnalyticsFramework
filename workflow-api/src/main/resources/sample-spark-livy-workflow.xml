@@ -1,0 +1,50 @@
+<workflow name="Sample Workflow">
+    <configurations>
+        <configuration>
+            <key>spark.driver.memory</key>
+            <value>1g</value>
+        </configuration>
+        <configuration>
+            <key>spark.driver.cores</key>
+            <value>1</value>
+        </configuration>
+    </configurations>
+    <task name = "edit_metadata" jar="edit-metadata-1.0.0-SNAPSHOT.jar" className="com.hashmap.haf.tasks.MetaDataIgniteTask">
+        <livy>
+            <inputCache>output_postgres</inputCache>
+            <outputCache>output_metadata</outputCache>
+            <args>
+                <arg key="someargs">someargsvalues</arg>
+            </args>
+            <to task="deduplication"/>
+            <to task="summarize"/>
+        </livy>
+    </task>
+    <task name = "deduplication" jar="deduplication-1.0.0-SNAPSHOT.jar" className="com.hashmap.haf.tasks.DeduplicateSparkIgniteTask">
+        <livy>
+            <configurations>
+                <configuration>
+                    <key>spark.driver.memory</key>
+                    <value>2g</value>
+                </configuration>
+            </configurations>
+            <inputCache>output_metadata</inputCache>
+            <outputCache>output_deduplicate</outputCache>
+            <args>
+                <arg key="retainlast">true</arg>
+            </args>
+        </livy>
+    </task>
+    <task name = "summarize" jar="summarize-1.0.0-SNAPSHOT.jar" className="com.hashmap.haf.tasks.SummarizeIgniteTask">
+        <livy>
+            <inputCache>output_metadata</inputCache>
+            <outputCache>output_summarize</outputCache>
+            <args>
+                <arg key="aggregates">min,max,avg</arg>
+            </args>
+            <to task="end"/>
+        </livy>
+    </task>
+</workflow>
+
+        <!-- TODO: Think about jobs joining -->
