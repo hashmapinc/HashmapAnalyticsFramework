@@ -44,6 +44,6 @@ object TestIgniteServices extends App{
       println(c.totalCount(), c.topologySnapshot())
       println(c)
       val service = ignite.services().serviceProxy("summarizeService", classOf[ServiceFunction], false)
-      println(service.run("output_postgres", "output_postgres", null))
+      println(service.run("output_postgres", "output_postgres", Map(), Map()))
   }
 }

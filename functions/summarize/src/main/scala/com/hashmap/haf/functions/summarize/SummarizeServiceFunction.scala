@@ -2,6 +2,7 @@ package com.hashmap.haf.functions.summarize
 
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.datastore.DataframeIgniteCache
+import com.hashmap.haf.functions.constants.TaskConfigurationConstants._
 import com.hashmap.haf.functions.services.ServiceFunction
 import org.apache.ignite.Ignite
 import org.apache.ignite.resources.IgniteInstanceResource
@@ -20,12 +21,12 @@ class SparkSummarizeService extends ServiceFunction{
   var ignite: Ignite = _
 
 
-  override def run(inputKey: String, outputKey: String, config: Any): String = {
+  override def run(inputKey: String, outputKey: String, functionArguments: Map[String, String], configurations: Map[String, String]): String = {
     println("Executing Spark Summarize.....")
     val spark = SparkSession
       .builder()
-      .appName("Spark Summarize Service")
-      .master("local")
+      .appName(configurations.getOrElse(SPARK_APP_NAME, throw new IllegalArgumentException(SPARK_APP_NAME + " not provided in configurations")))
+      .master(configurations.getOrElse(SPARK_MASTER, throw new IllegalArgumentException(SPARK_MASTER + " not provided in configurations")))
       .getOrCreate()
     val cache = DataframeIgniteCache.create()
     val (schema, igniteRDD) = cache.get(spark.sparkContext, inputKey)
@@ -110,7 +111,6 @@ object CommonUtils {
 
   val getAllSummarizeOperations: Seq[SummaryFunction] = {
     import SummarizeOperations._
-    import SummarizeOperationsOnEachColumn._
     List(count)
     //todo fix numeric unary operations - its giving null pointer
     //List(numericalUnaryOperations, count)

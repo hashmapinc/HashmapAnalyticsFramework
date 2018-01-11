@@ -1,18 +1,14 @@
 package com.hashmap.haf.functions
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.hashmap.haf.annotations.IgniteFunction
-import com.hashmap.haf.datastore.DataframeIgniteCache
 import com.hashmap.haf.functions.services.ServiceFunction
 import com.hashmap.haf.models.{Column, DataSet}
 import com.hashmap.haf.utils.SparkFunctionContext
 import org.apache.ignite.Ignite
 import org.apache.ignite.resources.IgniteInstanceResource
 import org.apache.ignite.services.ServiceContext
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.functions.{col, struct, to_json}
-import org.apache.spark.sql.{Row, SparkSession}
 
 @IgniteFunction(functionClazz = "MetadataEditSparkTask",
 	service = "metadataEditService",
@@ -24,7 +20,7 @@ class MetadataEditService extends ServiceFunction with SparkFunctionContext{
 
 	var svcName: String = _
 
-	override def run(inputKey: String, outputKey: String, config: Any): String = {
+	override def run(inputKey: String, outputKey: String, functionArguments: Map[String, String], configurations: Map[String, String]): String = {
 		println("Ignite ", ignite.services().serviceDescriptors())
 
 		/*val spark = SparkSession

@@ -44,6 +44,6 @@ object TestIgniteServices extends App{
       println(c.totalCount(), c.topologySnapshot())
       println(c)
       val service = ignite.services().serviceProxy("metadataEditService", classOf[ServiceFunction], false)
-      println(service.run("", "", null))
+      println(service.run("", "", Map(), Map()))
   }
 }

@@ -9,7 +9,7 @@ object DataframeIgniteCache {
 
   def create():Datastore = {
     //todo replace with system property on node
-    System.setProperty("IGNITE_HOME", "/Users/jetinder/Downloads/apache-ignite-fabric-2.3.0-bin/")
+    //System.setProperty("IGNITE_HOME", "/Users/jetinder/Downloads/apache-ignite-fabric-2.3.0-bin/")
     IgniteCacheInstance
   }
 
