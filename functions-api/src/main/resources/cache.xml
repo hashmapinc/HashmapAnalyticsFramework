@@ -37,6 +37,7 @@
     </bean>
 
     <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="peerClassLoadingEnabled" value="true"/>
         <property name="cacheConfiguration">
             <!-- SharedRDD cache example configuration (Atomic mode). -->
             <list>

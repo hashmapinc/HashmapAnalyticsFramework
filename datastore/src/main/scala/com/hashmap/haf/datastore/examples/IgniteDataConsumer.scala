@@ -15,7 +15,7 @@ object IgniteDataConsumer extends App {
 
   // For implicit conversions like converting RDDs to DataFrames
 
-  val cache: Datastore = DataframeIgniteCache.create(getClass.getResource("/examples/cache.xml").getPath)
+  val cache: Datastore = DataframeIgniteCache.create()
   val (schema, igniteRDD) = cache.get(spark.sparkContext, "output_data")
   schema.foreach(field => println(s"${field.name}: metadata=${field.metadata}"))
   spark.close()

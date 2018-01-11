@@ -7,7 +7,7 @@ server:
 
 functions:
   input:
-    location: "file://${FUNCTIONS_PATH:/home}"
+    location: "file://${FUNCTIONS_PATH:/Users/jetinder/ignite-functions}"
   output:
     location: "file:///home/functions"
   protocol: "file"

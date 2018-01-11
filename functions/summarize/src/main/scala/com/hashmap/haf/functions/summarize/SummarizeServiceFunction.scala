@@ -19,24 +19,27 @@ class SparkSummarizeService extends ServiceFunction{
   @IgniteInstanceResource
   var ignite: Ignite = _
 
-  val CONFIG = getClass.getResource("/examples/cache.xml").toURI.toURL.toString
 
   override def run(inputKey: String, outputKey: String, config: Any): String = {
+    println("Executing Spark Summarize.....")
     val spark = SparkSession
       .builder()
       .appName("Spark Summarize Service")
       .master("local")
       .getOrCreate()
-    val cache = DataframeIgniteCache.create(CONFIG)
+    val cache = DataframeIgniteCache.create()
     val (schema, igniteRDD) = cache.get(spark.sparkContext, inputKey)
 
     val rdd1: RDD[Row] = igniteRDD.map(_._2)
     val df = spark.sqlContext.createDataFrame(rdd1, schema)
+    df.show()
     df.cache()
     val metadata = MetadataHandler.get(df)
     val newMetaData = CommonUtils.getAllSummarizeOperations.foldLeft(metadata)((meta, op) => op(meta, df)).build()
     val newDs = MetadataHandler.set(df, newMetaData)
     cache.set(spark.sparkContext, newDs, outputKey)
+    println("Setting to output cache .......showing only 10 rows of it")
+    newDs.show(10)
     spark.close()
     "successful"
   }
@@ -108,7 +111,9 @@ object CommonUtils {
   val getAllSummarizeOperations: Seq[SummaryFunction] = {
     import SummarizeOperations._
     import SummarizeOperationsOnEachColumn._
-    List(numericalUnaryOperations, count)
+    List(count)
+    //todo fix numeric unary operations - its giving null pointer
+    //List(numericalUnaryOperations, count)
   }
 
 }

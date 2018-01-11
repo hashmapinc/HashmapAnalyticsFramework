@@ -15,16 +15,15 @@ class JdbcReaderService extends ServiceFunction{
   var appName = ""
   @IgniteInstanceResource
   var ignite: Ignite = _
-  val CONFIG = getClass.getResource("/cache.xml").toURI.toURL.toString
   override def run(inputKey: String, outputKey: String, config: Any): String = {
+    println("Executing JDBC Reader Job.....")
     val spark = SparkSession
       .builder()
       .appName("Spark JDBC Reader Service")
       .master("local")
       .getOrCreate()
 
-    val cache = DataframeIgniteCache.create(CONFIG)
-
+    val cache = DataframeIgniteCache.create()
     //val opts: Map[String, String] = config.asInstanceOf[Map[String, String]]
     val opts: Map[String, String] = Map(
       "url" -> "jdbc:postgresql://192.168.1.67:5432/thingsboard",
@@ -32,12 +31,12 @@ class JdbcReaderService extends ServiceFunction{
       "password" -> "postgres",
       "user" -> "postgres"
     )
-
     val newDs = spark.read.format("jdbc").options(opts).load
-
     cache.set(spark.sparkContext, newDs, outputKey)
-
+    println("Setting to output cache .......showing only 10 rows of it")
+    newDs.show(10)
     spark.close()
+    println("Done")
     ""
   }
 

@@ -12,6 +12,9 @@ case class DeviceIoTData (battery_level: Long, c02_level: Long, cca2: String,
 
 object IgniteDataProducer extends App {
 
+  /*private val igConfig = getClass.getResource("/cache.xml").getPath
+  private val ignite: Ignite = Ignition.start(igConfig)*/
+
 
   val spark = SparkSession
     .builder()
@@ -24,7 +27,7 @@ object IgniteDataProducer extends App {
 
   val df = InputDataLoader.load[DeviceIoTData](spark, getClass.getResource("/examples/iot_devices.json").getPath).toDF()
 
-  val cache: Datastore = DataframeIgniteCache.create(getClass.getResource("/examples/cache.xml").getPath)
+  val cache: Datastore = DataframeIgniteCache.create()
   cache.set(spark.sparkContext, df, "input_data")
   spark.close()
 }
