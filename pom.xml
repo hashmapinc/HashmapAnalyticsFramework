@@ -14,12 +14,12 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <jdk.version>1.8</jdk.version>
-        <scala.version>2.11.8</scala.version>
+        <scala.version>2.11.12</scala.version>
         <scala.compat.version>2.11</scala.compat.version>
         <play2.version>2.6.7</play2.version>
         <ignite.version>2.3.0</ignite.version>
         <joda-time.version>2.4</joda-time.version>
-        <spark.version>2.1.1</spark.version>
+        <spark.version>2.2.1</spark.version>
         <spring.version>4.3.13.RELEASE</spring.version>
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
         <spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
@@ -242,6 +242,14 @@
                     <exclusion>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.spark</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
