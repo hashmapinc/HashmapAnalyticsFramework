@@ -1,10 +1,11 @@
 package com.hashmap.haf.scheduler.executor.impl
 
 import com.hashmap.haf.scheduler.executor.api.Executor
+import org.springframework.stereotype.Service
 
-case class WorkflowExecutor(conf: Any) extends Executor {
+case class WorkflowExecutor() extends Executor {
   override def execute(id: String):Status = {
-    println(s"Executing workdlow with $id") //0/30 0/1 * 1/1 * ? *
+    println(s"Executing workflow with id: $id") //0/30 0/1 * 1/1 * ? *
     200
   }
 

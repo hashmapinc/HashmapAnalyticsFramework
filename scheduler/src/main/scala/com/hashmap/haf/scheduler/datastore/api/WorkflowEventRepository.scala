@@ -1,6 +1,6 @@
 package com.hashmap.haf.scheduler.datastore.api
 
-import com.hashmap.haf.scheduler.consumer.rest.WorkflowEvent
+import com.hashmap.haf.scheduler.model.WorkflowEvent
 
 import scala.concurrent.Future
 

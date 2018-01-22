@@ -1,9 +1,8 @@
 package com.hashmap.haf.scheduler.datastore.actors
 
 import akka.actor.{Actor, Props}
-import com.hashmap.haf.scheduler.consumer.rest.WorkflowEvent
-
 import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
+import com.hashmap.haf.scheduler.model.WorkflowEvent
 
 object DatastoreActor {
   def props(repository:  WorkflowEventRepository) = Props(new DatastoreActor(repository))

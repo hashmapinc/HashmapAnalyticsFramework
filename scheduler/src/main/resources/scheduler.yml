@@ -1,12 +1,21 @@
+workflow.executor.url : "http://localhost:9005/api/workflow/execute/"
+db.redis.host : "172.17.0.3"
+test.context: true
 
 spring.application:
     name: scheduler
 
 server:
-  port: ${PORT:8081}
+  port: ${PORT:9012}
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+# Disable Hystrix timeout globally (for all services)
+hystrix.command.default.execution.timeout.enabled: false
+
+# Increase the Hystrix timeout to 60s (globally)
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
 

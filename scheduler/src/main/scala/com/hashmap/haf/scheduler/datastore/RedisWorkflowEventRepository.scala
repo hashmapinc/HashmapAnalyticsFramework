@@ -1,12 +1,16 @@
 package com.hashmap.haf.scheduler.datastore
 
-import com.hashmap.haf.scheduler.consumer.rest.{WorkflowEvent, WorkflowEventImplicits}
 import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
+import com.hashmap.haf.scheduler.model.WorkflowEvent
+import com.hashmap.haf.scheduler.model.WorkflowEventImplicits
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Repository
 import redis.RedisClient
 
 import scala.concurrent.Future
 
-class RedisWorkflowEventRepository(redis: RedisClient) extends WorkflowEventRepository {
+@Repository
+class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends WorkflowEventRepository {
   import WorkflowEventImplicits._
 
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,7 +25,7 @@ class RedisWorkflowEventRepository(redis: RedisClient) extends WorkflowEventRepo
         updateSecondaryIndex(workflowEventId)
           .flatMap(_ => redis.hmset(workflowEventId, workflowEvent))
       case false =>
-        addSecondaryIndex(workflowEventId, workflowEvent.isStarted)
+        addSecondaryIndex(workflowEventId, workflowEvent.isRunning)
           .flatMap(_ => redis.hmset(workflowEventId, workflowEvent))
 
     }
@@ -36,7 +40,7 @@ class RedisWorkflowEventRepository(redis: RedisClient) extends WorkflowEventRepo
   override def get(workflowEventId: String): Future[WorkflowEvent] = getEventsByPattern(workflowEventId).map(_.head)
 
   override def removeAll = {
-    getAll.foreach(_.foreach(a => remove(a.id.toString)))
+    getAll.foreach(_.foreach(workflowEvent => remove(workflowEvent.id)))
   }
 
   private def addSecondaryIndex(workflowEventId: String, isRunnable: Boolean): Future[Long] = {
