@@ -13,7 +13,7 @@ module.exports = {
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/dist/',
+        //publicPath: '/dist/',
         filename: 'bundle.[hash].js',
     },
     plugins: [
@@ -31,14 +31,14 @@ module.exports = {
         ]),
         new HtmlWebpackPlugin({
             template: './src/index.html',
-            filename: '../index.html',
+            filename: 'index.html',
             title: 'RedTail',
             inject: 'body',
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.[hash].js'),
+        //new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.[hash].js'),
         new ExtractTextPlugin('style.[contentHash].css', {
             allChunks: true,
         }),
