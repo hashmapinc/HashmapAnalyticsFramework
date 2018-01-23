@@ -4,5 +4,5 @@ import $ from 'jquery';
 export default function HomeController($log) {
 
     var vm = this;
-    $log.info("Callin home controller");
+    $log.info("Calling home controller");
 }
