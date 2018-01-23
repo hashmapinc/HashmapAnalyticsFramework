@@ -3,24 +3,29 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
 /* devtool: 'cheap-module-eval-source-map', */
 
 module.exports = {
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
+    devServer: {
+        contentBase: './dist'
+    },
     entry: [
         './src/app/app.js',
         'webpack-hot-middleware/client?reload=true',
         'webpack-material-design-icons'
     ],
     output: {
-        path: path.resolve(__dirname, 'target/generated-resources/public/static'),
-        publicPath: '/',
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: '/'
     },
     plugins: [
+        new CleanWebpackPlugin(['dist']),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",

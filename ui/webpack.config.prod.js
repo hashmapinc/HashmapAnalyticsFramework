@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
@@ -11,11 +12,12 @@ module.exports = {
         'webpack-material-design-icons'
     ],
     output: {
-        path: path.resolve(__dirname, 'target/generated-resources/public/static'),
-        publicPath: '/static/',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: '/dist/',
         filename: 'bundle.[hash].js',
     },
     plugins: [
+        //new CleanWebpackPlugin(['dist']),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",

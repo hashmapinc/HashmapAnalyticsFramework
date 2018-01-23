@@ -12,7 +12,7 @@ const httpProxy = require('http-proxy');
 const app           = express(),
       DIST_DIR      = path.join(__dirname, "dist"),
       HTML_FILE     = path.join(DIST_DIR, "index.html"),
-      DEV_DIR       = path.join(__dirname, '/src'),
+      DEV_DIR       = path.join(__dirname, 'src'),
       isDevelopment = process.env.NODE_ENV !== "production",
       DEFAULT_PORT  = 3000,
       GATEWAY_HOST  = process.env.GATEWAY_HOST || "localhost",
@@ -31,6 +31,7 @@ const apiProxy = httpProxy.createProxyServer({
     }
 });
 
+console.info(`isDevelopment ${isDevelopment}`);
 if(isDevelopment){
     app.use(webpackDevMiddleware(compiler, {noInfo: true, publicPath: config.output.publicPath}));
     app.use(webpackHotMiddleware(compiler));
@@ -55,10 +56,14 @@ app.all('/api/*', (req, res) => {
     apiProxy.web(req, res);
 });
 
-server.listen(PORT, '0.0.0.0', (error) => {
+/*server.listen(PORT, '0.0.0.0', (error) => {
     if (error) {
         console.error(error);
     } else {
         console.info(`==> 🌎  Listening on port ${PORT}. Open up http://localhost:${PORT}/ in your browser.`);
     }
+});*/
+
+app.listen(PORT, function(){
+    console.info(`==> 🌎  Listening on port ${PORT}. Open up http://localhost:${PORT}/ in your browser.`);
 });
