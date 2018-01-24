@@ -23,6 +23,9 @@ export default angular.module('redTail.locale', [])
                 "dialog": {
                     "close": "Close dialog"
                 },
+                "action": {
+                    "back": "Back"
+                },
                 "error": {
                     "unable-to-connect": "Unable to connect to the server! Please check your internet connection.",
                     "unhandled-error-code": "Unhandled error code: {{errorCode}}",
