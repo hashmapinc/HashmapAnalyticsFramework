@@ -10,7 +10,7 @@ export default function HomeRoutes($stateProvider) {
 
     $stateProvider
         .state('home', {
-            url: '',
+            url: '/',
             module: 'private',
             //auth: ['SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER'],
             views: {

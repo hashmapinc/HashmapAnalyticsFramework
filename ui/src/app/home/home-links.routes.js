@@ -9,7 +9,7 @@ export default function HomeLinksRoutes($stateProvider) {
 
     $stateProvider
         .state('home.links', {
-            url: '/home',
+            url: 'home',
             //module: 'private',
             //auth: ['SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER'],
             views: {
