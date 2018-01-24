@@ -1,0 +1,6 @@
+<ul flex layout="column" layout-align="start stretch" class="hm-side-menu">
+   	  <li ng-repeat="section in sections" class="parent-list-item" 
+	      				ng-class="{'parentActive' : isOpen(section)}"> 
+			<hm-menu-link section="section"></hm-menu-link>
+      </li>
+</ul>

@@ -1,0 +1,69 @@
+@import "~compass-sass-mixins/lib/animate";
+
+.hm-invisible {
+  display: none !important;
+}
+
+.hm-primary-toolbar {
+  h1 {
+    font-size: 24px !important;
+    font-weight: 400 !important;
+  }
+}
+
+.hm-breadcrumb {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  h1, a, span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  a {
+    border: none;
+    opacity: 0.75;
+    @include transition(opacity 0.35s);
+  }
+  a:hover, a:focus {
+    opacity: 1;
+    text-decoration: none !important;
+    border: none;
+  }
+  .divider {
+    padding: 0px 30px;
+  }
+}
+
+md-sidenav.hm-site-sidenav {
+  width: 250px;
+}
+
+md-icon.hm-logo-title {
+  height: 46px;
+  width: 200px;
+}
+
+.hm-nav-header {
+  flex-shrink: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.hm-nav-header-toolbar {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.hm-side-menu-toolbar {
+  overflow-y: auto;
+}
+
+.hm-entity-subtype-search {
+  margin-top: 15px;
+}
+
+.hm-entity-search {
+  margin-top: 34px;
+}

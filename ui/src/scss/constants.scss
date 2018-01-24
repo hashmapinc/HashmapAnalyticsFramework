@@ -1,0 +1,30 @@
+@import "~sass-material-colors/sass/sass-material-colors";
+
+// Colors
+
+$gray: #eee;
+
+$primary-palette-color: 'indigo';
+$default: '500';
+$hue-1: '300';
+$hue-2: '800';
+$hue-3: 'a100';
+
+$primary-default: #305680; //material-color($primary-palette-color, $default);
+$primary-hue-1: material-color($primary-palette-color, $hue-1);
+$primary-hue-2: material-color($primary-palette-color, $hue-2);
+$primary-hue-3: rgb(207, 216, 220);
+
+// Layout
+
+$layout-breakpoint-xs: 600px !default;
+$layout-breakpoint-sm: 960px !default;
+$layout-breakpoint-md: 1280px !default;
+$layout-breakpoint-xmd: 1600px !default;
+$layout-breakpoint-lg: 1920px !default;
+
+$layout-breakpoint-gt-xs: 601px !default;
+$layout-breakpoint-gt-sm: 961px !default;
+$layout-breakpoint-gt-md: 1281px !default;
+$layout-breakpoint-gt-xmd: 1601px !default;
+$layout-breakpoint-gt-lg: 1921px !default;

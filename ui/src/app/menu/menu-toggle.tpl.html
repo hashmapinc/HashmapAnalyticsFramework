@@ -1,0 +1,16 @@
+<md-button 
+	ui-sref-active-eq="hm-active" ui-sref="{{section.state}}"
+    class="md-button-toggle"
+	aria-controls="docs-menu-{{section.name | nospace}}" layout="row"
+	aria-expanded="{{sectionActive()}}">
+	<md-icon ng-show="{{section.icon != null}}" aria-label="{{section.icon}}" class="material-icons">{{section.icon}}</md-icon>	
+	{{section.name | translate}}
+	<span aria-hidden="true" 
+	class=" pull-right fa fa-chevron-down md-toggle-icon"
+	ng-class="{'hm-toggled' : sectionActive()}"></span>
+</md-button>
+<ul id="docs-menu-{{section.name | nospace}}" class="hm-menu-toggle-list" ng-style="{height: sectionHeight()}">
+	<li ng-repeat="page in section.pages">
+     	<hm-menu-link section="page"></hm-menu-link>
+	</li>
+</ul>
