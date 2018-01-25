@@ -1,0 +1,12 @@
+
+<h3>Upload workflow</h3>
+  <div>
+    <md-input-container style="width:60%">
+      <label>Workflow XML Goes here..</label>
+      <!-- <input ng-model="color" required md-maxlength="10" type="text"> -->
+      <textarea ng-model="vm.workflowXml" rows="10" style="line-height:126%;font-size:small"> </textarea>
+    </md-input-container>
+  </div>
+  <div>
+    <md-button class="md-raise" style="background-color:cornflowerblue" ng-click="vm.upload(vm.workflowXml)">Upload</md-button>
+  </div>

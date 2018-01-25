@@ -34,13 +34,13 @@ function Menu($state) {
                 type: 'link',
                 state: 'home.links',
                 icon: 'home'
-            }/*,
-            {
-                name: 'Applications',
-                type: 'link',
-                state: 'home.applications',
-                icon: 'dashboards'
             },
+            {
+                name: 'Workflow',
+                type: 'link',
+                state: 'home.workflow',
+                icon: 'dashboards'
+            }/*,
             {
                 name: 'Tempusboard',
                 type: 'link',

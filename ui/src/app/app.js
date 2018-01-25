@@ -29,6 +29,8 @@ import '@flowjs/ng-flow/dist/ng-flow-standalone.min';
 import layout from './layout';
 import menu from './services/menu.service';
 import hmLocales from './translation/locale.constant';
+import workflow from './workflow';
+import workflowapiservice from './services/workflow.service';
 
 import 'typeface-roboto';
 import 'font-awesome/css/font-awesome.min.css';
@@ -64,5 +66,8 @@ angular.module('redTail', [
         'ngclipboard',
         'flow',
         menu,
-        hmLocales])
+        hmLocales,
+        workflow,
+        workflowapiservice
+      ])
         .config(AppConfig);

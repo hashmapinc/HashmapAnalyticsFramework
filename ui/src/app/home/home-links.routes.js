@@ -26,5 +26,5 @@ export default function HomeLinksRoutes($stateProvider) {
                 label: '{"icon": "home", "label": "home.home"}',
                 icon: 'home'
             }
-        });
+        })
 }
