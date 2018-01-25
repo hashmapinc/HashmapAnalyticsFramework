@@ -17,7 +17,7 @@ module.exports = {
         filename: 'bundle.[hash].js',
     },
     plugins: [
-        //new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['dist']),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",

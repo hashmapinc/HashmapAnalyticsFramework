@@ -3,8 +3,6 @@ const webpack = require('webpack');
 const historyApiFallback = require("connect-history-api-fallback");
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const config = require('./webpack.config');
-
 const express = require('express');
 const http = require('http');
 const httpProxy = require('http-proxy');
@@ -16,8 +14,7 @@ const app           = express(),
       isDevelopment = process.env.NODE_ENV !== "production",
       DEFAULT_PORT  = 3000,
       GATEWAY_HOST  = process.env.GATEWAY_HOST || "localhost",
-      GATEWAY_PORT  = process.env.GATEWAY_PORT || 8765,
-      compiler      = webpack(config);
+      GATEWAY_PORT  = process.env.GATEWAY_PORT || 8765;
 
 
 const PORT = process.env.PORT || DEFAULT_PORT;
@@ -31,8 +28,9 @@ const apiProxy = httpProxy.createProxyServer({
     }
 });
 
-console.info(`isDevelopment ${isDevelopment}`);
 if(isDevelopment){
+    const config = require('./webpack.config');
+    const compiler = webpack(config)
     app.use(webpackDevMiddleware(compiler, {noInfo: true, publicPath: config.output.publicPath}));
     app.use(webpackHotMiddleware(compiler));
     app.use(express.static(DEV_DIR));

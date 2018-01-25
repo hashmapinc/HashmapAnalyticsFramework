@@ -4,7 +4,7 @@ import workflowTemplate from './workflow.tpl.html';
 export default function WorkflowRoutes($stateProvider) {
   $stateProvider
       .state('home.workflow', {
-          url: '/workflow',
+          url: 'workflow',
           module: 'private',
           //auth: ['SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER'],
           views: {

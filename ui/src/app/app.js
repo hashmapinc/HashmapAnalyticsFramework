@@ -29,6 +29,7 @@ import '@flowjs/ng-flow/dist/ng-flow-standalone.min';
 import layout from './layout';
 import menu from './services/menu.service';
 import hmLocales from './translation/locale.constant';
+import toast from './toast/toast';
 import workflow from './workflow';
 import workflowapiservice from './services/workflow.service';
 
@@ -67,6 +68,7 @@ angular.module('redTail', [
         'flow',
         menu,
         hmLocales,
+        toast,
         workflow,
         workflowapiservice
       ])
