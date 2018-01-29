@@ -5,6 +5,9 @@ spring:
   application:
     name: gateway-server
 
+
+security.ignored: /**
+
 zuul:
   routes:
     functions:
@@ -14,7 +17,7 @@ zuul:
     workflow:
       path: /workflows-api/**
       sensitiveHeaders:
-      serviceId: workflow-service
+      serviceId: workflow-api
       #stripPrefix: true
     scheduler:
       path: /scheduler/**
@@ -29,11 +32,32 @@ zuul:
       sensitiveHeaders:
       serviceId: workflow-executor
 
+# Increase the Hystrix timeout to 10s (globally)
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+        timeout:
+          enabled: false
+
+
+ribbon:
+  maxAutoRetries: 3
+  MaxAutoRetriesNextServer: 3
+  OkToRetryOnAllOperations: true
+  ReadTimeout: 5000
+  ConnectTimeout: 3000
+
+
 eureka:
   client:
     registerWithEureka: false
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
 
 #proxy:
 #  auth:

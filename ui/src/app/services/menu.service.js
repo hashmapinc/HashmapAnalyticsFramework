@@ -40,6 +40,12 @@ function Menu($state) {
                 type: 'link',
                 state: 'home.workflow',
                 icon: 'dashboards'
+            },
+            {
+                name: 'Workflow Edit',
+                type: 'link',
+                state: 'home.workflowEdit',
+                icon: 'dashboards'
             }/*,
             {
                 name: 'Tempusboard',

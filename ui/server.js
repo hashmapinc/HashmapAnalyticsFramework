@@ -28,6 +28,11 @@ const apiProxy = httpProxy.createProxyServer({
     }
 });
 
+app.all('*/api/*', (req, res) => {
+    console.log("Sending request to proxy")
+    apiProxy.web(req, res);
+});
+
 if(isDevelopment){
     const config = require('./webpack.config');
     const compiler = webpack(config)
@@ -50,9 +55,6 @@ apiProxy.on('error', function (err, req, res) {
 
 console.info(`Forwarding API requests to http://${GATEWAY_HOST}:${GATEWAY_PORT}`);
 
-app.all('/api/*', (req, res) => {
-    apiProxy.web(req, res);
-});
 
 /*server.listen(PORT, '0.0.0.0', (error) => {
     if (error) {

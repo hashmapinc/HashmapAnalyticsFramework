@@ -1,12 +1,17 @@
-
-<h3>Upload workflow</h3>
-  <div>
+<md-toolbar layout="row" class="md-hue-3">
+  <div class="md-toolbar-tools">
+    <span>Upload workflow</span>
+  </div>
+</md-toolbar>
+<div layout="column" layout-margin>
+  <div flex>
     <md-input-container style="width:60%">
       <label>Workflow XML Goes here..</label>
       <!-- <input ng-model="color" required md-maxlength="10" type="text"> -->
-      <textarea ng-model="vm.workflowXml" rows="10" style="line-height:126%;font-size:small"> </textarea>
+      <textarea ng-model="vm.workflowXml" rows="10" style="line-height:126%;font-size:small; border:solid 1px rgb(167,193,222)"> </textarea>
     </md-input-container>
   </div>
-  <div>
-    <md-button class="md-raise" style="background-color:cornflowerblue" ng-click="vm.upload(vm.workflowXml)">Upload</md-button>
+  <div flex>
+    <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.upload(vm.workflowXml)">Upload</md-button>
   </div>
+</div>

@@ -14,7 +14,7 @@ function Workflowapiservice($http, $q) {
   return service;
 
   function saveWorkflow(data) {
-    return $http.put('/api/workflow', data)
+    return $http.put('/workflows-api/api/workflow', data)
       .then(success)
       .catch(fail);
 
@@ -29,7 +29,7 @@ function Workflowapiservice($http, $q) {
   }
 
   function getWorkflow() {
-    return $http.get('/api/workflow/')
+    return $http.get('/workflows-api/api/workflow/')
       .then(success)
       .catch(fail);
 

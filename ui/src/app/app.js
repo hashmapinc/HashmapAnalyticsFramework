@@ -31,6 +31,7 @@ import menu from './services/menu.service';
 import hmLocales from './translation/locale.constant';
 import toast from './toast/toast';
 import workflow from './workflow';
+import workflowEdit from './workflowEdit';
 import workflowapiservice from './services/workflow.service';
 
 import 'typeface-roboto';
@@ -70,6 +71,7 @@ angular.module('redTail', [
         hmLocales,
         toast,
         workflow,
+        workflowEdit,
         workflowapiservice
       ])
         .config(AppConfig);
