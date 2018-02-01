@@ -2,14 +2,13 @@ package com.hashmap.haf.functions.extension
 
 import com.hashmap.haf.functions.services.ServiceFunction
 import com.hashmap.haf.workflow.task.SparkIgniteTask
-import org.apache.ignite.resources.ServiceResource
 import scala.xml.NodeSeq
-import com.hashmap.haf.execution.ignite.IgniteContext
+import org.apache.ignite.Ignite
 
-class ${model.functionClazz}(xml: NodeSeq) extends SparkIgniteTask(xml){
+class ${model.functionClazz}(xml: NodeSeq, ignite: Ignite) extends SparkIgniteTask(xml){
 
   override def execute(): String = {
-    val mapSvc = IgniteContext.ignite.services().serviceProxy("${model.service}", classOf[ServiceFunction], false);
+    val mapSvc = ignite.services().serviceProxy("${model.service}", classOf[ServiceFunction], false)
     mapSvc.run(inputCache, outputCache, functionArguments, configurations)
   }
 }

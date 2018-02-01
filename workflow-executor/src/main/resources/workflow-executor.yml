@@ -14,4 +14,4 @@ functions:
   source:
     template: "template.vm"
   ignite:
-      config: ""
+      config: "cache.xml"

@@ -2,24 +2,24 @@ package com.hashmap.haf.execution.controllers
 
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import javax.annotation.PostConstruct
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
 import com.hashmap.haf.execution.clients.{FunctionsServiceClient, WorkflowServiceClient}
 import com.hashmap.haf.execution.executor.IgniteDexecutorState
-import com.hashmap.haf.execution.ignite.IgniteContext
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.processors.VelocitySourceGenerator
 import com.hashmap.haf.models.IgniteFunctionType
-import com.hashmap.haf.workflow.constants.XmlConstants.{LIVY_TASK, SPARK_TASK}
+import com.hashmap.haf.workflow.constants.XmlConstants.{LIVY_TASK, SPARK_TASK, _}
+import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.factory.Factory.{TaskFactory, WorkflowTask}
 import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
 import com.hashmap.haf.workflow.task.{DefaultTaskProvider, SparkIgniteTask}
-import org.apache.ignite.Ignite
-import org.springframework.beans.factory.annotation.Autowired
+import org.apache.ignite.internal.IgnitionEx
+import org.apache.ignite.{Ignite, Ignition}
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.web.bind.annotation._
-import com.hashmap.haf.workflow.constants.XmlConstants._
-import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 
 import scala.xml.{Node, NodeSeq}
 
@@ -29,8 +29,19 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
                                                workflowServiceClient: WorkflowServiceClient,
                                                sourceGenerator: VelocitySourceGenerator,
                                                functionCompiler: FunctionCompiler) {
+  @Value("${functions.ignite.config}")
+  var igniteConfigPath: String = _
 
-  val ignite: Ignite = IgniteContext.ignite
+  var ignite: Ignite = _
+
+  @PostConstruct
+  def init(): Unit = {
+    val igConfig = Thread.currentThread().getContextClassLoader.getResource(igniteConfigPath)
+    val configuration = IgnitionEx.loadConfiguration(igConfig).get1()
+    configuration.setClientMode(true)
+    ignite = Ignition.start(configuration)
+  }
+
 
   @RequestMapping(value = Array("/workflow/execute/{workflowId}"), method = Array(RequestMethod.GET))
   @ResponseBody
@@ -43,10 +54,10 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
             val functionClassName = (xml \ CLASSNAME_ATTRIBUTE).text
             functionCompiler.loadClazz(functionClassName) match {
               case Some(c) => {
-                c.getConstructor(classOf[NodeSeq]).newInstance(xml).asInstanceOf[SparkIgniteTask]
+                c.getConstructor(classOf[NodeSeq], classOf[Ignite]).newInstance(xml, ignite).asInstanceOf[SparkIgniteTask]
               }
               case _ => {
-                generateSourceAndCompile(functionClassName).get.getConstructor(classOf[NodeSeq]).newInstance(xml).asInstanceOf[SparkIgniteTask]
+                generateSourceAndCompile(functionClassName).get.getConstructor(classOf[NodeSeq], classOf[Ignite]).newInstance(xml, ignite).asInstanceOf[SparkIgniteTask]
               }
             }
           }
