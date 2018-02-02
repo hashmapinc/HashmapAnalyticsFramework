@@ -13,21 +13,44 @@
         </div>
       </md-toolbar>
   <div layout="row" layout-margin>
-    <div flex>
+    <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.createWorkflow(vm.workflowXml)">Create New Workflow</md-button>
+  </div>
+  <div layout="row" layout-margin>
+    <div flex="40">
       <md-list class="md-dense make-scrollable" flex>
         <md-list-item class="md-3-line" ng-repeat="workflow in vm.workflows"
             ng-click="vm.workflowXml = workflow.xml; vm.selectedIndex = $index" ng-class="{selectedIndex: vm.selectedIndex===$index}">
 
           <div class="md-list-item-text" layout="column">
-            <h3><b>id:</b> {{ workflow.id }}</h3>
-            <h4><b>status:</b> {{ workflow.status }}</h4>
-            <p><b>cronExpression:</b> {{ workflow.cronExpression }}</p>
+            <h3><b>Name:</b> {{ workflow.name }}</h3>
+            <p><b>id:</b> {{ workflow.id }}</p>
+            <p><b>isRunning:</b> {{ workflow.start }}</p>
+            <p><b>cronExpression:</b> {{ workflow.cron }}</p>
           </div>
         </md-list-item>
       </md-list>
     </div>
     <div flex>
-      {{ vm.workflowXml }}
+        <div hljs hljs-source="vm.workflowXml" style="border: 1px solid black;">
+
+        </div>
       <!-- <textarea ng-model="vm.workflowXml" rows="10" style="line-height:126%"/> -->
     </div>
   </div>
+
+<!--
+<div hljs>
+    [
+    {
+    "title": "apples",
+    "count": [12000, 20000],
+    "description": {"text": "...", "sensitive": false}
+    },
+    {
+    "title": "oranges",
+    "count": [17500, null],
+    "description": {"text": "...", "sensitive": false}
+    }
+    ]
+</div>
+-->

@@ -19,7 +19,8 @@ export default function AppConfig($provide,
                                   $mdThemingProvider,
                                   $httpProvider,
                                   $translateProvider,
-                                  locales) {
+                                  locales,
+                                  hljsServiceProvider) {
 
     injectTapEventPlugin();
     $locationProvider.html5Mode(true);
@@ -138,5 +139,9 @@ export default function AppConfig($provide,
         $mdThemingProvider.setDefaultTheme('default');
         //$mdThemingProvider.alwaysWatchTheme(true);
     }
+
+    hljsServiceProvider.setOptions({
+        tabReplace: ' '
+    })
 
 }

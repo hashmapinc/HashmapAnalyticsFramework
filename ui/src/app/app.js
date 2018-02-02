@@ -11,7 +11,8 @@ import 'angular-translate-storage-cookie';
 import 'angular-translate-handler-log';
 import 'angular-translate-interpolation-messageformat';
 import 'md-color-picker';
-import mdPickers from 'mdPickers';
+import hljs from 'angular-highlightjs';
+//import mdPickers from 'mdPickers';
 import ngSanitize from 'angular-sanitize';
 import vAccordion from 'v-accordion';
 import ngAnimate from 'angular-animate';
@@ -41,7 +42,7 @@ import 'angular-material-icons/angular-material-icons.css';
 import 'angular-gridster/dist/angular-gridster.min.css';
 import 'v-accordion/dist/v-accordion.min.css'
 import 'md-color-picker/dist/mdColorPicker.min.css';
-import 'mdPickers/dist/mdPickers.min.css';
+//import 'mdPickers/dist/mdPickers.min.css';
 import 'angular-hotkeys/build/hotkeys.min.css';
 import 'angular-carousel/dist/angular-carousel.min.css';
 import '../scss/main.scss';
@@ -56,7 +57,7 @@ angular.module('redTail', [
         ngCookies,
         'pascalprecht.translate',
         'mdColorPicker',
-        mdPickers,
+        //mdPickers,
         ngSanitize,
         vAccordion,
         ngAnimate,
@@ -67,6 +68,7 @@ angular.module('redTail', [
         'angular-carousel',
         'ngclipboard',
         'flow',
+        hljs,
         menu,
         hmLocales,
         toast,

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-@Service
+//@Service
 class RestWorkflowExecutorClient @Autowired()(system: ActorSystem,
                                               workflowExecutorClient: WorkflowExecutorClient) extends Executor  {
 

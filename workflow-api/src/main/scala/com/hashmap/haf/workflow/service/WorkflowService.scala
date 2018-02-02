@@ -11,5 +11,7 @@ trait WorkflowService {
 
   def findById(id: UUID): Workflow[UUID, String]
 
+  def findAll: List[Workflow[UUID, String]]
+
   def delete(id: UUID): Unit
 }

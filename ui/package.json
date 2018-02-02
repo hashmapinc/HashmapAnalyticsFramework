@@ -27,6 +27,7 @@
     "angular-drag-and-drop-lists": "^1.4.0",
     "angular-fullscreen": "git://github.com/fabiobiondi/angular-fullscreen.git#master",
     "angular-gridster": "^0.13.14",
+    "angular-highlightjs": "^0.7.1",
     "angular-hotkeys": "^1.7.0",
     "angular-jwt": "^0.1.6",
     "angular-material": "1.1.6",

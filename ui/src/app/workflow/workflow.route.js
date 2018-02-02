@@ -3,8 +3,8 @@ import workflowTemplate from './workflow.tpl.html';
 /*@ngInject*/
 export default function WorkflowRoutes($stateProvider) {
   $stateProvider
-      .state('home.workflow', {
-          url: 'workflow',
+      .state('home.workflowNew', {
+          url: 'workflowNew',
           module: 'private',
           //auth: ['SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER'],
           views: {
@@ -15,10 +15,10 @@ export default function WorkflowRoutes($stateProvider) {
               }
           },
           data: {
-              pageTitle: 'home.workflow'
+              pageTitle: 'home.workflowNew'
           },
           ncyBreadcrumb: {
-            label: '{"icon": "devices_other", "label": "workflow.workflow"}'
+            label: '{"icon": "devices_other", "label": "workflow.workflowNew"}'
           }
       });
 }

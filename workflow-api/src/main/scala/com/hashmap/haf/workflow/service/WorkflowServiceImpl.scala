@@ -18,6 +18,10 @@ class WorkflowServiceImpl @Autowired()(private val workflowDao: WorkflowDao) ext
       workflowDao.findById(id)
   }
 
+  override def findAll: List[Workflow[UUID, String]] = {
+    workflowDao.findAll
+  }
+
   override def delete(id: UUID): Unit = {
     workflowDao.deleteById(id)
   }

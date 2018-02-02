@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+import scala.collection.JavaConversions._
+
 @Component
 class WorkflowDaoImpl @Autowired()(private val workflowRepository: WorkflowRepository) extends WorkflowDao {
 
@@ -21,6 +23,10 @@ class WorkflowDaoImpl @Autowired()(private val workflowRepository: WorkflowRepos
   override def findById(id: UUID): Workflow[UUID, String] = {
     val workflowEntity: WorkflowEntity = workflowRepository.findOne(UUIDConverter.fromTimeUUID(id))
     workflowEntity.toData()
+  }
+
+  override def findAll: List[Workflow[UUID, String]] = {
+    workflowRepository.findAll().toList.map(_.toData())
   }
 
   @Transactional

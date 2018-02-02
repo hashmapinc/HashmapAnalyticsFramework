@@ -4,7 +4,7 @@ import workflowEditTemplate from './workflowEdit.tpl.html';
 export default function WorkflowRoutes($stateProvider) {
   $stateProvider
       .state('home.workflowEdit', {
-          url: 'workflowEdit',
+          url: 'workflow',
           module: 'private',
           //auth: ['SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER'],
           views: {
@@ -15,10 +15,10 @@ export default function WorkflowRoutes($stateProvider) {
               }
           },
           data: {
-              pageTitle: 'home.workflowEdit'
+              pageTitle: 'home.workflow'
           },
           ncyBreadcrumb: {
-            label: '{"icon": "devices_other", "label": "workflow.workflowEdit"}'
+            label: '{"icon": "devices_other", "label": "workflow.workflow"}'
           }
       });
 }

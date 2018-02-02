@@ -38,15 +38,15 @@ function Menu($state) {
             {
                 name: 'Workflow',
                 type: 'link',
-                state: 'home.workflow',
+                state: 'home.workflowEdit',
                 icon: 'dashboards'
-            },
+            }/*,
             {
                 name: 'Workflow Edit',
                 type: 'link',
                 state: 'home.workflowEdit',
                 icon: 'dashboards'
-            }/*,
+            }*//*,
             {
                 name: 'Tempusboard',
                 type: 'link',

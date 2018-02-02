@@ -10,5 +10,7 @@ trait WorkflowDao {
 
   def findById(id: UUID): Workflow[UUID, String]
 
+  def findAll: List[Workflow[UUID, String]]
+
   def deleteById(id: UUID)
 }

@@ -1,13 +1,28 @@
 package com.hashmap.haf.scheduler.datastore
 
+import akka.util.ByteString
 import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
 import com.hashmap.haf.scheduler.model.WorkflowEvent
 import com.hashmap.haf.scheduler.model.WorkflowEventImplicits
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import redis.RedisClient
-
+import scala.collection.JavaConverters._
 import scala.concurrent.Future
+
+/*
+*  There are two kind of stores :
+*  1. Map store :
+*  redis.hmset(workflowEventId, workflowEvent))
+*  This stores map with key workflowId and value is workflowEvent object
+*
+*  2. Set store:
+*  redis.sadd(RUNNING_EVENTS_KEY, workflowEventId)
+*  redis.sadd(STOPPED_EVENTS_KEY, workflowEventId)
+*
+*  This maintains all running and stopped event ids. Acts like a secondary index
+*
+* */
 
 @Repository
 class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends WorkflowEventRepository {
@@ -37,7 +52,17 @@ class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends Work
 
   override def getAll = getEventsByPattern("*")
 
-  override def get(workflowEventId: String): Future[WorkflowEvent] = getEventsByPattern(workflowEventId).map(_.head)
+  //override def get(workflowEventId: String): Future[WorkflowEvent] = getEventsByPattern(workflowEventId).map(_.head)
+  override def get(workflowEventId: String): Future[WorkflowEvent] =
+    redis.hgetall[String](workflowEventId).map(m1 => {
+      val we: WorkflowEvent = m1 // implicit conversion
+      println(we)
+      we
+    })
+
+
+  override def get(workflowEventId: List[String]): Future[List[WorkflowEvent]] = Future.sequence(workflowEventId.map(get))
+
 
   override def removeAll = {
     getAll.foreach(_.foreach(workflowEvent => remove(workflowEvent.id)))
@@ -68,7 +93,15 @@ class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends Work
     }
   }
 
-  private def getEventsByPattern(pattern: String) = {
+  private def getEventById(workflowEventId: String): Future[WorkflowEvent] = {
+    redis.hgetall[String](workflowEventId).map(m1 => {
+      val we: WorkflowEvent = m1 // implicit conversion
+      we
+    })
+  }
+
+
+  private def getEventsByPattern(pattern: String): Future[Seq[WorkflowEvent]] = {
     val ret: Future[Seq[WorkflowEvent]] =
       redis.keys(pattern)
         .flatMap(keys => {
