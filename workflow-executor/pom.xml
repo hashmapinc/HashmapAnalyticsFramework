@@ -71,6 +71,10 @@
             <groupId>com.hashmap.haf</groupId>
             <artifactId>workflow-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hashmap.haf</groupId>
+            <artifactId>datastore</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
