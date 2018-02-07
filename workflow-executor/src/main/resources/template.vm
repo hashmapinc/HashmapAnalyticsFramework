@@ -5,10 +5,10 @@ import com.hashmap.haf.workflow.task.SparkIgniteTask
 import scala.xml.NodeSeq
 import org.apache.ignite.Ignite
 
-class ${model.functionClazz}(xml: NodeSeq, ignite: Ignite) extends SparkIgniteTask(xml){
+class ${model.functionClazz}(xml: NodeSeq, ignite: Ignite, workflowId: String) extends SparkIgniteTask(xml){
 
   override def execute(): String = {
     val mapSvc = ignite.services().serviceProxy("${model.service}", classOf[ServiceFunction], false)
-    mapSvc.run(inputCache, outputCache, functionArguments, configurations)
+    mapSvc.run(workflowId + "_" + inputCache, workflowId + "_" + outputCache, functionArguments, configurations)
   }
 }
