@@ -1,9 +1,11 @@
+import AppUtilityService from "./utility.service";
+
 export default angular.module('redTail.workflowapiservice', [])
     .factory('workflowapiservice', Workflowapiservice)
     .name;
 
 /* @ngInject */
-function Workflowapiservice($http, $q, $log, $rootScope) {
+function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
   var service = {
     saveAndScheduleWorkflow: saveAndScheduleWorkflow,
     getDetailedWorkflow: getDetailedWorkflow,
@@ -43,6 +45,8 @@ function Workflowapiservice($http, $q, $log, $rootScope) {
         angular.extend(responseData,workflow);
         responseData.id = response.data.id;
         responseData.name = response.data.name;
+        responseData.xml = response.data.xml;
+        responseData.tasks = response.data.tasks;
         return responseData;
     }
 
@@ -85,9 +89,10 @@ function Workflowapiservice($http, $q, $log, $rootScope) {
           .catch(fail);
 
       function success(workflows) {
-          if(isUndefinedOrNullOrEmpty(workflows)) return;
+          if(AppUtilityService.isUndefinedOrNullOrEmpty(workflows))
+              return;
           $log.info(workflows);
-          return workflows;
+          return createWorkflowModel(workflows);
       }
 
       function fail(e) {
@@ -112,8 +117,25 @@ function Workflowapiservice($http, $q, $log, $rootScope) {
     }
   }
 
+  function createWorkflowModel(workflows){
+      if(AppUtilityService.isUndefinedOrNullOrEmpty(workflows)) {
+          return null;
+      }
+      return Object.keys(workflows).map(id => {
+          let temp = {};
+          let currObj = workflows[id];
+          temp.id = currObj.id;
+          temp.cron = currObj.cronExpression;
+          temp.name = currObj.name;
+          temp.start = currObj.isRunning;
+          temp.xml = currObj.xml;
+          temp.tasks = currObj.tasks;
+          return temp;
+      });
+  }
+
     function getScheduleInfo(workflows) {
-        if(isUndefinedOrNullOrEmpty(workflows)) return;
+        if(AppUtilityService.isUndefinedOrNullOrEmpty(workflows)) return;
         let workflowIds = Object.keys(workflows);
         return $http.post('/scheduler/api/workflows', workflowIds)
             .then(success)
@@ -147,8 +169,4 @@ function Workflowapiservice($http, $q, $log, $rootScope) {
       return e;
     }
   }
-
-    function isUndefinedOrNullOrEmpty(val) {
-        return angular.isUndefined(val) || val === null || (angular.isObject(val) && angular.equals({}, val))
-    }
 }

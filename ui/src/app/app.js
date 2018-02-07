@@ -26,6 +26,7 @@ import 'clipboard';
 import 'ngclipboard';
 import 'material-ui';
 import '@flowjs/ng-flow/dist/ng-flow-standalone.min';
+//import * as x2js from 'x2js';
 
 import layout from './layout';
 import menu from './services/menu.service';
@@ -34,6 +35,7 @@ import toast from './toast/toast';
 import workflow from './workflow';
 import workflowEdit from './workflowEdit';
 import workflowapiservice from './services/workflow.service';
+import AppUtilityService from './services/utility.service';
 
 import 'typeface-roboto';
 import 'font-awesome/css/font-awesome.min.css';
@@ -46,6 +48,7 @@ import 'md-color-picker/dist/mdColorPicker.min.css';
 import 'angular-hotkeys/build/hotkeys.min.css';
 import 'angular-carousel/dist/angular-carousel.min.css';
 import '../scss/main.scss';
+import 'angular-material-data-table/dist/md-data-table.min.css'
 
 import AppConfig from './app.config';
 
@@ -72,8 +75,10 @@ angular.module('redTail', [
         menu,
         hmLocales,
         toast,
+        //x2js,
         workflow,
         workflowEdit,
-        workflowapiservice
+        workflowapiservice,
+        AppUtilityService
       ])
         .config(AppConfig);

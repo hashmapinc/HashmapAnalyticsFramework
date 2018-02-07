@@ -12,14 +12,13 @@
           <span>All Workflows</span>
         </div>
       </md-toolbar>
+
   <div layout="row" layout-margin>
-    <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.createWorkflow(vm.workflowXml)">Create New Workflow</md-button>
-  </div>
-  <div layout="row" layout-margin>
-    <div flex="40">
+    <div flex="35">
+      <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.createWorkflow(vm.workflowXml)">Create New Workflow</md-button>
       <md-list class="md-dense make-scrollable" flex>
         <md-list-item class="md-3-line" ng-repeat="workflow in vm.workflows"
-            ng-click="vm.workflowXml = workflow.xml; vm.selectedIndex = $index" ng-class="{selectedIndex: vm.selectedIndex===$index}">
+            ng-click="vm.onClickSelectWorkflow($index)" ng-class="{selectedIndex: vm.selectedIndex===$index}">
 
           <div class="md-list-item-text" layout="column">
             <h3><b>Name:</b> {{ workflow.name }}</h3>
@@ -30,27 +29,52 @@
         </md-list-item>
       </md-list>
     </div>
-    <div flex>
-        <div hljs hljs-source="vm.workflowXml" style="border: 1px solid black;">
+    <div flex="80" ng-show="vm.workflows.length == 0">
+      <h3>Workflows are not defined yet. Please create a new one.</h3>
+    </div>
+    <div flex ng-show="vm.workflows.length > 0">
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="XML">
+          <md-content class="md-padding">
+            <div hljs hljs-source="vm.workflowXml" style="border: 1px solid black;">
 
-        </div>
-      <!-- <textarea ng-model="vm.workflowXml" rows="10" style="line-height:126%"/> -->
+            </div>
+          </md-content>
+        </md-tab>
+        <md-tab label="Tabular">
+          <md-content class="md-padding">
+            <md-table-container>
+              <table md-table md-row-select multiple>
+                <thead md-head>
+                <tr md-row>
+                  <th md-column>TaskName</th>
+                  <th md-column>ToTaskNames</th>
+                  <th md-column>InputCache</th>
+                  <th md-column>OutputCache</th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row md-select="task" md-select-id="taskName" md-auto-select ng-repeat="task in vm.workflowTasks">
+                  <td md-cell><b>{{task.taskName | uppercase }}</b></td>
+                  <td md-cell>{{task.toTaskName | uppercase }}</td>
+                  <td md-cell>
+                    {{task.inputCache}}
+                    <md-button ng-show= "task.inputCache.trim() != ''" class="md-icon-button launch" ng-click="">
+                      <md-icon title="View Data" md-svg-icon="{{vm.launchSvg}}"></md-icon>
+                    </md-button>
+                  </td>
+                  <td md-cell>
+                    {{task.outputCache}}
+                    <md-button class="md-icon-button launch" ng-click="">
+                      <md-icon title="View Data" md-svg-icon="{{vm.launchSvg}}"></md-icon>
+                    </md-button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </md-table-container>
+          </md-content>
+        </md-tab>
+      </md-tabs>
     </div>
   </div>
-
-<!--
-<div hljs>
-    [
-    {
-    "title": "apples",
-    "count": [12000, 20000],
-    "description": {"text": "...", "sensitive": false}
-    },
-    {
-    "title": "oranges",
-    "count": [17500, null],
-    "description": {"text": "...", "sensitive": false}
-    }
-    ]
-</div>
--->
