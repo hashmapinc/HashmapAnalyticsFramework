@@ -7,6 +7,8 @@ import launchSvg from '../../svg/icons/launch.svg'
 
 import WorkflowController from "../workflow/workflow.controller";
 import workflowTemplate from '../workflow/workflow.tpl.html';
+import CacheController from "../cache/cache.controller";
+import CacheTemplate from '../cache/cache.tpl.html';
 import AppUtilityService from "../services/utility.service";
 
 /* eslint-enable import/no-unresolved, import/default */
@@ -14,7 +16,8 @@ import AppUtilityService from "../services/utility.service";
 /* eslint-disable angular/angularelement */
 
 /* @ngInject */
-export default function WorkflowEditController($scope, $q, $log, $mdDialog, $rootScope, $mdToast, workflowapiservice, AppUtilityService) {
+export default function WorkflowEditController($scope, $q, $log, $mdDialog, $rootScope, $mdToast,
+                                               workflowapiservice, AppUtilityService) {
     var vm = this;
     vm.launchSvg = launchSvg;
     vm.title = 'WorkflowEditController';
@@ -24,6 +27,7 @@ export default function WorkflowEditController($scope, $q, $log, $mdDialog, $roo
     vm.selected = [];
 
     vm.createWorkflow = createWorkflow;
+    vm.displayCacheData = displayCacheData;
     vm.onClickSelectWorkflow = onClickSelectWorkflow;
     activate();
 
@@ -42,6 +46,22 @@ export default function WorkflowEditController($scope, $q, $log, $mdDialog, $roo
             controller: WorkflowController,
             controllerAs: 'vm',
             templateUrl: workflowTemplate,
+            targetEvent: ev,
+            clickOutsideToClose:false
+        })
+    }
+
+    function displayCacheData(cacheName, ev) {
+        let _dataToPass = {
+            workflowId: vm.workflows[vm.selectedIndex].id,
+            cacheName: cacheName,
+            numOfRecords: 100
+        };
+        $mdDialog.show({
+            locals:{dataToPass: _dataToPass},
+            controller: CacheController,
+            controllerAs: 'vm',
+            templateUrl: CacheTemplate,
             targetEvent: ev,
             clickOutsideToClose:false
         })

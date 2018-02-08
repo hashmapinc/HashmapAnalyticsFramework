@@ -59,13 +59,13 @@
                   <td md-cell>{{task.toTaskName | uppercase }}</td>
                   <td md-cell>
                     {{task.inputCache}}
-                    <md-button ng-show= "task.inputCache.trim() != ''" class="md-icon-button launch" ng-click="">
+                    <md-button ng-show= "task.inputCache.trim() != ''" class="md-icon-button launch" ng-click="vm.displayCacheData(task.inputCache)">
                       <md-icon title="View Data" md-svg-icon="{{vm.launchSvg}}"></md-icon>
                     </md-button>
                   </td>
                   <td md-cell>
                     {{task.outputCache}}
-                    <md-button class="md-icon-button launch" ng-click="">
+                    <md-button class="md-icon-button launch" ng-click="vm.displayCacheData(task.outputCache)">
                       <md-icon title="View Data" md-svg-icon="{{vm.launchSvg}}"></md-icon>
                     </md-button>
                   </td>
