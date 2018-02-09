@@ -1,6 +1,7 @@
 package com.hashmap.haf.workflow
 
 
+import com.hashmap.haf.workflow.install.WorkflowInstallationService
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -18,7 +19,9 @@ object WorkflowApiApplication extends App{
   private val SPRING_CONFIG_NAME_KEY = "--spring.config.name"
   private val DEFAULT_SPRING_CONFIG_PARAM = SPRING_CONFIG_NAME_KEY + "=" + "workflow-api"
 
-  SpringApplication.run(classOf[WorkflowApiApplication], updateArguments(args): _*)
+  val context = SpringApplication.run(classOf[WorkflowApiApplication], updateArguments(args): _*)
+  context.getBean(classOf[WorkflowInstallationService]).performInstall()
+
 
   private def updateArguments(args: Array[String]): List[String] ={
     val argsAsList = args.toList

@@ -33,3 +33,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+install:
+  data_dir: /Users/jetinder/timeseries/HashmapAnalyticsFramework/workflow-api/src/main/resources
