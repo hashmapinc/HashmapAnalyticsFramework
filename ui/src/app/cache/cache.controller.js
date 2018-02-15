@@ -32,8 +32,9 @@ export default function CacheController($mdDialog, $mdToast, workflowapiservice,
                 return;
             }
 
-            let dataTemp = [["id","url","name","description","rel","app_metadata"],["1","http://www.postgresqltutorial.com","PostgreSQL Tutorial","null","null","1"],["2","http://www.postgresq.com","Tutorial","null","null","2"]];//data;
-            //angular.extend(dataTemp, data);
+            //let dataTemp = [["id","url","name","description","rel","app_metadata"],["1","http://www.postgresqltutorial.com","PostgreSQL Tutorial","null","null","1"],["2","http://www.postgresq.com","Tutorial","null","null","2"]];//data;
+            let dataTemp = [];
+            angular.extend(dataTemp, data);
             vm.headers = dataTemp.shift();
             vm.dataValues = dataTemp;
 
