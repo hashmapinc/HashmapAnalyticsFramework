@@ -28,6 +28,10 @@
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-spark</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>

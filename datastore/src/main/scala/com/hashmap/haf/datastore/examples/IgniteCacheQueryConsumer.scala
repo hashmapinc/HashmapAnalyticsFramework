@@ -1,13 +1,18 @@
 package com.hashmap.haf.datastore.examples
 
-import com.hashmap.haf.datastore.impl.{IgniteSparkDFStore, SparkDFOptions}
+
+import com.hashmap.haf.datastore.api.SELECT
+import com.hashmap.haf.datastore.impl.IgniteQueryableDataStore
 import com.typesafe.config.ConfigFactory
 import org.apache.ignite.Ignition
-import org.apache.spark.sql.SparkSession
 
-object IgniteDataConsumer extends App {
+import scala.collection.JavaConversions._
 
-  println("Reading DF from ignite cache")
+object IgniteCacheQueryConsumer extends App {
+  println("Reading cache value directly from ignite")
+
+  val CACHE_NAME = "testCache"
+
   private [this] val configFactory = ConfigFactory.load()
   private[this] val CONFIG:String = configFactory.getString("ignite.configPath")
   val tableName = "iot_devices"
@@ -15,21 +20,14 @@ object IgniteDataConsumer extends App {
   Ignition.setClientMode(true)
   val ignite = Ignition.start(CONFIG)
 
-  val spark = SparkSession
-    .builder()
-    .appName("Ignite Data Consumer")
-    .master("local")
-    .getOrCreate()
+  val datastore = IgniteQueryableDataStore(ignite)
+
+  val data = datastore.query(s"SELECT * FROM $tableName limit 20", SELECT)
 
 
-
-  val df1 = IgniteSparkDFStore.get(SparkDFOptions(spark, tableName))
   println("***********************************************************************")
-  df1.show()
+  data.foreach { row ⇒ println(row.mkString("[", ", ", "]")) }
   println("***********************************************************************")
-
 
   ignite.close()
 }
-
-

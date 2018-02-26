@@ -1,6 +1,9 @@
 package com.hashmap.haf.datastore.examples
 
-import com.hashmap.haf.datastore.{DataframeIgniteCache, Datastore}
+import com.hashmap.haf.datastore.impl.{IgniteSparkDFStore, SparkDFOptions}
+import com.typesafe.config.ConfigFactory
+import org.apache.ignite.spark.IgniteDataFrameSettings._
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{Encoder, SparkSession}
 
 
@@ -12,9 +15,16 @@ case class DeviceIoTData (battery_level: Long, c02_level: Long, cca2: String,
 
 object IgniteDataProducer extends App {
 
-  /*private val igConfig = getClass.getResource("/cache.xml").getPath
-  private val ignite: Ignite = Ignition.start(igConfig)*/
+  println("Example to write DF in ignite cache")
 
+  val tableName = "iot_devices"
+  private [this] val configFactory = ConfigFactory.load()
+  private[this] val CONFIG:String = configFactory.getString("ignite.configPath")
+
+  import org.apache.ignite.Ignition
+
+  Ignition.setClientMode(true)
+  val ignite = Ignition.start(CONFIG)
 
   val spark = SparkSession
     .builder()
@@ -22,14 +32,27 @@ object IgniteDataProducer extends App {
     .master("local")
     .getOrCreate()
 
+
+  Logger.getRootLogger.setLevel(Level.INFO)
+  Logger.getLogger("org.apache.ignite").setLevel(Level.INFO)
+
   // For implicit conversions like converting RDDs to DataFrames
   import spark.implicits._
 
   val df = InputDataLoader.load[DeviceIoTData](spark, getClass.getResource("/examples/iot_devices.json").getPath).toDF()
 
-  val cache: Datastore = DataframeIgniteCache.create()
-  cache.set(spark.sparkContext, df, "input_data")
+  println()
+  println("Writing Data Frame to Ignite:")
+  println()
+
+  //Writing content of data frame to Ignite.
+
+  IgniteSparkDFStore.set(df, SparkDFOptions(spark, tableName))
+
+  println("Done!")
+
   spark.close()
+  ignite.close()
 }
 
 object InputDataLoader {

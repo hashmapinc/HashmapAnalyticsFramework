@@ -1,13 +1,15 @@
 package com.hashmap.haf.execution.controllers
 
 import java.sql.{Date, Timestamp}
-import java.util.UUID
+import java.util
+import java.util.{Collections, UUID}
 import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
-import com.hashmap.haf.datastore.{DataframeIgniteCache, Datastore}
+import com.hashmap.haf.datastore.api.{Datastore, SELECT}
+import com.hashmap.haf.datastore.impl.IgniteQueryableDataStore
 import com.hashmap.haf.execution.clients.{FunctionsServiceClient, WorkflowServiceClient}
 import com.hashmap.haf.execution.executor.IgniteDexecutorState
 import com.hashmap.haf.functions.compiler.FunctionCompiler
@@ -18,6 +20,8 @@ import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.factory.Factory.{TaskFactory, WorkflowTask}
 import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
 import com.hashmap.haf.workflow.task.{DefaultTaskProvider, SparkIgniteTask}
+import org.apache.ignite.cache.query.SqlFieldsQuery
+import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.internal.IgnitionEx
 import org.apache.ignite.{Ignite, Ignition}
 import org.apache.spark.rdd.RDD
@@ -26,6 +30,8 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.web.bind.annotation._
 
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.xml.{Node, NodeSeq}
 
 @RestController
@@ -49,37 +55,33 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
 
   @RequestMapping(value = Array("/workflow/{workflowId}/cache/{cacheId}/{count}"), method = Array(RequestMethod.GET))
   @ResponseBody
-  def getCacheData(@PathVariable("workflowId") workflowId: String, @PathVariable("cacheId") cacheId: String, @PathVariable("count") count: Int): Array[Array[String]]  = {
-    val spark = SparkSession
-      .builder()
-      .appName("someApp")
-      .master("local")
-      .getOrCreate()
+  def getCacheData(@PathVariable("workflowId") workflowId: String, @PathVariable("cacheId") cacheId: String, @PathVariable("count") count: Int): util.List[util.List[String]]  = {
+    //val CACHE_NAME = "temp_" + workflowId
+    val tableName = cacheId + "_" + workflowId
 
-    val cache: Datastore = DataframeIgniteCache.create()
-    val (schema, igniteRDD) = cache.get(spark.sparkContext, workflowId + "_"+ cacheId)
-    val rdd1: RDD[Row] = igniteRDD.map(_._2)
-    val df: DataFrame = spark.sqlContext.createDataFrame(rdd1, schema)
+    val datastore = IgniteQueryableDataStore(ignite)
 
-    lazy val timeZone = DateTimeUtils.getTimeZone(spark.sessionState.conf.sessionLocalTimeZone)
-    val rows: Array[Array[String]] = schema.fieldNames +: df.take(count).map { row =>
-      row.toSeq.toArray.map { cell =>
-        val str = cell match {
-          case null => "null"
-          case binary: Array[Byte] => binary.map("%02X".format(_)).mkString("[", " ", "]")
-          case array: Array[_] => array.mkString("[", ", ", "]")
-          case seq: Seq[_] => seq.mkString("[", ", ", "]")
-          case d: Date =>
-            DateTimeUtils.dateToString(DateTimeUtils.fromJavaDate(d))
-          case ts: Timestamp =>
-            DateTimeUtils.timestampToString(DateTimeUtils.fromJavaTimestamp(ts), timeZone)
-          case _ => cell.toString
-        }
-        str
-      }: Array[String]
-    }
-    spark.close()
-    rows
+    datastore.query(s"SELECT * FROM $tableName limit $count", SELECT)
+
+    /*val ccfg = new CacheConfiguration[Any, Any](CACHE_NAME).setSqlSchema("PUBLIC")
+    val tempCache = ignite.getOrCreateCache(ccfg)
+
+    try{
+      val cursor = tempCache.query(new SqlFieldsQuery(s"SELECT * FROM $tableName limit $count"))
+      val clCnt = cursor.getColumnsCount()
+      val fNames:util.List[String] = (0 until clCnt).map(cursor.getFieldName(_)).toList
+      val _data = cursor.getAll
+      // Converting collection of Any types to collection of Strings
+      val data: util.List[util.List[String]] = _data.map(lst => lst.toList.filter(_ != null).map(_.toString).asJava).asJava
+      //As given collection is not modifiable, we need to convert it into modifiable collection
+      val newList = new util.ArrayList(data)
+      newList.add(0, fNames)
+      newList
+
+
+    }finally {
+      tempCache.destroy()
+    }*/
   }
 
 
