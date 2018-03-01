@@ -16,11 +16,15 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.util.List;
+
 @Configuration
 @EnableAuthorizationServer
 public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdapter{
 
     @Autowired private JwtSettings settings;
+
+    @Autowired private ClientConfig config;
 
     @Autowired
     @Qualifier("authenticationManagerBean")
@@ -48,10 +52,22 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("bar_app")
-                .authorizedGrantTypes("refresh_token", "password")
-                .scopes("ui");
+        config.getClients().forEach((k, v) -> {
+            try {
+                clients
+                        .inMemory()
+                        .withClient(k)
+                        .secret(v.getClientSecret())
+                        .authorizedGrantTypes(listToArray(v.getGrantTypes()))
+                        .scopes(listToArray(v.getScopes()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private String[] listToArray(List<String> l){
+        return l.toArray(new String[l.size()]);
     }
 
     @Bean

@@ -14,6 +14,15 @@ security.jwt:
   tokenIssuer: "${JWT_TOKEN_ISSUER:thingsboard.io}"
   tokenSigningKey: "${JWT_TOKEN_SIGNING_KEY:thingsboardDefaultSigningKey}"
 
+oauth2.clients:
+  bar_app:
+    clientSecret: ""
+    grantTypes:
+      - refresh_token
+      - password
+    scopes:
+      - ui
+
 
 users:
   provider: database

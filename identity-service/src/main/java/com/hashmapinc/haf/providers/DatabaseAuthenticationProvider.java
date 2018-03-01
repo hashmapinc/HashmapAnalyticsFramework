@@ -88,7 +88,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
             throw new InsufficientAuthenticationException("User has no authority assigned");
 
-        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(userInfo, auth.getCredentials(), auth.getAuthorities());
+        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(userInfo.getUserName(), auth.getCredentials(), auth.getAuthorities());
         result.setDetails(auth.getDetails());
 
         return result;
