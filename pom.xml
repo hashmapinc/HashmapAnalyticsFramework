@@ -48,6 +48,7 @@
         <module>workflow-executor</module>
         <module>functions</module>
         <module>scheduler</module>
+        <module>identity-service</module>
         <!--<module>ui</module>-->
     </modules>
 
