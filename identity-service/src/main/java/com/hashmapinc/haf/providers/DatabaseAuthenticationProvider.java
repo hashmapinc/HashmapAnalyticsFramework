@@ -2,7 +2,6 @@ package com.hashmapinc.haf.providers;
 
 
 import com.hashmapinc.haf.models.SecurityUser;
-import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.util.Arrays;
 
 @Component
 @ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
@@ -55,7 +52,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     protected Authentication authenticateByUsernameAndPassword(String username, String password) {
-        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -64,9 +61,9 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             throw new DisabledException("User is not active");
         }
 
-        /*if (!encoder.matches(password, userInfo.getPassword())) {
+        if (!encoder.matches(password, userInfo.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
-        }*/
+        }
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
             throw new InsufficientAuthenticationException("User has no authority assigned");
 
@@ -76,7 +73,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
-        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -92,16 +89,5 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         result.setDetails(auth.getDetails());
 
         return result;
-    }
-
-    private UserInformation dummyUser(){
-        User u = new User("123");
-        u.setEnabled(true);
-        u.setPassword("jay");
-        u.setUserName("jay");
-        u.setAuthorities(Arrays.asList("admin"));
-        u.setFirstName("Jayesh");
-        u.setLastName("Kapadnis");
-        return u;
     }
 }
