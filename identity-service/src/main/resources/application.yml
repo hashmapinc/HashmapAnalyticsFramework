@@ -4,6 +4,10 @@ spring.application:
 server:
   port: ${IDENTITY_SERVICE_PORT:9002}
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 
 security.client: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
 
