@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.cloud.security.oauth2.client.feign.OAuth2FeignRequestInterceptor
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.oauth2.client.{DefaultOAuth2ClientContext, OAuth2RestTemplate}
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails
 import org.springframework.security.oauth2.config.annotation.web.configuration.{EnableResourceServer, ResourceServerConfigurerAdapter}
@@ -29,10 +30,11 @@ class FunctionsResourceServer @Autowired()(sso: ResourceServerProperties) extend
 		new OAuth2RestTemplate(clientCredentialsResourceDetails)
 
 	@Bean
+	@Primary
 	def tokenServices = {
 		val tokenService = new RemoteTokenServices()
 		tokenService.setRestTemplate(clientCredentialsRestTemplate)
-		tokenService.setCheckTokenEndpointUrl(sso.getUserInfoUri)
+		tokenService.setCheckTokenEndpointUrl(sso.getTokenInfoUri)
 		tokenService.setClientId(clientCredentialsResourceDetails.getClientId)
 		tokenService.setClientSecret(clientCredentialsResourceDetails.getClientSecret)
 		tokenService
@@ -40,7 +42,9 @@ class FunctionsResourceServer @Autowired()(sso: ResourceServerProperties) extend
 
 	@throws[Exception]
 	override def configure(http: HttpSecurity): Unit = {
-		http
+		http.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
 			.authorizeRequests
 			.antMatchers("/", "/demo").permitAll
 			.anyRequest.authenticated

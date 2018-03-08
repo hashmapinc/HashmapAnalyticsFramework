@@ -43,7 +43,6 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
                 .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain())
                 .tokenServices(tokenServices);
-        //TokenGranter can be customized to Generate new type of token
     }
 
     @Override
@@ -57,10 +56,6 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         //TODO: Inject a client details service which uses DB to identify clients information
         clients.withClientDetails(new PropertiesClientUserDetailsService(config));
-    }
-
-    private String[] listToArray(List<String> l){
-        return l.toArray(new String[l.size()]);
     }
 
     @Bean

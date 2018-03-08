@@ -68,4 +68,4 @@ security:
       grant-type: client_credentials
       scope: server
     resource:
-      userInfoUri: http://localhost:9002/oauth/check_token
+      tokenInfoUri: http://localhost:9002/oauth/check_token
