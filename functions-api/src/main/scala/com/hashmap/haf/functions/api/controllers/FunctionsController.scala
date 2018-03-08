@@ -13,7 +13,7 @@ import collection.JavaConverters._
 @RequestMapping(path = Array("/api"))
 class FunctionsController @Autowired()(igniteFunctionService: IgniteFunctionTypeService){
 
-	@PreAuthorize("#oauth2.hasScope('ui') or hasAuthority('user')")
+	@PreAuthorize("hasAuthority('admin')")
 	@GetMapping(path = Array("/functions"))
 	def getAllFunctions: List[IgniteFunctionType] = {
 		igniteFunctionService.findAll().asScala.toList

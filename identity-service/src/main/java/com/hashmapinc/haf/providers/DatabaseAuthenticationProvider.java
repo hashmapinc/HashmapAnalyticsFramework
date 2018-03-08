@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import java.util.Arrays;
 
 @Component
-@ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
+@ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
 
     private final DatabaseUserDetailsService userDetailsService;
@@ -54,7 +54,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     protected Authentication authenticateByUsernameAndPassword(String username, String password) {
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -75,7 +75,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }

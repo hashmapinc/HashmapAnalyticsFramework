@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-@ConditionalOnProperty(value = "security.client", havingValue = "kerberos")
+@ConditionalOnProperty(value = "security.provider", havingValue = "kerberos")
 public class KerberosIdentityProvider extends CustomAuthenticationProvider{
 
     private KerberosClient kerberosClient;

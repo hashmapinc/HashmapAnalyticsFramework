@@ -9,7 +9,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
-security.client: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
+security.provider: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
 
 # JWT Token parameters
 security.jwt:
