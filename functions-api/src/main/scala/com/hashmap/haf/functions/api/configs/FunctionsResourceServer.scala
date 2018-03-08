@@ -19,10 +19,10 @@ class FunctionsResourceServer @Autowired()(sso: ResourceServerProperties) extend
 	@ConfigurationProperties(prefix = "security.oauth2.client")
 	def clientCredentialsResourceDetails = new ClientCredentialsResourceDetails
 
-	/*@Bean
+	@Bean
 	def oauth2FeignRequestInterceptor: OAuth2FeignRequestInterceptor = {
 		new OAuth2FeignRequestInterceptor(new DefaultOAuth2ClientContext, clientCredentialsResourceDetails)
-	}*/
+	}
 
 	@Bean
 	def clientCredentialsRestTemplate: OAuth2RestTemplate =
