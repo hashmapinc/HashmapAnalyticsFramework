@@ -12,7 +12,9 @@ import org.apache.ignite.services.ServiceContext
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.util.Utils
+
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 @IgniteFunction(functionClazz = "JdbcReaderSparkTask", service = "jdbcReaderService",
   configs = Array())
@@ -32,22 +34,27 @@ class JdbcReaderService extends ServiceFunction{
       .master(sparkMaster)
       .getOrCreate()
 
-    //Logger.getRootLogger.setLevel(Level.DEBUG)
-    //Logger.getLogger("org.apache.ignite").setLevel(Level.DEBUG)
+    Logger.getRootLogger.setLevel(Level.DEBUG)
+    Logger.getLogger("org.apache.ignite").setLevel(Level.DEBUG)
 
     val newDs: DataFrame = getDataframe(jdbcUrl, dbTable, jdbcUser, jdbcPassword, spark)
     println("Saving DF")
     IgniteSparkDFStore.set(newDs, SparkDFOptions(spark, outputKey, tableParameters))
     println("Displaying 10 rows of saved df")
     newDs.show(10)
-//    import scala.concurrent.ExecutionContext.Implicits.global
-//    try {
-//      spark.close()
-//      // Future { try{  } catch { case e1 => e1.printStackTrace()} }
-//    } catch {
-//      case e => e.printStackTrace()
-//    }
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val f = Future { spark.close() }
 
+    f onComplete {
+      case Success(x) => println("JDBC: Successfully closed spark context")
+      case Failure(e) => e.printStackTrace()
+    }
+    /*try{
+      println("Closing spark context")
+      spark.close()
+    }catch {
+      case e => e.printStackTrace()
+    }*/
     println("Executed JDBC Reader Service")
     "Successful"
   }

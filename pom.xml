@@ -17,7 +17,7 @@
         <scala.version>2.11.12</scala.version>
         <scala.compat.version>2.11</scala.compat.version>
         <play2.version>2.6.7</play2.version>
-        <ignite.version>2.5.0-SNAPSHOT</ignite.version>
+        <ignite.version>2.4.0-SNAPSHOT</ignite.version>
         <joda-time.version>2.4</joda-time.version>
         <spark.version>2.2.1</spark.version>
         <spring.version>4.3.13.RELEASE</spring.version>

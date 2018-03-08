@@ -12,6 +12,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 @IgniteFunction(functionClazz = "SummarizeSparkTask", service = "summarizeService",
   configs = Array())
@@ -39,12 +40,13 @@ class SparkSummarizeService extends ServiceFunction{
     cache.set(newDs, SparkDFOptions(spark, outputKey, tableParameters))
     println("Setting to output cache .......showing only 10 rows of it")
     newDs.show(10)
-//    import scala.concurrent.ExecutionContext.Implicits.global
-//    try {
-//      Future { spark.close() }
-//    } catch {
-//      case e => e.printStackTrace()
-//    }
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val f = Future { spark.close() }
+
+    f onComplete {
+      case Success(x) => println("Summarize: Successfully closed spark context")
+      case Failure(e) => e.printStackTrace()
+    }
     println("Executed Summarize")
     "successful"
   }
