@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.configs;
 
+import com.hashmapinc.haf.services.PropertiesClientUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -52,18 +53,8 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        config.getClients().forEach((k, v) -> {
-            try {
-                clients
-                        .inMemory()
-                        .withClient(k)
-                        .secret(v.getClientSecret())
-                        .authorizedGrantTypes(listToArray(v.getGrantTypes()))
-                        .scopes(listToArray(v.getScopes()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        //TODO: Inject a client details service which uses DB to identify clients information
+        clients.withClientDetails(new PropertiesClientUserDetailsService(config));
     }
 
     private String[] listToArray(List<String> l){

@@ -2,6 +2,7 @@ package com.hashmapinc.haf.providers;
 
 
 import com.hashmapinc.haf.models.SecurityUser;
+import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import java.util.Arrays;
 
 @Component
 @ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
@@ -89,5 +91,16 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         result.setDetails(auth.getDetails());
 
         return result;
+    }
+
+    private UserInformation dummyUser(){
+        User u = new User("tempus_user");
+        u.setEnabled(true);
+        u.setFirstName("jay");
+        u.setUserName("jay");
+        u.setPassword("jay");
+        u.setTenantId("123");
+        u.setAuthorities(Arrays.asList("admin"));
+        return  u;
     }
 }

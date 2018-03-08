@@ -26,6 +26,14 @@ oauth2.clients:
       - password
     scopes:
       - ui
+      - server
+  functions-service:
+      clientSecret: password
+      grantTypes:
+        - refresh_token
+        - client_credentials
+      scopes:
+        - server
 
 
 users:

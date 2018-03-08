@@ -40,6 +40,9 @@ public class HafSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.anonymous().disable().httpBasic().disable()
+                .authorizeRequests().anyRequest().authenticated()
+                .and()
+                .csrf().disable();
     }
 }
