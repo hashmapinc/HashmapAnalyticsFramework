@@ -2,7 +2,6 @@ package com.hashmapinc.haf.providers;
 
 
 import com.hashmapinc.haf.models.SecurityUser;
-import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import java.util.Arrays;
 
 @Component
 @ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
@@ -54,7 +52,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     protected Authentication authenticateByUsernameAndPassword(String username, String password) {
-        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -63,6 +61,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             throw new DisabledException("User is not active");
         }
 
+        System.out.println(encoder.encode(userInfo.getPassword()));
         if (!encoder.matches(password, userInfo.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
         }
@@ -71,11 +70,11 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
 
         SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
 
-        return new UsernamePasswordAuthenticationToken(username, password, securityUser.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(securityUser, password, securityUser.getAuthorities());
     }
 
     protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
-        UserInformation userInfo = dummyUser();//userDetailsService.loadUserByUsername(username);
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -87,20 +86,11 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
             throw new InsufficientAuthenticationException("User has no authority assigned");
 
-        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(userInfo.getUserName(), auth.getCredentials(), auth.getAuthorities());
+        SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
+
+        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(securityUser, auth.getCredentials(), securityUser.getAuthorities());
         result.setDetails(auth.getDetails());
 
         return result;
-    }
-
-    private UserInformation dummyUser(){
-        User u = new User("tempus_user");
-        u.setEnabled(true);
-        u.setFirstName("jay");
-        u.setUserName("jay");
-        u.setPassword("jay");
-        u.setTenantId("123");
-        u.setAuthorities(Arrays.asList("admin"));
-        return  u;
     }
 }

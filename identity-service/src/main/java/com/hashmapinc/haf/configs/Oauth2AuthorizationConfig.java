@@ -12,11 +12,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -26,6 +26,8 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Autowired private JwtSettings settings;
 
     @Autowired private ClientConfig config;
+
+    @Autowired private UserAuthenticationConverter userDetailsConverter;
 
     @Autowired
     @Qualifier("authenticationManagerBean")
@@ -39,7 +41,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore())
-                .tokenEnhancer(accessTokenConverter())
+                .tokenEnhancer(tokenEnhancerChain())
                 .tokenServices(tokenServices);
         //TokenGranter can be customized to Generate new type of token
     }
@@ -69,8 +71,17 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+        accessTokenConverter.setUserTokenConverter(userDetailsConverter);
+        converter.setAccessTokenConverter(accessTokenConverter);
         converter.setSigningKey(settings.getTokenSigningKey());
         return converter;
+    }
+
+    public TokenEnhancer tokenEnhancerChain(){
+        TokenEnhancerChain chain = new TokenEnhancerChain();
+        chain.setTokenEnhancers(Arrays.asList(accessTokenConverter()));
+        return chain;
     }
 
     @Bean
