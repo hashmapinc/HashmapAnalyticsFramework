@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.hashmap.haf</groupId>
-    <artifactId>hashmap-analytics</artifactId>
+    <artifactId>redtail</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -32,6 +32,7 @@
         <dexecutor.version>2.0.1</dexecutor.version>
         <akka.version>2.4.20</akka.version>
         <livy.version>0.3.0</livy.version>
+        <docker.repository>hashmapinc</docker.repository>
     </properties>
 
     <modules>
@@ -457,6 +458,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.3.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>it.ozimov</groupId>
+                    <artifactId>yaml-properties-maven-plugin</artifactId>
+                    <version>1.1.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>

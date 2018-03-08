@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hashmap.haf</groupId>
         <version>1.0.0-SNAPSHOT</version>
-        <artifactId>hashmap-analytics</artifactId>
+        <artifactId>redtail</artifactId>
     </parent>
 
     <artifactId>functions-api</artifactId>
@@ -85,7 +85,45 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>${project.name}</finalName>
                     <mainClass>com.hashmap.haf.functions.api.FunctionApiApplication</mainClass>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>it.ozimov</groupId>
+                <artifactId>yaml-properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/src/main/resources/functions-api.yml</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <repository>${docker.repository}/${project.parent.artifactId}-${project.artifactId}</repository>
+                    <tag>${project.parent.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.name}.jar</JAR_FILE>
+                        <SERVER_PORT>${server.port}</SERVER_PORT> <!-- Will come from application.properties by using properties plugin -->
+                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>
