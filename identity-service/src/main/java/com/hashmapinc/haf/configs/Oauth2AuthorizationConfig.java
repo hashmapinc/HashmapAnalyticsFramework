@@ -73,6 +73,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         return converter;
     }
 
+    @Bean
     public TokenEnhancer tokenEnhancerChain(){
         TokenEnhancerChain chain = new TokenEnhancerChain();
         chain.setTokenEnhancers(Arrays.asList(accessTokenConverter()));

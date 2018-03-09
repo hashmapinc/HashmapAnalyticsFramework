@@ -48,7 +48,7 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
             UserInformation user = userDetailsService.loadUserByUsername((String) principal);
             SecurityUser securityUser = new SecurityUser(user, user.isEnabled());
 
-            return new UsernamePasswordAuthenticationToken(principal, "N/A", securityUser.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(securityUser, "N/A", securityUser.getAuthorities());
         } else {
             return null;
         }
