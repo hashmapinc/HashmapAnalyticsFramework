@@ -19,13 +19,20 @@ security.jwt:
   tokenSigningKey: "${JWT_TOKEN_SIGNING_KEY:thingsboardDefaultSigningKey}"
 
 oauth2.clients:
-  bar_app:
-    clientSecret: ""
+  ui:
+    clientSecret: ${UI_PASSWORD:password}
     grantTypes:
       - refresh_token
       - password
     scopes:
       - ui
+      - server
+  workflow-service:
+    clientSecret: ${WORKFLOW_SERVICE_PASSWORD:password}
+    grantTypes:
+      - refresh_token
+      - client_credentials
+    scopes:
       - server
   functions-service:
       clientSecret: password
@@ -34,7 +41,6 @@ oauth2.clients:
         - client_credentials
       scopes:
         - server
-
 
 users:
   provider: database

@@ -69,3 +69,4 @@ security:
       scope: server
     resource:
       tokenInfoUri: http://localhost:9002/oauth/check_token
+      #userInfoUri: http://localhost:9002/users/current --> Use either tokenInfoUri(Preferred) or userInfoUri
