@@ -10,4 +10,6 @@ public interface UserDetailsService {
 
     User save(User user);
 
+    User findById(String id);
+
 }

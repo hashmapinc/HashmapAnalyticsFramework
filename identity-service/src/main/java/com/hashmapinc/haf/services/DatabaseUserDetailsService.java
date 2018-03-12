@@ -26,6 +26,11 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         return usersDao.save(user);
     }
 
+    @Override
+    public User findById(String id) {
+        return usersDao.findById(id);
+    }
+
     private UserInformation dummyUser(){
         User u = new User("tempus_user");
         u.setEnabled(true);

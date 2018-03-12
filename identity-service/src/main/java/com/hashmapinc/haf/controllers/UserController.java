@@ -1,16 +1,14 @@
 package com.hashmapinc.haf.controllers;
 
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -46,5 +44,13 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .body("User can't be created as provider is set to " + provider);
+    }
+
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserById(@PathVariable String userId){
+        User user = userService.findById(userId);
+        if(user == null)
+            return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(user);
     }
 }

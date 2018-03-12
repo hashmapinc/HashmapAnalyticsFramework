@@ -40,4 +40,12 @@ public class UsersDaoImpl implements UsersDao{
     public void deleteById(String userId) {
         usersRepository.delete(userId);
     }
+
+    @Override
+    public User findById(String userId) {
+        UserEntity user = usersRepository.findOne(userId);
+        if(user != null)
+            return user.toData();
+        return null;
+    }
 }
