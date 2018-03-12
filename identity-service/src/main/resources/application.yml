@@ -61,7 +61,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: "validate"
+      ddl-auto: "create"
       #show_sql: true
       #format_sql: true
     database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"

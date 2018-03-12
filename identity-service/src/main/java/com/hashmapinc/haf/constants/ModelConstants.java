@@ -15,5 +15,5 @@ public class ModelConstants {
 
 
     public static final String USER_ENABLED_PROPERTY = "enabled";
-    public static final String USER_AUTHORITIES_TABLE = "user_authorities";
+    public static final String USER_AUTHORITIES_TABLE = "haf_user_authorities";
 }

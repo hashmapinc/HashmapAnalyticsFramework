@@ -1,7 +1,6 @@
 package com.hashmapinc.haf.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,9 +14,11 @@ public class User implements UserInformation, Serializable{
     private String lastName;
     private List<String> authorities;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private boolean enabled;
+
+    public User(){}
 
     public User(String id){
         this.id = id;

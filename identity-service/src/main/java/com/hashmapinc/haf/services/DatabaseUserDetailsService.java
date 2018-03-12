@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-@ConditionalOnProperty(value = "users.provider", havingValue = "database")
+//@ConditionalOnProperty(value = "users.provider", havingValue = "database")
 public class DatabaseUserDetailsService implements UserDetailsService {
 
     @Autowired private UsersDao usersDao;

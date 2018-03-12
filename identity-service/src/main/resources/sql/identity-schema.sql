@@ -1,8 +1,3 @@
-create table if not exists user_authorities (
-    id varchar(255) NOT NULL,
-    authorities_id varchar(255)
-);
-
 create table if not exists haf_users (
     id varchar(255) NOT NULL CONSTRAINT haf_user_pkey PRIMARY KEY,
     enabled boolean default false,
@@ -13,4 +8,7 @@ create table if not exists haf_users (
     user_name varchar(255)
 );
 
-alter table user_authorities add constraint haf_user_fk foreign key (id) references users;
+create table if not exists haf_user_authorities (
+    user_id varchar(255),
+    authorities_id varchar(255)
+);
