@@ -4,7 +4,7 @@ public class ModelConstants {
     private ModelConstants() {
     }
 
-    public static final String USERS_TABLE = "users";
+    public static final String USERS_TABLE = "haf_users";
     public static final String ID_PROPERTY = "id";
     public static final String USER_NAME_PROPERTY = "user_name";
     public static final String TENANT_ID_PROPERTY = "tenant_id";

@@ -11,6 +11,9 @@ eureka:
 
 security.provider: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
 
+install:
+  data_dir: /Users/jayeshkapadnis/Projects/hashmap/HashmapAnalyticsFramework/identity-service/src/main/resources
+
 # JWT Token parameters
 security.jwt:
   tokenExpirationTime: "${JWT_TOKEN_EXPIRATION_TIME:9000000}" # Number of seconds (15 mins)
@@ -45,6 +48,10 @@ oauth2.clients:
 users:
   provider: database
 
+#spring.jpa.properties.javax.persistence.schema-generation.create-source: metadata
+#spring.jpa.properties.javax.persistence.schema-generation.scripts.action: create
+#spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target: create.sql
+
 # HSQLDB DAO Configuration
 spring:
   data:
@@ -52,10 +59,11 @@ spring:
       repositories:
         enabled: "true"
   jpa:
+    generate-ddl: true
     hibernate:
-      ddl-auto: "create"
-      show_sql: true
-      format_sql: true
+      ddl-auto: "validate"
+      #show_sql: true
+      #format_sql: true
     database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
