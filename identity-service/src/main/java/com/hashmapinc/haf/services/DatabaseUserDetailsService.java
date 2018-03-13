@@ -18,7 +18,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
     @Override
     public UserInformation loadUserByUsername(String s) throws UsernameNotFoundException {
-        return dummyUser();//usersDao.findByUserName(s);
+        return usersDao.findByUserName(s);
     }
 
     @Override
@@ -29,16 +29,5 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public User findById(String id) {
         return usersDao.findById(id);
-    }
-
-    private UserInformation dummyUser(){
-        User u = new User("tempus_user");
-        u.setEnabled(true);
-        u.setFirstName("jay");
-        u.setUserName("jay");
-        u.setPassword("$2a$10$az45PJqtLRKTFWXgH5CImuB3Xdrzn1RVsh7GcfCeBoPh/4via30uO");
-        u.setTenantId("123");
-        u.setAuthorities(Arrays.asList("admin"));
-        return  u;
     }
 }
