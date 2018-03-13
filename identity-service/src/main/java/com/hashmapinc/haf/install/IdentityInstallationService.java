@@ -1,11 +1,14 @@
 package com.hashmapinc.haf.install;
 
+import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Service
 public class IdentityInstallationService {
@@ -16,6 +19,9 @@ public class IdentityInstallationService {
     @Autowired
     private DatabaseSchemaService schemaService;
 
+    @Autowired
+    private UserDetailsService userService;
+
     public void performInstall() throws Exception {
         if (this.dataDir == null) {
             throw new RuntimeException("'install.data_dir' property should specified!");
@@ -25,5 +31,15 @@ public class IdentityInstallationService {
         }
 
         schemaService.createDatabaseSchema();
+
+        User user = new User("123456");
+        user.setUserName("demo");
+        user.setPassword("demo");
+        user.setTenantId("hashmapInc");
+        user.setAuthorities(Arrays.asList("admin", "user"));
+        user.setEnabled(true);
+        user.setFirstName("demo");
+
+        userService.save(user);
     }
 }

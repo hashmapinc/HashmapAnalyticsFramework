@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
@@ -32,13 +33,17 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody User user){
         if(provider.equalsIgnoreCase("database")) {
-            User savedUser = userService.save(user);
-            URI uri = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(savedUser.getId())
-                    .toUri();
-            return ResponseEntity.created(uri).body(savedUser);
+            if(userService.findById(user.getId()) != null) {
+                User savedUser = userService.save(user);
+                URI uri = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{userId}")
+                        .buildAndExpand(savedUser.getId())
+                        .toUri();
+                return ResponseEntity.created(uri).body(savedUser);
+            }else{
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already present");
+            }
         }
         else
             return ResponseEntity
@@ -52,5 +57,13 @@ public class UserController {
         if(user == null)
             return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(user);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<?> getAllUsers(){
+        Collection<User> users = userService.findAll();
+        if(users == null || users.isEmpty())
+            return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(users);
     }
 }

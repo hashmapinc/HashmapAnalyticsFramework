@@ -37,7 +37,7 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.USER_LAST_NAME_PROPERTY)
     private String lastName;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = ModelConstants.USER_AUTHORITIES_TABLE, joinColumns = @JoinColumn(name = ModelConstants.ID_PROPERTY))
     @Column(name = ModelConstants.USER_AUTHORITIES_COLUMN)
     private List<String> authorities;

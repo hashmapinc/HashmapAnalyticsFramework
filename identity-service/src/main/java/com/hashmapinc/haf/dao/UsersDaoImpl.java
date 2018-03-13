@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -47,5 +50,20 @@ public class UsersDaoImpl implements UsersDao{
         if(user != null)
             return user.toData();
         return null;
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return convertDataList(usersRepository.findAll());
+    }
+
+    private List<User> convertDataList(Iterable<UserEntity> toDataList){
+        List<UserEntity> entities = new ArrayList<>();
+        List<User> list = new ArrayList<>();
+        if(toDataList != null) {
+            toDataList.iterator().forEachRemaining(entities::add);
+            entities.forEach(e -> list.add(e.toData()));
+        }
+        return list;
     }
 }

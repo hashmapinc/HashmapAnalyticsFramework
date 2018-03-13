@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 @Component
 //@ConditionalOnProperty(value = "users.provider", havingValue = "database")
@@ -29,5 +30,10 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public User findById(String id) {
         return usersDao.findById(id);
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return usersDao.findAll();
     }
 }
