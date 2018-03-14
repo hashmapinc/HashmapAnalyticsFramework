@@ -36,4 +36,9 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public Collection<User> findAll() {
         return usersDao.findAll();
     }
+
+    @Override
+    public void deleteById(String userId) {
+        usersDao.deleteById(userId);
+    }
 }

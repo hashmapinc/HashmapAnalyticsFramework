@@ -33,7 +33,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody User user){
         if(provider.equalsIgnoreCase("database")) {
-            if(userService.findById(user.getId()) != null) {
+            if(userService.findById(user.getId()) == null) {
                 User savedUser = userService.save(user);
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()

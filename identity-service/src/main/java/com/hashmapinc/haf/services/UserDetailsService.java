@@ -16,4 +16,6 @@ public interface UserDetailsService {
 
     Collection<User> findAll();
 
+    void deleteById(String userId);
+
 }

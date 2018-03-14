@@ -45,7 +45,8 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             String password = (String) authentication.getCredentials();
             return authenticateByUsernameAndPassword(username, password);
         }else{
-            String username = (String)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            SecurityUser user = (SecurityUser)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            String username = user.getUser().getUserName();
             PreAuthenticatedAuthenticationToken auth  = (PreAuthenticatedAuthenticationToken)authentication;
             return reAuthenticateWithUsername(username, auth);
         }
