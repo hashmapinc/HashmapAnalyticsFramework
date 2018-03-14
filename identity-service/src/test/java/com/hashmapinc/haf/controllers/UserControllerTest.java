@@ -81,8 +81,6 @@ public class UserControllerTest {
         createUser(user);
         user.setPassword("password");
 
-        System.out.println("User name is ");
-
         adminToken = obtainAccessToken("demo", "demo");
     }
 
@@ -239,8 +237,6 @@ public class UserControllerTest {
         params.add("scope", "server");
 
         Map<String, Object> info = accessOAuth2Endpoint(params, "/oauth/token");
-
-        System.out.println("******** "+info);
 
         Assert.assertNotNull(info);
         Assert.assertNotNull(info.get("access_token"));

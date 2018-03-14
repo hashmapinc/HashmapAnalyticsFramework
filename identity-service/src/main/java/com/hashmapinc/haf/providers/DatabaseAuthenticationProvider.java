@@ -62,7 +62,6 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             throw new DisabledException("User is not active");
         }
 
-        System.out.println(encoder.encode(userInfo.getPassword()));
         if (!encoder.matches(password, userInfo.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
         }
