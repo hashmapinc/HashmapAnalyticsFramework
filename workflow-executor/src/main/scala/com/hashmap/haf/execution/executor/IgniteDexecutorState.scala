@@ -1,7 +1,7 @@
 package com.hashmap.haf.execution.executor
 
 import java.util
-
+import org.apache.ignite.configuration.CollectionConfiguration
 import com.github.dexecutor.core.{DexecutorState, Phase}
 import com.github.dexecutor.core.graph._
 import com.github.dexecutor.core.task.{ExecutionResult, ExecutionResults}
@@ -26,7 +26,6 @@ class IgniteDexecutorState[T <: Comparable[T], R] (cacheName: String, ignite: Ig
 
   val nodesCount: IgniteAtomicLong = ignite.atomicLong(CACHE_ID_NODES_COUNT, 0, true)
 
-  import org.apache.ignite.configuration.CollectionConfiguration
 
   val setCfg = new CollectionConfiguration
   setCfg.setAtomicityMode(TRANSACTIONAL)

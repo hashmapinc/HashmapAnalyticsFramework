@@ -75,6 +75,10 @@
             <groupId>com.hashmap.haf</groupId>
             <artifactId>datastore</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -89,7 +93,6 @@
                 <directory>${project.basedir}/src/test/resources</directory>
             </testResource>
         </testResources>
-        <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

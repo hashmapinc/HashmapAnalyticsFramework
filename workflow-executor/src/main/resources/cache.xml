@@ -92,7 +92,7 @@
                         <!--<bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder">-->
                         <property name="addresses">
                             <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
-                                <constructor-arg type="java.lang.String" value="192.168.1.67:47500..47509"/>
+                                <constructor-arg type="java.lang.String" value="192.168.1.88:47500..47509"/>
                             </bean>
                             <!--<list>
                                 &lt;!&ndash; In distributed environment, replace with actual host IP address. &ndash;&gt;
