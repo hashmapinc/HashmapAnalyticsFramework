@@ -3,6 +3,7 @@ spring.application:
 
 server:
   port: ${IDENTITY_SERVICE_PORT:9002}
+  contextPath: /uaa
 
 eureka:
   client:

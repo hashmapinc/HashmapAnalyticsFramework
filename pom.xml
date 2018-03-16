@@ -41,7 +41,6 @@
         <module>functions-core</module>
         <module>api-discovery</module>
         <module>api-gateway</module>
-        <module>auth-service</module>
         <module>functions-api</module>
         <module>workflow-core</module>
         <module>workflow-api</module>

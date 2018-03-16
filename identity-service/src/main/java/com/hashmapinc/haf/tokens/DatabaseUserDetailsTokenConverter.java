@@ -46,11 +46,12 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
             Object principal = map.get("user_name");
             //TODO: Make sure to get the User using tenant_id as well
             UserInformation user = userDetailsService.loadUserByUsername((String) principal);
-            SecurityUser securityUser = new SecurityUser(user, user.isEnabled());
 
-            return new UsernamePasswordAuthenticationToken(securityUser, "N/A", securityUser.getAuthorities());
-        } else {
-            return null;
+            if(user != null) {
+                SecurityUser securityUser = new SecurityUser(user, user.isEnabled());
+                return new UsernamePasswordAuthenticationToken(securityUser, "N/A", securityUser.getAuthorities());
+            }
         }
+        return null;
     }
 }
