@@ -3,8 +3,6 @@ package com.hashmap.haf.execution.controllers
 import java.sql.{Date, Timestamp}
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import javax.annotation.PostConstruct
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.task.ExecutionResults
 import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
@@ -20,15 +18,13 @@ import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.factory.Factory.{TaskFactory, WorkflowTask}
 import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
 import com.hashmap.haf.workflow.task.{DefaultTaskProvider, SparkIgniteTask}
-import org.apache.ignite.internal.IgnitionEx
-import org.apache.ignite.{Ignite, Ignition}
+import org.apache.ignite.Ignite
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
-
 import scala.xml.{Node, NodeSeq}
 
 @RestController
@@ -36,23 +32,9 @@ import scala.xml.{Node, NodeSeq}
 class WorkflowExecutionController @Autowired()(functionsServiceClient: FunctionsServiceClient,
                                                workflowServiceClient: WorkflowServiceClient,
                                                sourceGenerator: VelocitySourceGenerator,
-                                               functionCompiler: FunctionCompiler) {
+                                               functionCompiler: FunctionCompiler,
+																							 ignite: Ignite) {
   private val logger = LoggerFactory.getLogger(classOf[WorkflowExecutionController])
-
-  @Value("${functions.ignite.config}")
-  var igniteConfigPath: String = _
-
-  var ignite: Ignite = _
-
-  @PostConstruct
-  def init(): Unit = {
-    logger.trace("Initializing Ignite in client mode.")
-    val igConfig = Thread.currentThread().getContextClassLoader.getResource(igniteConfigPath)
-    val configuration = IgnitionEx.loadConfiguration(igConfig).get1()
-    configuration.setClientMode(true)
-    ignite = Ignition.start(configuration)
-    logger.trace("Ignite started in client mode.")
-  }
 
   @RequestMapping(value = Array("/workflow/{workflowId}/cache/{cacheId}/{count}"), method = Array(RequestMethod.GET))
   @ResponseBody
