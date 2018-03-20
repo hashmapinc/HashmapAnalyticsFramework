@@ -5,7 +5,7 @@ import com.github.dexecutor.core.task.ExecutionStatus
 import com.google.common.base.Charsets
 import com.google.common.io.Resources
 import com.hashmap.haf.execution.clients.WorkflowServiceClient
-import com.hashmap.haf.execution.models.Responses.WorkflowExecutionResult
+import com.hashmap.haf.execution.models.Responses.{TaskError, WorkflowErrors, WorkflowExecutionResult}
 import com.hashmap.haf.execution.services.WorkflowExecutionService
 import com.hashmap.haf.workflow.task.SparkIgniteTask
 import org.apache.ignite.Ignite
@@ -57,6 +57,25 @@ class WorkflowExecutionControllerTest {
 			.andExpect(jsonPath("$.status").value(ExecutionStatus.SUCCESS.toString))
 	  	.andExpect(jsonPath("$.errors").doesNotExist())
 	  	.andExpect(jsonPath("$.skipped").doesNotExist())
+	}
+
+	@Test
+	def returnResponseWithErrorsForTaskFailed(): Unit ={
+		val workflowId = UUID.randomUUID().toString
+		val taskId = UUID.randomUUID()
+		when(workflowServiceClient.getFunction(workflowId)).thenReturn(successWorkflow)
+		when(workflowExecutionService.executeWorkflow(workflowId, successWorkflow)).thenReturn(
+			WorkflowExecutionResult(workflowId, ExecutionStatus.ERRORED,
+				Some(WorkflowErrors(List(TaskError(taskId, "No data found in cache.")))), None)
+		)
+
+		mockMvc.perform(get(s"/api/workflow/execute/$workflowId"))
+			.andExpect(status().isOk) //TODO: Need to work on status returned
+			.andExpect(jsonPath("$.id").value(workflowId))
+			.andExpect(jsonPath("$.status").value(ExecutionStatus.ERRORED.toString))
+			.andExpect(jsonPath("$.errors.taskErrors[0].id").value(taskId.toString))
+			.andExpect(jsonPath("$.errors.taskErrors[0].error").value("No data found in cache."))
+			.andExpect(jsonPath("$.skipped").doesNotExist())
 	}
 
 }
