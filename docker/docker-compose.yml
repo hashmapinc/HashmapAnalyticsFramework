@@ -1,0 +1,68 @@
+version: 1
+
+services:
+  api-discovery:
+    image: "hashmapinc/redtail-api-discovery:1.0.0-SNAPSHOT"
+    ports:
+      - "8761:8761"
+  api-gateway:
+    image: "hashmapinc/redtail-api-gateway:1.0.0-SNAPSHOT"
+    ports: "8765:8765"
+    depends_on:
+      - api-discovery
+  auth-service:
+    image: "hashmapinc/redtail-auth-service:1.0.0-SNAPSHOT"
+    ports:
+      - "9002:9002"
+    depends_on:
+          - api-discovery
+          - api-gateway
+  functions-api:
+    image: "hashmapinc/redtail-functions-api:1.0.0-SNAPSHOT"
+    ports:
+      - "2222:2222"
+    volumes:
+      - "${FUNCTIONS_PATH:/home/}:${FUNCTIONS_PATH:/home/}"
+    depends_on:
+      - api-discovery
+      - api-gateway
+      - postgres
+  workflow-api:
+    image: "hashmapinc/redtail-workflow-api:1.0.0-SNAPSHOT"
+    ports:
+          - "9000:9000"
+        depends_on:
+          - api-discovery
+          - api-gateway
+          - postgres
+
+  workflow-executor:
+      image: "hashmapinc/redtail-workflow-executor:1.0.0-SNAPSHOT"
+      ports:
+            - "9005:9005"
+          depends_on:
+            - functions-api
+            - workflow-api
+  schedular:
+    image: "hashmapinc/redtail-schedular:1.0.0-SNAPSHOT"
+    ports:
+      - "9012:9012"
+    depends_on:
+          - workflow-executor
+    links:
+      - redis
+
+  redis:
+    image: "redis:latest"
+
+  postgres:
+      image: "postgres:latest"
+      ports:
+      - "5432"
+      environment:
+        - POSTGRES_DB=${POSTGRES_DB}
+      volumes:
+        - "${POSTGRES_DATA_DIR}:/var/lib/postgresql/data"
+
+  #yarn-ignite:
+   # image: ""
