@@ -1,0 +1,15 @@
+#Number of nodes in the cluster.
+IGNITE_NODE_COUNT=2
+
+# The number of CPU Cores for each Apache Ignite node.
+IGNITE_RUN_CPU_PER_NODE=1
+
+# The number of Megabytes of RAM for each Apache Ignite node.
+IGNITE_MEMORY_PER_NODE=2048
+
+
+#Following properties are specific to container
+IGNITE_VERSION=2.3.0
+IGNITE_PATH=/ignite/apache-ignite-hadoop-2.3.0-bin.zip
+IGNITE_XML_CONFIG=/ignite/default-config.xml
+IGNITE_USER_LIBS=/ignite/libs
