@@ -3,11 +3,13 @@ package com.hashmap.haf.execution.controllers
 import java.sql.{Date, Timestamp}
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.task.ExecutionResults
 import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
 import com.hashmap.haf.datastore.{DataframeIgniteCache, Datastore}
 import com.hashmap.haf.execution.clients.{FunctionsServiceClient, WorkflowServiceClient}
+import com.hashmap.haf.execution.exceptions.Exceptions.WorkflowNotFoundException
 import com.hashmap.haf.execution.executor.IgniteDexecutorState
 import com.hashmap.haf.execution.models.Responses.WorkflowExecutionResult
 import com.hashmap.haf.functions.compiler.FunctionCompiler
@@ -25,6 +27,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
+
 import scala.xml.{Node, NodeSeq}
 
 @RestController
@@ -74,7 +77,7 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
 
   @RequestMapping(value = Array("/workflow/execute/{workflowId}"), method = Array(RequestMethod.GET))
   @ResponseBody
-  def executeById(@PathVariable("workflowId") workflowId: String): String = {
+  def executeById(@PathVariable("workflowId") workflowId: String): Option[String] = {
 
     object CustomTaskFactory extends TaskFactory[UUID, String] {
       def create(xml: Node): WorkflowTask[UUID, String] = {
@@ -97,13 +100,15 @@ class WorkflowExecutionController @Autowired()(functionsServiceClient: Functions
     }
 
     val workflowXml: String = workflowServiceClient.getFunction(workflowId)
-    val workflow = DefaultWorkflow(workflowXml, CustomTaskFactory)
-    val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
-    workflow.buildTaskGraph(executor)
-    val results: ExecutionResults[UUID, String] =
+    if(workflowXml == null || workflowXml.isEmpty) throw new WorkflowNotFoundException()
+
+		val workflow = DefaultWorkflow(workflowXml, CustomTaskFactory)
+		val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
+		workflow.buildTaskGraph(executor)
+		val results: ExecutionResults[UUID, String] =
 			executor.execute(new ExecutionConfig().scheduledRetrying(3, new Duration(2, TimeUnit.SECONDS)))
 		WorkflowExecutionResult(workflowId, results)
-		"Done"
+		Option("Done")
   }
 
   private def generateSourceAndCompile(functionClassName: String) = {
