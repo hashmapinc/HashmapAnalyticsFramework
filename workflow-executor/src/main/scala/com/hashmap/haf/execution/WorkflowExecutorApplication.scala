@@ -1,34 +1,22 @@
 package com.hashmap.haf.execution
 
-import org.apache.ignite.internal.IgnitionEx
-import org.apache.ignite.{Ignite, Ignition}
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.boot.{SpringApplication, SpringBootConfiguration}
+import com.hashmap.haf.execution.mappers.ScalaObjectMapperBuilder
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.netflix.feign.EnableFeignClients
-import org.springframework.context.annotation.{Bean, ComponentScan}
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.context.annotation.Bean
 
-@SpringBootConfiguration
+@SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableAutoConfiguration
-@ComponentScan(Array("com.hashmap.haf"))
-@EnableJpaRepositories(Array("com.hashmap.haf.repository", "com.hashmap.haf.workflow.dao"))
-@EntityScan(Array("com.hashmap.haf.entities", "com.hashmap.haf.workflow.entity"))
 class WorkflowExecutorApplication{
 
-  @Value("${functions.ignite.config}")
-  var igniteConfigPath: String = _
-
-  @Bean(destroyMethod = "close")
-  def ignite(): Ignite = {
-    val igConfig = Thread.currentThread().getContextClassLoader.getResource(igniteConfigPath)
-    val configuration = IgnitionEx.loadConfiguration(igConfig).get1()
-    configuration.setClientMode(true)
-    Ignition.start(configuration)
+  @Bean
+  def jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer ={
+    new ScalaObjectMapperBuilder()
   }
 }
 
