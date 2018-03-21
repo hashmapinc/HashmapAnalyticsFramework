@@ -10,7 +10,8 @@ function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
     saveAndScheduleWorkflow: saveAndScheduleWorkflow,
     getDetailedWorkflow: getDetailedWorkflow,
     deleteWorkflow: deleteWorkflow, 
-    getDataByCacheName: getDataByCacheName
+    getDataByCacheName: getDataByCacheName,
+    execute: execute
   };
 
   return service;
@@ -30,13 +31,26 @@ function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
       }
   }
 
-  function saveAndScheduleWorkflow(workflow) {
-      return saveWorkflow(workflow)
+  function saveAndScheduleWorkflow(workflow, isScheduled) {
+      if(isScheduled == true){
+         return saveWorkflow(workflow)
+                .then(saveWorkflowInScheduler)
+                .then(success)
+                .catch(fail);
+      } else {
+        return saveWorkflow(workflow)
+                .then(success)
+                .catch(fail);
+      }
+      /*return saveWorkflow(workflow)
           .then(saveWorkflowInScheduler)
           .then(success)
           .catch(fail);
-
+*/
       function success(savedWorkflow) {
+          $rootScope.$broadcast('savedWorkflow', {
+              workflow: savedWorkflow
+          });
           return savedWorkflow;
       }
 
@@ -85,9 +99,6 @@ function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
           .catch(fail);
 
       function success(response) {
-          $rootScope.$broadcast('savedWorkflow', {
-              workflow: savedWorkflow
-          });
           return savedWorkflow;
       }
 
@@ -206,5 +217,24 @@ function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
       $log.error('XHR Failed for delete workflow');
       return e;
     }
+  }
+
+  function execute(workflowId) {
+      return $http({
+             url: '/workflow-executor-api/api/workflow/execute/'+ workflowId,
+             method: 'GET',
+             timeout: 60000
+           })//.get('/workflow-executor-api/api/workflow/execute/'+ workflowId)
+          .then(success)
+          .catch(fail);
+
+      function success(response) {
+          return response.data;
+      }
+
+      function fail(e) {
+          $log.error('XHR Failed for delete workflow');
+          return e;
+      }
   }
 }

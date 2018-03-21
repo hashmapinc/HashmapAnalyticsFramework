@@ -29,6 +29,7 @@ export default function WorkflowEditController($scope, $q, $log, $mdDialog, $roo
     vm.createWorkflow = createWorkflow;
     vm.displayCacheData = displayCacheData;
     vm.onClickSelectWorkflow = onClickSelectWorkflow;
+    vm.executeWorkflow = executeWorkflow;
     activate();
 
     // Broadcasted from workflow service
@@ -104,6 +105,33 @@ export default function WorkflowEditController($scope, $q, $log, $mdDialog, $roo
                     .hideDelay(3000)
             );
         });
+    }
+
+    function executeWorkflow(index){
+        $log.info(index);
+        let workflowId = getWorkflowIdByIndex(index);
+        $log.info(workflowId);
+        workflowapiservice.execute(workflowId).then(function(data){
+            $log.info(data);
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent('Workflow Executed Successfully')
+                    .hideDelay(3000)
+            );
+            return;
+        }).catch(function(e){
+            $log.error(e);
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent('Error while executing workflow')
+                    .hideDelay(3000)
+            );
+            return;
+        });
+    }
+
+    function getWorkflowIdByIndex(index){
+        return vm.workflows[index]["id"];
     }
 
 }
