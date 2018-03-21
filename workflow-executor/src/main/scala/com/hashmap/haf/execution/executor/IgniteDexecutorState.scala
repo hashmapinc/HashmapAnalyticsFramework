@@ -31,6 +31,7 @@ class IgniteDexecutorState[T <: Comparable[T], R] (cacheName: String, ignite: Ig
   val setCfg = new CollectionConfiguration
   setCfg.setAtomicityMode(TRANSACTIONAL)
   setCfg.setCacheMode(PARTITIONED)
+  setCfg.setBackups(1)
 
   val processedNodes: util.Collection[Node[T, R]] = ignite.set(CACHE_ID_PROCESSED_NODES, setCfg)
   val discontinuedNodes: util.Collection[Node[T, R]] = ignite.set(CACHE_ID_DISCONTINUED_NODES, setCfg)

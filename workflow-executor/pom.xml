@@ -15,10 +15,12 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
+            <!--<scope>runtime</scope>-->
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
+            <!--<scope>runtime</scope>-->
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>

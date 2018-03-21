@@ -1,16 +1,18 @@
 package com.hashmap.haf.functions.summarize
 
 import com.hashmap.haf.annotations.IgniteFunction
-import com.hashmap.haf.datastore.DataframeIgniteCache
+import com.hashmap.haf.datastore.impl.{IgniteSparkDFStore, SparkDFOptions}
 import com.hashmap.haf.functions.constants.TaskConfigurationConstants._
 import com.hashmap.haf.functions.services.ServiceFunction
 import org.apache.ignite.Ignite
 import org.apache.ignite.resources.IgniteInstanceResource
 import org.apache.ignite.services.ServiceContext
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 @IgniteFunction(functionClazz = "SummarizeSparkTask", service = "summarizeService",
   configs = Array())
@@ -23,26 +25,44 @@ class SparkSummarizeService extends ServiceFunction{
 
   override def run(inputKey: String, outputKey: String, functionArguments: Map[String, String], configurations: Map[String, String]): String = {
     println("Executing Spark Summarize.....")
+    val (sparkAppName: String, sparkMaster: String, tableParameters: String) = getConfigurations(configurations)
+
     val spark = SparkSession
       .builder()
-      .appName(configurations.getOrElse(SPARK_APP_NAME, throw new IllegalArgumentException(SPARK_APP_NAME + " not provided in configurations")))
-      .master(configurations.getOrElse(SPARK_MASTER, throw new IllegalArgumentException(SPARK_MASTER + " not provided in configurations")))
+      .appName(sparkAppName)
+      .master(sparkMaster)
       .getOrCreate()
-    val cache = DataframeIgniteCache.create()
-    val (schema, igniteRDD) = cache.get(spark.sparkContext, inputKey)
 
-    val rdd1: RDD[Row] = igniteRDD.map(_._2)
-    val df = spark.sqlContext.createDataFrame(rdd1, schema)
-    df.show()
-    df.cache()
+    val cache = IgniteSparkDFStore
+
+    val df = cache.get(SparkDFOptions(spark, inputKey, tableParameters))
+    val newDs: DataFrame = processInputDF(df)
+    cache.set(newDs, SparkDFOptions(spark, outputKey, tableParameters))
+    println("Setting to output cache .......showing only 10 rows of it")
+    newDs.show(10)
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val f = Future { spark.close() }
+
+    f onComplete {
+      case Success(x) => println("Summarize: Successfully closed spark context")
+      case Failure(e) => e.printStackTrace()
+    }
+    println("Executed Summarize")
+    "successful"
+  }
+
+  private def processInputDF(df: DataFrame) = {
     val metadata = MetadataHandler.get(df)
     val newMetaData = CommonUtils.getAllSummarizeOperations.foldLeft(metadata)((meta, op) => op(meta, df)).build()
     val newDs = MetadataHandler.set(df, newMetaData)
-    cache.set(spark.sparkContext, newDs, outputKey)
-    println("Setting to output cache .......showing only 10 rows of it")
-    newDs.show(10)
-    spark.close()
-    "successful"
+    newDs
+  }
+
+  private def getConfigurations(configurations: Map[String, String]) = {
+    val sparkAppName = configurations.getOrElse(SPARK_APP_NAME, throw new IllegalArgumentException(SPARK_APP_NAME + " not provided in configurations"))
+    val sparkMaster = configurations.getOrElse(SPARK_MASTER, throw new IllegalArgumentException(SPARK_MASTER + " not provided in configurations"))
+    val tableParameters = configurations.getOrElse(TABLE_PARAMETERS, "template=partitioned")
+    (sparkAppName, sparkMaster, tableParameters)
   }
 
   override def cancel(ctx: ServiceContext) = println("Cancelled")

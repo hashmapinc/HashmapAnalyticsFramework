@@ -9,6 +9,6 @@ class ${model.functionClazz}(xml: NodeSeq, ignite: Ignite, workflowId: String) e
 
   override def execute(): String = {
     val mapSvc = ignite.services().serviceProxy("${model.service}", classOf[ServiceFunction], false)
-    mapSvc.run(workflowId + "_" + inputCache, workflowId + "_" + outputCache, functionArguments, configurations)
+    mapSvc.run(inputCache +     "_" + workflowId, outputCache + "_" + workflowId, functionArguments, configurations)
   }
 }

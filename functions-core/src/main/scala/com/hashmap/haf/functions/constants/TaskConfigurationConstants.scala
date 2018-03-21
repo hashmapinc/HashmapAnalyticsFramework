@@ -7,4 +7,6 @@ object TaskConfigurationConstants {
   val JDBC_PASSWORD = "jdbcPassword"
   val SPARK_APP_NAME = "sparkAppName"
   val SPARK_MASTER = "sparkMaster"
+  val CONFIG_PATH = "configPath"
+  val TABLE_PARAMETERS = "tableParameters" // comma seprated list of table configs : ref : https://apacheignite-sql.readme.io/docs/create-table
 }
