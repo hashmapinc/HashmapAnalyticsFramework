@@ -28,7 +28,9 @@ class WorkflowEventListenerActor @Autowired()(system: ActorSystem, springExtensi
   val schedulerActor = system.actorOf(springExtension.props("schedulerActor"))
 
   override def receive = {
-    case AddJob(workflowEvent) => schedulerActor ! StartJob(workflowEvent)
+    case AddJob(workflowEvent) =>
+      schedulerActor ! CreateJob(workflowEvent)
+      //schedulerActor ! StartJob(workflowEvent)
     case StopJob(id) => schedulerActor ! SuspendJob(id)
     case DropJob(id) => schedulerActor ! RemoveJob(id)
     case JobStatus(_) => ???

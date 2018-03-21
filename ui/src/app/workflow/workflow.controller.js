@@ -26,8 +26,8 @@ export default function WorkflowController($q, $mdToast, $mdDialog, workflowapis
         $mdDialog.cancel();
   }
 
-  function upload(workflow) {
-      workflowapiservice.saveAndScheduleWorkflow(workflow).then(function(data, isScheduled) {
+  function upload(workflow, isScheduled) {
+      workflowapiservice.saveAndScheduleWorkflow(workflow, isScheduled).then(function(data) {
         $mdDialog.cancel();
         $mdToast.show(
           $mdToast.simple()
