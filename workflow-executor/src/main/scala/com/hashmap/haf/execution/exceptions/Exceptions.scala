@@ -6,7 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus
 object Exceptions {
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Workflow with given id not found.")
-	class WorkflowNotFoundException extends RuntimeException
+	class WorkflowNotFoundException(msg: String, cause: Throwable) extends RuntimeException(msg, cause) {
+		def this(msg: String) {
+			this(msg, null)
+		}
+	}
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Function specified in workflow not found")
 	class FunctionNotFoundException(msg: String, cause: Throwable) extends RuntimeException(msg, cause){

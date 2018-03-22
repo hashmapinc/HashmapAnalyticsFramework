@@ -65,8 +65,9 @@ class WorkflowExecutionController @Autowired()(workflowServiceClient: WorkflowSe
 		logger.debug(s"Workflow XML for id $workflowId found is $workflowXml")
 
     if(workflowXml == null || workflowXml.isEmpty) {
-			logger.error(s"Workflow not found for id $workflowId")
-			throw new WorkflowNotFoundException()
+			val errorMessage = s"Workflow not found for id $workflowId"
+			logger.error(errorMessage)
+			throw new WorkflowNotFoundException(errorMessage)
 		}
 		workflowExecutionService.executeWorkflow(workflowId, workflowXml)
   }
