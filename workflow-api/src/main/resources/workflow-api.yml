@@ -28,6 +28,7 @@ spring:
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target: my-schema.sql
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.action: create
 
+spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
 
 eureka:
   client:
