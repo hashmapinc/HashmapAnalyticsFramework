@@ -70,7 +70,7 @@ class WorkflowExecutionControllerTest {
 		)
 
 		mockMvc.perform(get(s"/api/workflow/execute/$workflowId"))
-			.andExpect(status().isOk) //TODO: Need to work on status returned
+			.andExpect(status().isOk) //TODO: Need to work on status returned for errors
 			.andExpect(jsonPath("$.id").value(workflowId))
 			.andExpect(jsonPath("$.status").value(ExecutionStatus.ERRORED.toString))
 			.andExpect(jsonPath("$.errors.taskErrors[0].id").value(taskId.toString))

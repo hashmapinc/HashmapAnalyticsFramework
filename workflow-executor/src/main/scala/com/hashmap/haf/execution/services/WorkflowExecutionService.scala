@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.task.ExecutionResults
 import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
 import com.hashmap.haf.execution.clients.FunctionsServiceClient
+import com.hashmap.haf.execution.exceptions.Exceptions.{FunctionNotFoundException, SourceCompilationException, SourceGenerationException}
 import com.hashmap.haf.execution.executor.IgniteDexecutorState
 import com.hashmap.haf.execution.models.Responses.WorkflowExecutionResult
 import com.hashmap.haf.functions.compiler.FunctionCompiler
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service
 import com.hashmap.haf.workflow.constants.XmlConstants._
 import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
+import org.springframework.util.StringUtils
 
 import scala.xml.{Node, NodeSeq}
 
@@ -37,7 +39,8 @@ class WorkflowExecutionService @Autowired()(functionsServiceClient: FunctionsSer
 		val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
 		workflow.buildTaskGraph(executor)
 		val results: ExecutionResults[UUID, String] =
-			executor.execute(new ExecutionConfig().scheduledRetrying(3, new Duration(2, TimeUnit.SECONDS)))
+			executor.execute(new ExecutionConfig().terminating()/*.scheduledRetrying(2, new Duration(2, TimeUnit.SECONDS))*/)
+		//Scheduled retrying is not terminating if task is failed, need to check implementation
 		WorkflowExecutionResult(workflowId, results)
 	}
 
@@ -48,19 +51,32 @@ class WorkflowExecutionService @Autowired()(functionsServiceClient: FunctionsSer
 		new DefaultDexecutor[UUID, String](config)
 	}
 
-	private def generateSourceAndCompile(functionClassName: String) = {
+	private def generateSourceAndCompile(functionClassName: String): Either[Exception, Option[Class[_]]] = {
 		logger.trace(s"Generating source for $functionClassName")
-		val functionTypeString = functionsServiceClient.getFunction(functionClassName.substring(functionClassName.lastIndexOf(".")+1))
-		logger.debug(s"Received function $functionTypeString from functions-api")
-		val mapper = new ObjectMapper()
-		val functionType = mapper.readValue(functionTypeString, classOf[IgniteFunctionType])
+		val s = functionsServiceClient.getFunction(functionClassName.substring(functionClassName.lastIndexOf(".")+1))
+		s match {
+			case functionTypeString if !StringUtils.isEmpty(functionTypeString) =>
+				logger.debug(s"Received function $functionTypeString from functions-api")
+				val mapper = new ObjectMapper()
+				val functionType = mapper.readValue(functionTypeString, classOf[IgniteFunctionType])
+				generateSource(functionClassName, functionType)
+
+			case _ =>
+				logger.error(s"Function with $functionClassName not found")
+				Left(new FunctionNotFoundException(s"Function $functionClassName Not found"))
+		}
+	}
+
+	private def generateSource(functionClassName: String, functionType: IgniteFunctionType) = {
 		sourceGenerator.generateSource(functionType) match {
 			case Right(source) =>
 				logger.debug(s"Compiling source for $functionClassName")
 				functionCompiler.compile(functionClassName, source)
-				functionCompiler.loadClazz(functionClassName)
+				Right(functionCompiler.loadClazz(functionClassName))
 
-			case Left(_) => None
+			case Left((m, e)) =>
+				logger.error(m, e)
+				Left(new SourceGenerationException(m, e))
 		}
 	}
 
@@ -76,7 +92,12 @@ class WorkflowExecutionService @Autowired()(functionsServiceClient: FunctionsSer
 
 						case _ =>
 							logger.debug(s"No precompiled class found for $functionClassName.")
-							generateSourceAndCompile(functionClassName).get.getConstructor(classOf[NodeSeq], classOf[Ignite], classOf[String]).newInstance(xml, ignite, workflowId).asInstanceOf[SparkIgniteTask]
+							generateSourceAndCompile(functionClassName) match {
+								case Right(Some(c)) =>
+									c.getConstructor(classOf[NodeSeq], classOf[Ignite], classOf[String]).newInstance(xml, ignite, workflowId).asInstanceOf[SparkIgniteTask]
+								case Right(None) => throw new SourceCompilationException(s"Error while loading class $functionClassName")
+								case Left(e) => throw e
+							}
 
 					}
 				}
