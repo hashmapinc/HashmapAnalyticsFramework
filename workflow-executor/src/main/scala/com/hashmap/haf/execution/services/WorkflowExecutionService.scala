@@ -1,11 +1,9 @@
 package com.hashmap.haf.execution.services
 
 import java.util.UUID
-import java.util.concurrent.TimeUnit
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dexecutor.core.task.ExecutionResults
-import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, Duration, ExecutionConfig}
+import com.github.dexecutor.core.{DefaultDexecutor, DexecutorConfig, ExecutionConfig}
 import com.hashmap.haf.execution.clients.FunctionsServiceClient
 import com.hashmap.haf.execution.exceptions.Exceptions.{FunctionNotFoundException, SourceCompilationException, SourceGenerationException}
 import com.hashmap.haf.execution.executor.IgniteDexecutorState
@@ -13,17 +11,16 @@ import com.hashmap.haf.execution.models.Responses.WorkflowExecutionResult
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.processors.VelocitySourceGenerator
 import com.hashmap.haf.models.IgniteFunctionType
+import com.hashmap.haf.workflow.constants.XmlConstants._
+import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
 import com.hashmap.haf.workflow.factory.Factory.{TaskFactory, WorkflowTask}
+import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
 import com.hashmap.haf.workflow.task.{DefaultTaskProvider, SparkIgniteTask}
 import org.apache.ignite.Ignite
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import com.hashmap.haf.workflow.constants.XmlConstants._
-import com.hashmap.haf.workflow.execution.IgniteSparkExecutionEngine
-import com.hashmap.haf.workflow.models.{DefaultWorkflow, Workflow}
 import org.springframework.util.StringUtils
-
 import scala.xml.{Node, NodeSeq}
 
 @Service
