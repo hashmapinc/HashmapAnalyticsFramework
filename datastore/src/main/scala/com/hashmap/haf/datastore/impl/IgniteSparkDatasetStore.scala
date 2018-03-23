@@ -20,6 +20,7 @@ object IgniteSparkDFStore extends Datastore[DataFrame, SparkDFOptions] {
       else
         data.withColumn(primaryKeyFieldName,monotonically_increasing_id())
 
+    println(configPath)
     //val df =
     df.write
       .format(FORMAT_IGNITE)

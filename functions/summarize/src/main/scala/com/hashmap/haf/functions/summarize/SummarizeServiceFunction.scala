@@ -8,6 +8,7 @@ import org.apache.ignite.Ignite
 import org.apache.ignite.resources.IgniteInstanceResource
 import org.apache.ignite.services.ServiceContext
 import org.apache.spark.sql
+import org.apache.spark.sql.ignite.IgniteSparkSession
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
@@ -27,11 +28,21 @@ class SparkSummarizeService extends ServiceFunction{
     println("Executing Spark Summarize.....")
     val (sparkAppName: String, sparkMaster: String, tableParameters: String) = getConfigurations(configurations)
 
-    val spark = SparkSession
+    val igniteSession = IgniteSparkSession.builder()
+      .appName(sparkAppName)
+      .master(sparkMaster)
+      //.config("spark.executor.instances", "2")
+      //Only additional option to refer to Ignite cluster.
+      //.igniteConfig("/path/to/ignite/config.xml")
+      .getOrCreate()
+
+    val spark = igniteSession.newSession()
+    /*val spark: SparkSession = SparkSession
       .builder()
       .appName(sparkAppName)
       .master(sparkMaster)
       .getOrCreate()
+*/
 
     val cache = IgniteSparkDFStore
 
@@ -40,14 +51,9 @@ class SparkSummarizeService extends ServiceFunction{
     cache.set(newDs, SparkDFOptions(spark, outputKey, tableParameters))
     println("Setting to output cache .......showing only 10 rows of it")
     newDs.show(10)
-    import scala.concurrent.ExecutionContext.Implicits.global
-    val f = Future { spark.close() }
-
-    f onComplete {
-      case Success(x) => println("Summarize: Successfully closed spark context")
-      case Failure(e) => e.printStackTrace()
-    }
-    println("Executed Summarize")
+    println("Closing spark context")
+    spark.close()
+    println("Successfully executed Summarize")
     "successful"
   }
 

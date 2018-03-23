@@ -51,7 +51,7 @@ object TestIgniteServices extends App{
     println("Hello")
 
   } finally {
-    ignite.close()
+    //ignite.close()
   }
 
   /*private val descriptors = ignite.services().serviceDescriptors().asScala.toList

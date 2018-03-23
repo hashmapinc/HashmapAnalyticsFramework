@@ -14,7 +14,7 @@
             <inputCache></inputCache>
             <outputCache>output_postgres</outputCache>
             <args>
-                <arg key="jdbcUrl">jdbc:postgresql://192.168.1.67:5432/thingsboard</arg>
+                <arg key="jdbcUrl">jdbc:postgresql://172.17.0.2:5432/thingsboard</arg>
                 <arg key="jdbcDbTable">ts_kv</arg>
                 <arg key="jdbcUser">postgres</arg>
                 <arg key="jdbcPassword">postgres</arg>
