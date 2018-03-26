@@ -10,23 +10,23 @@ import com.google.common.base.Charsets
 import com.google.common.io.Resources
 import com.hashmap.haf.execution.clients.FunctionsServiceClient
 import com.hashmap.haf.execution.controllers.{SampleFailureWorkflowTask, SampleWorkflowTask}
-import com.hashmap.haf.execution.exceptions.Exceptions.{FunctionNotFoundException, SourceCompilationException, SourceGenerationException}
+import com.hashmap.haf.execution.exceptions.Exceptions.{FunctionNotFoundException, SourceGenerationException}
 import com.hashmap.haf.functions.compiler.FunctionCompiler
 import com.hashmap.haf.functions.processors.VelocitySourceGenerator
 import com.hashmap.haf.models.IgniteFunctionType
-import org.apache.ignite.{Ignite, Ignition}
 import org.apache.ignite.configuration.IgniteConfiguration
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
-import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
+import org.apache.ignite.{Ignite, Ignition}
 import org.apache.velocity.exception.ParseErrorException
+import org.junit.Assert._
 import org.junit._
 import org.junit.runner.RunWith
-import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.stubbing.Answer
-import org.junit.Assert._
 
 object WorkflowExecutionServiceTest{
 	private var ignite: Ignite = _
@@ -44,11 +44,12 @@ object WorkflowExecutionServiceTest{
 
 	private def igniteServer(): Ignite ={
 		val configs = new IgniteConfiguration()
+		configs.setIgniteInstanceName("TestIgniteServer")
 		configs.setClientMode(false)
 		configs.setPeerClassLoadingEnabled(true)
 		val spi = new TcpDiscoverySpi()
-		val finder = new TcpDiscoveryMulticastIpFinder()
-		finder.setAddresses(util.Arrays.asList("127.0.0.1:47500..47509"))
+		val finder = new TcpDiscoveryVmIpFinder(false)
+		finder.setAddresses(util.Arrays.asList("127.0.0.1:47500"))
 		spi.setIpFinder(finder)
 		configs.setDiscoverySpi(spi)
 		Ignition.getOrStart(configs)

@@ -1,5 +1,8 @@
 package com.hashmap.haf.execution.events.dao
 
-class EventsDao {
+import com.hashmap.haf.execution.events.Event
 
+trait EventsDao {
+
+  def save(event: Event): Event
 }

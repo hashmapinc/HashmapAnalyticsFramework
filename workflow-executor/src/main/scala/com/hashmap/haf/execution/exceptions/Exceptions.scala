@@ -19,14 +19,14 @@ object Exceptions {
 		}
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No compiled class found for given function")
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "No compiled class found for given function")
 	class SourceCompilationException(msg: String, cause: Throwable) extends RuntimeException(msg, cause){
 		def this(msg: String){
 			this(msg, null)
 		}
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Exception while generating source for function")
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Exception while generating source for function")
 	class SourceGenerationException(msg: String, cause: Throwable) extends RuntimeException(msg, cause){
 		def this(msg: String){
 			this(msg, null)
