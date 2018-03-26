@@ -35,10 +35,7 @@ class WorkflowExecutionService @Autowired()(functionsServiceClient: FunctionsSer
 		val workflow = DefaultWorkflow(workflowXML, new CustomTaskFactory(workflowId))
 		val executor: DefaultDexecutor[UUID, String] = newTaskExecutor(workflow)
 		workflow.buildTaskGraph(executor)
-		val results: ExecutionResults[UUID, String] =
-			executor.execute(new ExecutionConfig().terminating()/*.scheduledRetrying(2, new Duration(2, TimeUnit.SECONDS))*/)
-		//Scheduled retrying is not terminating if task is failed, need to check implementation
-		WorkflowExecutionResult(workflowId, results)
+		execute(workflowId, executor)
 	}
 
 	private def newTaskExecutor(workflow: Workflow[UUID, String]) = {
@@ -46,6 +43,13 @@ class WorkflowExecutionService @Autowired()(functionsServiceClient: FunctionsSer
 		val config = new DexecutorConfig[UUID, String](new IgniteSparkExecutionEngine[UUID, String](executorState), DefaultTaskProvider(workflow))
 		config.setDexecutorState(executorState)
 		new DefaultDexecutor[UUID, String](config)
+	}
+
+	private def execute(workflowId: String, executor: DefaultDexecutor[UUID, String]) = {
+		val results: ExecutionResults[UUID, String] =
+			executor.execute(new ExecutionConfig().terminating() /*.scheduledRetrying(2, new Duration(2, TimeUnit.SECONDS))*/)
+		//Scheduled retrying is not terminating if task is failed, need to check implementation
+		WorkflowExecutionResult(workflowId, results)
 	}
 
 	private def generateSourceAndCompile(functionClassName: String): Either[Exception, Option[Class[_]]] = {

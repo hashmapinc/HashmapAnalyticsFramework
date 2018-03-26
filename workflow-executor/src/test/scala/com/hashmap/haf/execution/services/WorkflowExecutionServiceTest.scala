@@ -19,7 +19,7 @@ import org.apache.ignite.configuration.IgniteConfiguration
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder
 import org.apache.velocity.exception.ParseErrorException
-import org.junit.{After, Before, Test}
+import org.junit._
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -27,6 +27,32 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.runners.MockitoJUnitRunner
 import org.mockito.stubbing.Answer
 import org.junit.Assert._
+
+object WorkflowExecutionServiceTest{
+	private var ignite: Ignite = _
+
+	@BeforeClass
+	def init(): Unit ={
+		ignite = igniteServer()
+	}
+
+	@AfterClass
+	def tearDown(): Unit = {
+		if(ignite != null)
+			ignite.close()
+	}
+
+	private def igniteServer(): Ignite ={
+		val configs = new IgniteConfiguration()
+		configs.setClientMode(false)
+		val spi = new TcpDiscoverySpi()
+		val finder = new TcpDiscoveryMulticastIpFinder()
+		finder.setAddresses(util.Arrays.asList("127.0.0.1:47500..47509"))
+		spi.setIpFinder(finder)
+		configs.setDiscoverySpi(spi)
+		Ignition.getOrStart(configs)
+	}
+}
 
 @RunWith(classOf[MockitoJUnitRunner])
 class WorkflowExecutionServiceTest {
@@ -39,8 +65,6 @@ class WorkflowExecutionServiceTest {
 
 	private var functionCompiler: FunctionCompiler = _
 
-	private var ignite: Ignite = _
-
 	private var service: WorkflowExecutionService = _
 
 	private val successWorkflow: String = Resources.toString(Resources.getResource("test-success-workflow.xml"), Charsets.UTF_8)
@@ -49,13 +73,12 @@ class WorkflowExecutionServiceTest {
 	@Before
 	def setup(): Unit ={
 		mapper.registerModule(DefaultScalaModule)
-		ignite = igniteServer()
 		functionsServiceClient = mock(classOf[FunctionsServiceClient])
 		sourceGenerator = mock(classOf[VelocitySourceGenerator])
 		functionCompiler = mock(classOf[FunctionCompiler])
 		when(sourceGenerator.generateSource(any[IgniteFunctionType]())).thenReturn(Right(""))
 		doNothing().when(functionCompiler).compile(anyString(), anyString())
-		service = new WorkflowExecutionService(functionsServiceClient, sourceGenerator, functionCompiler, ignite)
+		service = new WorkflowExecutionService(functionsServiceClient, sourceGenerator, functionCompiler, WorkflowExecutionServiceTest.ignite)
 	}
 
 	@Test
@@ -144,24 +167,6 @@ class WorkflowExecutionServiceTest {
 		when(sourceGenerator.generateSource(functionResult)).thenReturn(Left("Error while loading template", new ParseErrorException("parse error")))
 
 		service.executeWorkflow(workflowId, successWorkflow)
-	}
-
-	@After
-	def tearDown(): Unit = {
-		if(ignite != null)
-			ignite.close()
-	}
-
-
-	private def igniteServer(): Ignite ={
-		val configs = new IgniteConfiguration()
-		configs.setClientMode(false)
-		val spi = new TcpDiscoverySpi()
-		val finder = new TcpDiscoveryMulticastIpFinder()
-		finder.setAddresses(util.Arrays.asList("127.0.0.1:47500..47509"))
-		spi.setIpFinder(finder)
-		configs.setDiscoverySpi(spi)
-		Ignition.start(configs)
 	}
 
 }

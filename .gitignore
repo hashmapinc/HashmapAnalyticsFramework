@@ -3,7 +3,7 @@
 */target
 *.iml
 .idea/
-*/dependency-reduced-pom.xml
+**/dependency-reduced-pom.xml
 */*/target
 */*/*/target
 */node_modules/
