@@ -15,9 +15,6 @@ class LivyTaskEntity (
                        @BeanProperty val outputCache: String
                      ) extends BaseTaskEntity[String] {
 
-  @Transient
-  private val serialVersionUID = 7969830667450807686L
-
   private def this() = this(null, null, null, null)
 
   @BeanProperty

@@ -6,8 +6,8 @@ import java.util
 case class SavedWorkflow(@BeanProperty id: String,
                          @BeanProperty name: String,
                          @BeanProperty xml: String,
-                         @BeanProperty tasks: util.List[WorkflowTask]) extends Serializable {
-  private val serialVersionUID = - 1262757341033966563L
+                         @BeanProperty tasks: util.List[WorkflowTask]) {
+
   def this() = this("", "", "", null)
 }
 

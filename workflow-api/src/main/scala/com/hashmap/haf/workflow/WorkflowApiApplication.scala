@@ -2,17 +2,18 @@ package com.hashmap.haf.workflow
 
 
 import com.hashmap.haf.workflow.install.WorkflowInstallationService
+import com.hashmap.haf.workflow.mappers.ScalaObjectMapperBuilder
 import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.netflix.feign.EnableFeignClients
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.{Bean, ComponentScan}
 
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableAutoConfiguration
-@ComponentScan
 class WorkflowApiApplication
 
 object WorkflowApiApplication extends App{
@@ -22,6 +23,11 @@ object WorkflowApiApplication extends App{
   val context = SpringApplication.run(classOf[WorkflowApiApplication], updateArguments(args): _*)
   context.getBean(classOf[WorkflowInstallationService]).performInstall()
 
+
+  @Bean
+  def jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer ={
+    new ScalaObjectMapperBuilder()
+  }
 
   private def updateArguments(args: Array[String]): List[String] ={
     val argsAsList = args.toList

@@ -14,7 +14,6 @@ case class SparkIgniteTask(override val name: String,
                            configurations: Map[String, String],
                            override val to: List[String] = Nil) extends BaseTask[String](name, id, to){
 
-  private val serialVersionUID = - 4757027432747661204L
 
   def this(xml: NodeSeq) = this (
     name = (xml \ NAME_ATTRIBUTE).text,

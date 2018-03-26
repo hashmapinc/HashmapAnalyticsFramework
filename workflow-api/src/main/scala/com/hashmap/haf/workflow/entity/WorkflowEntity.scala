@@ -15,9 +15,6 @@ class WorkflowEntity(@BeanProperty val name: String) extends BaseSqlEntity[Defau
 
   private def this() = this(null)
 
-  @Transient
-  private val serialVersionUID = - 6583308305335959576L
-
   @BeanProperty
   @OneToMany(cascade = Array(CascadeType.ALL), orphanRemoval = true)
   @JoinColumn(name = "WORKFLOW_ID")
