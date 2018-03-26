@@ -45,6 +45,7 @@ object WorkflowExecutionServiceTest{
 	private def igniteServer(): Ignite ={
 		val configs = new IgniteConfiguration()
 		configs.setClientMode(false)
+		configs.setPeerClassLoadingEnabled(true)
 		val spi = new TcpDiscoverySpi()
 		val finder = new TcpDiscoveryMulticastIpFinder()
 		finder.setAddresses(util.Arrays.asList("127.0.0.1:47500..47509"))
