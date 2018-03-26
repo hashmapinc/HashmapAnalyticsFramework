@@ -49,7 +49,7 @@ class WorkflowExecutorAspect @Autowired()(publisher: EventsPublisher) {
 		value
 	}
 
-	@Around("execution(* com.hashmap.haf.execution.services.WorkflowExecutionService.executeWorkflow(String, String)")
+	@Around("execution(* com.hashmap.haf.execution.services.WorkflowExecutionService.executeWorkflow(String, String))")
 	def publishEvent(joinPoint: ProceedingJoinPoint): Object = {
 		val startTime = System.currentTimeMillis()
 		logger.trace(s"Execution of $joinPoint started at $startTime")

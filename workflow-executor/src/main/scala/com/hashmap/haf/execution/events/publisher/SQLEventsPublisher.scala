@@ -4,8 +4,11 @@ import com.hashmap.haf.execution.events.Event
 import com.hashmap.haf.execution.events.dao.EventsDao
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
 import scala.util._
 
+@Component
 class SQLEventsPublisher @Autowired()(dao: EventsDao) extends EventsPublisher{
 
   private val logger = LoggerFactory.getLogger(classOf[SQLEventsPublisher])

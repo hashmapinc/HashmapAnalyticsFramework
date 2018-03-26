@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @Configuration
 @EnableAspectJAutoProxy
 @ComponentScan(Array("com.hashmap.haf"))
-@EnableJpaRepositories(Array("com.hashmap.haf.repository", "com.hashmap.haf.workflow.dao"))
-@EntityScan(Array("com.hashmap.haf.entities", "com.hashmap.haf.workflow.entity"))
 class WorkflowExecutorConfig {
 
 	@Value("${functions.ignite.config}")
