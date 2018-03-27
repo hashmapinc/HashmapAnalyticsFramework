@@ -21,7 +21,7 @@ import org.mockito.Mockito._
 import org.springframework.test.web.servlet.{MockMvc, ResultActions}
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders._
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers._
-import org.junit.Test
+import org.junit.{Assert, Test}
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -43,7 +43,7 @@ class WorkflowControllerSpec {
 
 
   @Test
-  def saveWorkflow() {
+  def testSaveWorkflow() {
     when(workflowService.saveOrUpdate(workflowXML)).thenReturn(DefaultWorkflow(workflowXML))
 
     val putRequest = put(s"/api/workflows")
@@ -55,12 +55,26 @@ class WorkflowControllerSpec {
   }
 
   @Test
-  def findById(): Unit = {
+  def testFindById(): Unit = {
     val workflowId = "bea90c838d84f4e9a66ea41df42cb9a"
     when(workflowService.findById(UUIDConverter.fromString(workflowId))).thenReturn(DefaultWorkflow(workflowXML))
     val getRequest = get(s"/api/workflows/$workflowId")
     mockMvc.perform(getRequest)
       .andExpect(status().isOk)
+  }
+
+  @Test
+  def testFindAll(): Unit = {
+    when(workflowService.findAll).thenReturn(List(DefaultWorkflow(workflowXML)))
+    val getRequest = get("/api/workflows")
+    mockMvc.perform(getRequest).andExpect(status().isOk)
+  }
+
+  @Test
+  def testDelete(): Unit = {
+    val workflowId = "bea90c838d84f4e9a66ea41df42cb9a"
+    val deleteRequest = delete(s"/api/workflows/$workflowId")
+    mockMvc.perform(deleteRequest).andExpect(status().isOk)
   }
 
 
