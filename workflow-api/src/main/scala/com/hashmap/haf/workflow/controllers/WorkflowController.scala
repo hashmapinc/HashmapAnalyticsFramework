@@ -22,7 +22,13 @@ class WorkflowController @Autowired()(private val workflowService: WorkflowServi
   @ResponseBody
   def findById(@PathVariable("workflowId") workflowId: String): String = {
     logger.trace("Executing find workflow by Id for {}", workflowId)
-     workflowService.findById(UUIDConverter.fromString(workflowId)).toXml.toString
+
+     workflowService.findById(UUIDConverter.fromString(workflowId)) match {
+       case Some(workflow) =>  workflow.toXml.toString
+       case None => throw new IllegalArgumentException("Workflow Not found")
+     }
+
+
   }
 
   @RequestMapping(value = Array("/workflows"), method = Array(RequestMethod.GET),

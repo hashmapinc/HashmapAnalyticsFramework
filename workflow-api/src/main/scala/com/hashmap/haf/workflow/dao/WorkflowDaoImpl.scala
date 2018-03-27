@@ -20,11 +20,14 @@ class WorkflowDaoImpl @Autowired()(private val workflowRepository: WorkflowRepos
     workflowRepository.save(workflowEntity).toData()
   }
 
-  override def findById(id: UUID): Workflow[UUID, String] = {
-    val workflowEntity: WorkflowEntity = workflowRepository.findOne(UUIDConverter.fromTimeUUID(id))
-    workflowEntity.toData()
+  @Transactional
+  override def findById(id: UUID): Option[Workflow[UUID, String]] = workflowRepository.findOne(UUIDConverter.fromTimeUUID(id)) match {
+      case null => None
+      case we => Some(we.toData())
   }
 
+
+  @Transactional
   override def findAll: List[Workflow[UUID, String]] = {
     workflowRepository.findAll().toList.map(_.toData())
   }

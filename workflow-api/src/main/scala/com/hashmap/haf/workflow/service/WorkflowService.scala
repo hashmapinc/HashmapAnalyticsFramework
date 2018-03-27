@@ -9,7 +9,7 @@ trait WorkflowService {
 
   def saveOrUpdate(workflowXml: String): Workflow[UUID, String]
 
-  def findById(id: UUID): Workflow[UUID, String]
+  def findById(id: UUID): Option[Workflow[UUID, String]]
 
   def findAll: List[Workflow[UUID, String]]
 
