@@ -78,6 +78,11 @@
             <groupId>com.hashmap.haf</groupId>
             <artifactId>functions-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.takari.junit</groupId>
+            <artifactId>takari-cpsuite</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -101,6 +106,15 @@
             <plugin>
                 <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
                 <artifactId>sbt-compiler-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Suite.java</include>
+                    </includes>
+                </configuration>
             </plugin>
             <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
