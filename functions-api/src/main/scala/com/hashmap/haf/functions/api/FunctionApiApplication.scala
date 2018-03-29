@@ -1,27 +1,28 @@
 package com.hashmap.haf.functions.api
 
-import com.hashmap.haf.functions.api.services.FunctionsBootstrapService
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.boot.{SpringApplication, SpringBootConfiguration}
+import com.hashmap.haf.functions.api.mappers.ScalaObjectMapperBuilder
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.Bean
 
 @EnableDiscoveryClient
-@SpringBootConfiguration
+@SpringBootApplication
 @EnableAutoConfiguration
-@EnableJpaRepositories(Array("com.hashmap.haf.repository"))
-@EntityScan(Array("com.hashmap.haf.entities"))
-@ComponentScan(Array("com.hashmap.haf"))
-class FunctionApiApplication
+class FunctionApiApplication {
+	@Bean
+	def jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer ={
+		new ScalaObjectMapperBuilder()
+	}
+}
 
 object FunctionApiApplication extends App{
 	private val SPRING_CONFIG_NAME_KEY = "--spring.config.name"
 	private val DEFAULT_SPRING_CONFIG_PARAM = SPRING_CONFIG_NAME_KEY + "=" + "functions-api"
 
-	private val context = SpringApplication.run(classOf[FunctionApiApplication], updateArguments(args): _*)
-	context.getBean(classOf[FunctionsBootstrapService]).init()
+	SpringApplication.run(classOf[FunctionApiApplication], updateArguments(args): _*)
 
 	private def updateArguments(args: Array[String]): List[String] ={
 		val argsAsList = args.toList
@@ -31,3 +32,5 @@ object FunctionApiApplication extends App{
 		}
 	}
 }
+
+

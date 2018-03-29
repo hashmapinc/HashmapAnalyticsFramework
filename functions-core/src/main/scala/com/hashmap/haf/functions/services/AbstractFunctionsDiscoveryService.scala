@@ -20,13 +20,17 @@ abstract class AbstractFunctionsDiscoveryService(inputGateway: FunctionsInputGat
 
 	protected var deploymentService: DeploymentService = _
 
+	protected def validateFunctionInputLocation(uri: URI):Unit
+
 	override def discoverFunctions(uri: URI): Unit = {
-		val files = inputGateway.listFilesFrom(uri)
-		process(uri, files)
-		inputGateway.poll(uri, newListener())
+			validateFunctionInputLocation(uri)
+			val files = inputGateway.listFilesFrom(uri)
+			process(uri, files)
+			inputGateway.poll(uri, newListener())
+
 	}
 
-	def process(uri: URI, files: List[Path]): Unit ={
+	private def process(uri: URI, files: List[Path]): Unit ={
 		val jars = files.filter(isJar)
 		addJarsToClassPath(jars.map(_.toUri.toURL).toArray)
 		jars.foreach{ p =>
