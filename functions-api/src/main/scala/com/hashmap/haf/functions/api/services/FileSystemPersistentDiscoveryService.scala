@@ -1,7 +1,9 @@
 package com.hashmap.haf.functions.api.services
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
+import java.net.URI
 import javax.annotation.PostConstruct
+
 import com.hashmap.haf.annotations.IgniteFunction
 import com.hashmap.haf.functions.deployment.DefaultDeploymentService
 import com.hashmap.haf.functions.factory.Factories.Processors.ProcessorFactory
@@ -33,6 +35,10 @@ class FileSystemPersistentDiscoveryService @Autowired()(inputGateway: FunctionsI
 			case Some(c) => deploymentService = DefaultDeploymentService(c)
 			case _ => deploymentService = DefaultDeploymentService()
 		}
+	}
+
+	override protected def validateFunctionInputLocation(uri: URI): Unit = {
+		if(!new File(uri).exists()) throw new FileNotFoundException("Exception: File not found for uri: "+ uri)
 	}
 
 	override protected def processFunction(r: IgniteFunctionType): Unit = igniteFunctionService.save(r)
