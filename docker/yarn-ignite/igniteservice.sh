@@ -4,7 +4,20 @@ COMMAND="${1}"
 IGNITE_VERSION="2.3.0"
 PROP_FILE="properties.prop"
 APP_ID_FILE=".applicationId"
-IGNITE_HOME="/opt/ignite/"
+IGNITE_HOME="/opt/ignite"
+IGNITE_VERSION="2.3.0"
+SCALA_VERSION="2.11"
+JSON4S_AST="3.5.0"
+
+`/etc/bootstrap.sh`
+
+`$HADOOP_PREFIX/bin/hadoop dfsadmin -safemode leave`
+`$HADOOP_PREFIX/bin/hadoop fs -mkdir /ignite`
+`$HADOOP_PREFIX/bin/hadoop fs -mkdir /ignite/libs`
+`$HADOOP_PREFIX/bin/hadoop fs -put "apache-ignite-hadoop-$IGNITE_VERSION-bin.zip" /ignite`
+`$HADOOP_PREFIX/bin/hadoop fs -put "default-config.xml" /ignite`
+`$HADOOP_PREFIX/bin/hadoop fs -put "json4s-ast_$SCALA_VERSION-$JSON4S_AST.jar" /ignite/libs`
+
 function init() {
     `cd ${HADOOP_PREFIX}/bin/`
 }
@@ -17,8 +30,9 @@ function start() {
     fi
 
     echo "Starting Ignite cluster"
+    `chmod +x ${IGNITE_HOME}/ignite-yarn-${IGNITE_VERSION}.jar`
     IGNITE_YARN_JAR=`${IGNITE_HOME}/ignite-yarn-${IGNITE_VERSION}.jar`
-    `yarn jar ${IGNITE_YARN_JAR} ./ ${IGNITE_YARN_JAR} &> temp.txt`
+    `$HADOOP_PREFIX/bin/hadoop/yarn jar ${IGNITE_YARN_JAR} ./ ${IGNITE_YARN_JAR} &> temp.txt`
     APP_ID=`cat temp.txt | grep 'Application id:' | awk '{print $6}'`
     `rm temp.txt`
     if [[ ${APP_ID} == application_* ]];
