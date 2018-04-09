@@ -27,6 +27,10 @@ class SqlDatabaseSchemaService extends DatabaseSchemaService {
   var dbPassword: String = _
 
   override def createDatabaseSchema(): Unit = {
+    println("************ Install Dir **************")
+    println(dbUrl)
+    println(dataDir)
+    println("************ Install Dir **************")
     val schemaFile = Paths.get(this.dataDir, SQL_DIR, SCHEMA_SQL)
     val conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword)
     try {
