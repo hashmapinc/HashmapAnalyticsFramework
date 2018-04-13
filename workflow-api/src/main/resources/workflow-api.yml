@@ -20,7 +20,9 @@ spring:
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
     #change url accordingly
-    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://192.168.1.67:5432/thingsboard}"
+    #url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRES_HOST:172.17.0.2}:5432/thingsboard}"
+    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://${SPRING_DB_HOST:172.17.0.2}:5432/${SPRING_DB_NAME:thingsboard}}"
+    #url: jdbc:postgresql://postgres:5432/thingsboard
     username: "${SPRING_DATASOURCE_USERNAME:postgres}"
     password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
 
@@ -32,7 +34,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
 
 install:
-  data_dir: /Users/jetinder/timeseries/HashmapAnalyticsFramework/workflow-api/src/main/resources
+  data_dir: ${WORKFLOW_INSTALL_DIR:/home/akshay/IdeaProjects/HashmapAnalyticsFramework/workflow-api/src/main/resources/}
