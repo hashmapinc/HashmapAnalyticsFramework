@@ -7,9 +7,11 @@ server:
 
 functions:
   input:
-    location: "file://${FUNCTIONS_PATH:/home/}"
+    location: "file://${FUNCTIONS_PATH:/Users/akshay/HAF/functionJars/}"
+
   output:
-    location: "file:///home/functions"
+    #location: "file:///Users/akshay/HAF/functions"
+    location: "file://${FUNCTIONS_OUTPUT_PATH:/home/}"
   protocol: "file"
   source:
     template: "task.vm"
@@ -55,6 +57,6 @@ spring:
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
     #change url accordingly
-    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://${SPRING_DB_HOST:172.17.0.2}:5432/${SPRING_DB_NAME:thingsboard}}"
+    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://${SPRING_DB_HOST:localhost}:5432/${SPRING_DB_NAME:thingsboard}}"
     username: "${SPRING_DATASOURCE_USERNAME:postgres}"
     password: "${SPRING_DATASOURCE_PASSWORD:postgres}"

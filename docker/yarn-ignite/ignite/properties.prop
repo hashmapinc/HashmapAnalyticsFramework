@@ -12,4 +12,4 @@ IGNITE_MEMORY_PER_NODE=2048
 IGNITE_VERSION=2.3.0
 IGNITE_PATH=/ignite/apache-ignite-hadoop-2.3.0-bin.zip
 IGNITE_XML_CONFIG=/ignite/default-config.xml
-IGNITE_USER_LIBS=/ignite/libs
+IGNITE_USER_LIBS=/ignite/libs/user_libs/

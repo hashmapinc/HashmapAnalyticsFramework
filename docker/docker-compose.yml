@@ -5,6 +5,7 @@ services:
     image: "hashmapinc/redtail-api-discovery:1.0.0-SNAPSHOT"
     ports:
       - "8761:8761"
+#    network_mode: bridge
 
 #  api-gateway:
 #    image: "hashmapinc/redtail-api-gateway:1.0.0-SNAPSHOT"
@@ -16,6 +17,7 @@ services:
 #      - api-discovery
 #    environment:
 #      - EUREKA_SERVER_HOST=api-discovery
+
 #  auth-service:
 #    image: "hashmapinc/redtail-auth-service:1.0.0-SNAPSHOT"
 #    ports:
@@ -28,71 +30,85 @@ services:
 #      - api-discovery
 #      - api-gateway
 #      - yarn-ignite
-#  functions-api:
-#    image: "hashmapinc/redtail-functions-api:1.0.0-SNAPSHOT"
+
+  functions-api:
+    restart: always
+    image: "hashmapinc/redtail-functions-api:1.0.0-SNAPSHOT"
+    ports:
+      - "2222:2222"
+      - "47500-47509"
+    volumes:
+      - "$FUNCTIONS_INPUT_PATH:/home/"
+#    network_mode: bridge
+    depends_on:
+      api-discovery:
+         condition: service_started
+#      api-gateway:
+#         condition: service_started
+      postgres:
+          condition: service_healthy
+      yarn-ignite:
+          condition: service_healthy
+    links:
+      - api-discovery
+#      - api-gateway
+      - postgres
+      - yarn-ignite
+    #external_links:
+      #- postgresPeri:postgres
+    environment:
+      - EUREKA_SERVER_HOST=api-discovery
+      - SPRING_DB_HOST=postgres
+      - SPRING_DB_NAME=thingsboard
+      - IGNITE_HOST_IP=yarn-ignite
+      - FUNCTIONS_PATH=/home/
+      - FUNCTIONS_OUTPUT_PATH=/home/
+
+#  workflow-api:
+#    image: "hashmapinc/redtail-workflow-api:1.0.0-SNAPSHOT"
 #    ports:
-#      - "2222:2222"
-#    volumes:
-#      - "$FUNCTIONS_PATH:/home/"
+#          - "9000:9000"
 #    depends_on:
 #      api-discovery:
 #         condition: service_started
-#      api-gateway:
-#         condition: service_started
+##      api-gateway:
+##         condition: service_started
 #      postgres:
 #          condition: service_healthy
 #      yarn-ignite:
 #          condition: service_healthy
 #    links:
 #      - api-discovery
-#      - api-gateway
 #      - postgres
 #      - yarn-ignite
 #    #external_links:
-#      #- postgresPeri:postgres
+#      #- postgresPer:postgres
 #    environment:
 #      - EUREKA_SERVER_HOST=api-discovery
 #      - SPRING_DB_HOST=postgres
-#      - SPRING_DB_NAME=tb
-#      - IGNITE_HOST_IP=yarn-ignite
-  workflow-api:
-    image: "hashmapinc/redtail-workflow-api:1.0.0-SNAPSHOT"
-    ports:
-          - "9000:9000"
-    depends_on:
-      api-discovery:
-         condition: service_started   
-#      api-gateway:
-#         condition: service_started
-      postgres:
-          condition: service_healthy
-      #yarn-ignite:
-       #   condition: service_healthy
-    links:
-      - api-discovery
-#      - api-gateway
-      - postgres
-#      - yarn-ignite
-    #external_links:
-      #- postgresPer:postgres
-    environment:
-      - EUREKA_SERVER_HOST=api-discovery
-      - SPRING_DB_HOST=postgres
-      - SPRING_DB_NAME=thingsboard
-      - WORKFLOW_INSTALL_DIR=/home/
-
+#      - SPRING_DB_NAME=thingsboard
+#      - WORKFLOW_INSTALL_DIR=/home
+#
+#
 #  workflow-executor:
-#      image: "hashmapinc/redtail-workflow-executor:1.0.0-SNAPSHOT"
+#      image: "hashmapinc/redtail-workflow-executor:latest"
 #      ports:
 #            - "9005:9005"
 #      depends_on:
-#        - functions-api
-#        - workflow-api
-#        - yarn-ignite
+#        functions-api:
+#           condition: service_started
+#        workflow-api:
+#           condition: service_started
+#        yarn-ignite:
+#            condition: service_healthy
 #      links:
 #        - functions-api
 #        - workflow-api
 #        - yarn-ignite
+#      environment:
+#            - EUREKA_SERVER_HOST=api-discovery
+#            - IGNITE_HOST_IP=yarn-ignite
+
 #  schedular:
 #    image: "hashmapinc/redtail-schedular:1.0.0-SNAPSHOT"
 #    ports:
@@ -104,13 +120,15 @@ services:
 #      - redis
 #      - workflow-executor
 
-  #redis:
-   # image: "redis:latest"
+#  redis:
+#    image: "redis:latest"
 
   postgres:
+      #restart: always
       image: "hashmapinc/redtail-postgres:latest"
+#      network_mode: bridge
       ports:
-      - "5432"
+      - "5432:5432"
       environment:
         - POSTGRES_DB=${POSTGRES_DB}
       volumes:
@@ -121,13 +139,34 @@ services:
         timeout: 30s
         retries: 3
 
-#  yarn-ignite:
-#      image: "hashmapinc/yarn-ignite:latest"
-#      volumes:
-#        - "$IGNITE_USER_LIBS:/opt/ignite/user_libs"
-#      healthcheck:
-#        test: ["CMD", "curl", "-f", "http://localhost:8088/cluster"]
-#        interval: 30s
-#        timeout: 30s
-#        retries: 3
-
+  yarn-ignite:
+      restart: always
+      image: "hashmapinc/redtail-yarn-ignite:latest"
+      ports:
+        - "47500-47509:47500-47509"
+        - "50010"
+        - "50020"
+        - "50070"
+        - "50075"
+        - "50090"
+        - "8020"
+        - "9000"
+        - "10020"
+        - "19888"
+        - "8030"
+        - "8031"
+        - "8032"
+        - "8033"
+        - "8040"
+        - "8042:8042"
+        - "8088:8088"
+        - "49707"
+        - "2122"
+      volumes:
+        - "$IGNITE_USER_LIBS:/opt/ignite/user_libs"
+#      network_mode: bridge
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:8088/cluster && echo OK"]
+        interval: 30s
+        timeout: 30s
+        retries: 3

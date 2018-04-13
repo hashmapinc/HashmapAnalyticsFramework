@@ -78,6 +78,12 @@
         <!--</bean>-->
         <!--</property>-->
 
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="sharedMemoryPort" value="-1"/>
+            </bean>
+        </property>
+
         <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
         <property name="discoverySpi">
             <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">

@@ -155,6 +155,7 @@
                         <configuration>
                             <repository>${docker.repository}/${project.parent.artifactId}-${project.artifactId}</repository>
                             <buildArgs>
+                                <WORKFLOW_INSTALL_DIR>src/main/resources/sql</WORKFLOW_INSTALL_DIR>
                                 <JAR_FILE>target/${project.name}.jar</JAR_FILE>
                                 <SERVER_PORT>${server.port}</SERVER_PORT> <!-- Will come from application.properties by using properties plugin -->
                             </buildArgs>

@@ -28,6 +28,9 @@ if [[ ${IGNITE_VERSION} == "2.3.0" ]]; then
     `zip -r "apache-ignite-hadoop-$IGNITE_VERSION-bin.zip" "apache-ignite-hadoop-$IGNITE_VERSION-bin/" > /dev/null 2>&1`
 fi
 
+#Put current container's IP address
+sed -i s/IGNITE_IP/$(hostname -i)/g /opt/ignite/default-config.xml
+
 #Moving required files to HDFS
 `$HADOOP_PREFIX/bin/hadoop fs -put "$IGNITE_HOME/apache-ignite-hadoop-$IGNITE_VERSION-bin.zip" /ignite`
 `$HADOOP_PREFIX/bin/hadoop fs -put "$IGNITE_HOME/default-config.xml" /ignite`
@@ -35,7 +38,10 @@ fi
 `$HADOOP_PREFIX/bin/hadoop fs -put ${IGNITE_HOME}/${PROP_FILE} /ignite/`
 `$HADOOP_PREFIX/bin/hadoop fs -put ${IGNITE_HOME}/ignite-yarn-${IGNITE_VERSION}.jar /ignite/`
 
+
 `${IGNITE_HOME}/igniteservice.sh start`
+
+sleep 5
 
 while true;
 do

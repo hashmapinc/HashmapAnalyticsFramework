@@ -25,9 +25,7 @@ RUN wget -q "https://archive.apache.org/dist/ignite/$IGNITE_VERSION/apache-ignit
 
 COPY ignite/default-config.xml ignite/properties.prop startup.sh igniteservice.sh /opt/ignite/
 
-RUN sed -i s/IGNITE_IP/$(hostname -i)/g /opt/ignite/default-config.xml \
-    && chmod +x /opt/ignite/startup.sh \
-    && chmod +x /opt/ignite/igniteservice.sh
+RUN chmod +x /opt/ignite/startup.sh /opt/ignite/igniteservice.sh
 
 
 EXPOSE 47500-47509
