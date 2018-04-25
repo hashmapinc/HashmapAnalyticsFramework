@@ -6,10 +6,16 @@ import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.{Bean, Configuration, Scope}
+import feign.Request
+import org.springframework.core.env.ConfigurableEnvironment
 import redis.RedisClient
 
 @Configuration
 class SchedulerApplicationConfig {
+
+  private val defaultRibbonReadTimeout = 70000
+  private val defaultRibbonConnectTimeout = 60000
+
   @Bean
   @Scope("prototype")
   def actorSystem(context: ApplicationContext, springExtension: SpringExtension): ActorSystem = {
@@ -30,11 +36,7 @@ class SchedulerApplicationConfig {
   def quartzExtensionFactory(system: ActorSystem): QuartzSchedulerExtension =
     QuartzSchedulerExtension(system)
 
-  import feign.Request
-  import org.springframework.context.annotation.Bean
-  import org.springframework.core.env.ConfigurableEnvironment
 
-  import org.springframework.core.env.ConfigurableEnvironment
 
   /**
     * Method to create a bean to increase the timeout value,
@@ -46,8 +48,8 @@ class SchedulerApplicationConfig {
     */
   @Bean
   def requestOptions(env: ConfigurableEnvironment): Request.Options = {
-    val ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", classOf[Int], 70000)
-    val ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", classOf[Int], 60000)
+    val ribbonReadTimeout = env.getProperty("ribbon.ReadTimeout", classOf[Int], defaultRibbonReadTimeout)
+    val ribbonConnectionTimeout = env.getProperty("ribbon.ConnectTimeout", classOf[Int], defaultRibbonConnectTimeout)
     new Request.Options(ribbonConnectionTimeout, ribbonReadTimeout)
   }
 
