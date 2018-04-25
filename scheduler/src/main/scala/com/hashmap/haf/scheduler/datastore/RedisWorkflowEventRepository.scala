@@ -1,13 +1,11 @@
 package com.hashmap.haf.scheduler.datastore
 
-import akka.util.ByteString
-import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
+import com.hashmap.haf.scheduler.datastore.api.EventRepository
 import com.hashmap.haf.scheduler.model.WorkflowEvent
 import com.hashmap.haf.scheduler.model.WorkflowEventImplicits
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import redis.RedisClient
-import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
 /*
@@ -25,7 +23,7 @@ import scala.concurrent.Future
 * */
 
 @Repository
-class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends WorkflowEventRepository {
+class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends EventRepository[WorkflowEvent] {
   import WorkflowEventImplicits._
 
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,11 +50,9 @@ class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends Work
 
   override def getAll = getEventsByPattern("*")
 
-  //override def get(workflowEventId: String): Future[WorkflowEvent] = getEventsByPattern(workflowEventId).map(_.head)
   override def get(workflowEventId: String): Future[WorkflowEvent] =
     redis.hgetall[String](workflowEventId).map(m1 => {
       val we: WorkflowEvent = m1 // implicit conversion
-      println(we)
       we
     })
 

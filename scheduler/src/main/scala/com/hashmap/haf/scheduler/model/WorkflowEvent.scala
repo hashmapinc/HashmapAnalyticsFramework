@@ -4,7 +4,7 @@ import scala.beans.BeanProperty
 
 case class WorkflowEvent(@BeanProperty id: String,
                          @BeanProperty cronExpression: String,
-                         @BeanProperty isRunning: Boolean = false) {
+                         @BeanProperty isRunning: Boolean = false) extends Event {
   def this() = this("", "", false)
 }
 

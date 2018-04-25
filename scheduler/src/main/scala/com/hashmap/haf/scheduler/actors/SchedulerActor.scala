@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorSystem, Props}
 import akka.util.Timeout
 import com.hashmap.haf.scheduler.api.Scheduler
 import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor.{AddEvent, GetAll, GetEvent, RemoveEvent}
-import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
+import com.hashmap.haf.scheduler.datastore.api.EventRepository
 import com.hashmap.haf.scheduler.executor.actors.ExecutorActor
 import com.hashmap.haf.scheduler.extension.SpringExtension
 import com.hashmap.haf.scheduler.model.WorkflowEvent
