@@ -1,11 +1,12 @@
 package com.hashmap.haf.scheduler.datastore
 
-import com.hashmap.haf.scheduler.datastore.api.EventRepository
+import com.hashmap.haf.scheduler.datastore.api.WorkflowEventRepository
 import com.hashmap.haf.scheduler.model.WorkflowEvent
 import com.hashmap.haf.scheduler.model.WorkflowEventImplicits
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import redis.RedisClient
+
 import scala.concurrent.Future
 
 /*
@@ -23,13 +24,15 @@ import scala.concurrent.Future
 * */
 
 @Repository
-class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends EventRepository[WorkflowEvent] {
+class RedisWorkflowEventRepository @Autowired()(redis: RedisClient) extends WorkflowEventRepository {
   import WorkflowEventImplicits._
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
   private val RUNNING_EVENTS_KEY = "running_event_ids"
   private val STOPPED_EVENTS_KEY = "stopped_event_ids"
+
+  //override type T = WorkflowEvent
 
   override def addOrUpdate(workflowEvent : WorkflowEvent): Future[Boolean] = {
     val workflowEventId = workflowEvent.id.toString

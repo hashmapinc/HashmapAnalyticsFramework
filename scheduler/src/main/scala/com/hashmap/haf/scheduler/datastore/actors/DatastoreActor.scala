@@ -2,10 +2,10 @@ package com.hashmap.haf.scheduler.datastore.actors
 
 import akka.actor.{Actor, ActorSystem, Props}
 import com.hashmap.haf.scheduler.api.Scheduler
-import com.hashmap.haf.scheduler.datastore.api.EventRepository
+import com.hashmap.haf.scheduler.datastore.api.{EventRepository, WorkflowEventRepository}
 import com.hashmap.haf.scheduler.extension.SpringExtension
 import com.hashmap.haf.scheduler.model.{Event, WorkflowEvent}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 object DatastoreActor {
-  def props(repository:  EventRepository[Event]) = Props(new DatastoreActor(repository))
+  def props(repository:  WorkflowEventRepository) = Props(new DatastoreActor(repository))
   case class AddEvent(workflowEvent: WorkflowEvent)
   case class GetEvent(workflowId: String)
   case class GetEvents(workflowId: List[String])
@@ -27,7 +27,7 @@ object DatastoreActor {
 
 @Component("datastoreActor")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-class DatastoreActor @Autowired()(repository:  EventRepository[Event]) extends Actor {
+class DatastoreActor @Autowired()(repository:  WorkflowEventRepository) extends Actor {
   import DatastoreActor._
   override def receive = {
     case AddEvent(we) => repository.addOrUpdate(we)
