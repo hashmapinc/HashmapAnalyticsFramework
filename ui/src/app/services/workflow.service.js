@@ -94,7 +94,7 @@ function Workflowapiservice($http, $q, $log, $rootScope, AppUtilityService) {
       workflowForScheduler.cronExpression = savedWorkflow.cron;
       workflowForScheduler.id = savedWorkflow.id;
 
-      return $http.post('/scheduler/api/workflow', workflowForScheduler)
+      return $http.put('/scheduler/api/workflow', workflowForScheduler)
           .then(success)
           .catch(fail);
 

@@ -27,7 +27,7 @@ class EventConsumerController @Autowired()(system: ActorSystem, springExtension:
   val datastoreActor = system.actorOf(springExtension.props("datastoreActor"))
 
   //To do: Convert this to PUT
-  @RequestMapping(value = Array("/workflow"))
+  @RequestMapping(value = Array("/workflow"), method = Array(RequestMethod.PUT))
   @ResponseStatus(value = HttpStatus.OK)
   def saveOrUpdate(@RequestBody workflowEvent: WorkflowEvent) =
     workflowEventListenerActor ! AddJob(workflowEvent)
