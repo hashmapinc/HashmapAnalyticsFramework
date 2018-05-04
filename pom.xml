@@ -386,6 +386,12 @@
                 <artifactId>commons-compiler</artifactId>
                 <version>2.7.8</version>
             </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-testkit_${scala.compat.version}</artifactId>
+                <version>${akka.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     
