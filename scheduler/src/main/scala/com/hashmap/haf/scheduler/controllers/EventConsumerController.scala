@@ -64,4 +64,12 @@ class EventConsumerController @Autowired()(system: ActorSystem, springExtension:
     Await.result(futureWorkflows, Duration.Inf).map(we => we.id -> we).toMap.asJava
   }
 
+  @RequestMapping(value = Array("/workflows"), method = Array(RequestMethod.GET),
+    produces = Array(MediaType.APPLICATION_JSON_VALUE))
+  @ResponseStatus(value = HttpStatus.OK)
+  def getAll = {
+    implicit val timeout: Timeout = Timeout(30 second)
+    val futureWorkflows = (datastoreActor ? GetAll).mapTo[List[WorkflowEvent]]
+    Await.result(futureWorkflows, Duration.Inf).map(we => we.id -> we).toMap.asJava
+  }
 }

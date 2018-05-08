@@ -20,7 +20,6 @@ object DatastoreActor {
   case class RemoveEvent(id: String)
   case object RemoveAll
   case object GetAll
-
 }
 
 @Component("datastoreActor")
@@ -33,6 +32,6 @@ class DatastoreActor @Autowired()(eventDao:  WorkflowEventDaoImpl) extends Actor
     case GetEvents(id) => eventDao.get(id) pipeTo sender
     case RemoveEvent(id) => eventDao.remove(id)
     case RemoveAll => eventDao.removeAll
-    case GetAll => eventDao.getAll
+    case GetAll => eventDao.getAll pipeTo sender
   }
 }

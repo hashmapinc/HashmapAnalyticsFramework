@@ -3,7 +3,7 @@ package com.hashmap.haf.scheduler.actors
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.util.Timeout
 import com.hashmap.haf.scheduler.api.Scheduler
-import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor.{AddEvent, GetAll, GetEvent, RemoveEvent}
+import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor._
 //import com.hashmap.haf.scheduler.datastore.api.EventRepository
 import com.hashmap.haf.scheduler.executor.actors.ExecutorActor
 import com.hashmap.haf.scheduler.extension.SpringExtension
@@ -43,9 +43,6 @@ class SchedulerActor @Autowired()(scheduler: Scheduler, system: ActorSystem, spr
   val datastoreActor = system.actorOf(springExtension.props("datastoreActor"))
   val executorActor = system.actorOf(springExtension.props("executorActor"))
 
-  //@Autowired
-  //val workflowEventRepository: WorkflowEventRepository = null
-
   override def receive = {
     case CreateJob(workflowEvent: WorkflowEvent) =>
       scheduler.createJob(workflowEvent.id, workflowEvent.cronExpression)
@@ -84,9 +81,6 @@ class SchedulerActor @Autowired()(scheduler: Scheduler, system: ActorSystem, spr
   override def preStart(): Unit = {
     implicit val timeout: Timeout = Timeout(20 seconds)
     (datastoreActor ? GetAll).mapTo[List[WorkflowEvent]]
-      .foreach(_.foreach(we => self ! StartJob(we)))
-//    workflowEventRepository
-//      .getAll.foreach(_.foreach(we => self ! StartJob(we)))
-
+      .foreach(_.foreach(we => self ! CreateJob(we)))
   }
 }
