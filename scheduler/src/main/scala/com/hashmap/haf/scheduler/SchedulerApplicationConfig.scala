@@ -26,7 +26,7 @@ class SchedulerApplicationConfig {
 
   @Bean
   @Scope("prototype")
-  def redisClientFactory(context: ApplicationContext, @Value("${db.redis.host}") host: String): RedisClient = {
+  def redisClientFactory(context: ApplicationContext, @Value("${spring.redis.host}") host: String): RedisClient = {
     implicit val system = context.getBean(classOf[ActorSystem])
     RedisClient(host)
   }

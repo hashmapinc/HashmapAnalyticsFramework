@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorSystem, Props}
 import akka.util.Timeout
 import com.hashmap.haf.scheduler.api.Scheduler
 import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor.{AddEvent, GetAll, GetEvent, RemoveEvent}
-import com.hashmap.haf.scheduler.datastore.api.EventRepository
+//import com.hashmap.haf.scheduler.datastore.api.EventRepository
 import com.hashmap.haf.scheduler.executor.actors.ExecutorActor
 import com.hashmap.haf.scheduler.extension.SpringExtension
 import com.hashmap.haf.scheduler.model.WorkflowEvent
@@ -60,9 +60,17 @@ class SchedulerActor @Autowired()(scheduler: Scheduler, system: ActorSystem, spr
       implicit val timeout: Timeout = Timeout(20 seconds)
       (datastoreActor ? GetEvent(id))
         .mapTo[WorkflowEvent]
+        .map(we => we.copy(isRunning = false))
         .map(we => datastoreActor ! AddEvent(we))
 
-    case RestartJob(id) => scheduler.resumeJob(id)
+    case RestartJob(id) => //scheduler.resumeJob(id)
+      scheduler.resumeJob(id)
+      implicit val timeout: Timeout = Timeout(20 seconds)
+      (datastoreActor ? GetEvent(id))
+        .mapTo[WorkflowEvent]
+        .map(we => we.copy(isRunning = true))
+        .map(we => datastoreActor ! AddEvent(we))
+
     case RemoveJob(id) => //workflowEventRepository.remove(id).foreach(_ => scheduler.cancelJob(id))
       scheduler.cancelJob(id)
       datastoreActor ! RemoveEvent(id)

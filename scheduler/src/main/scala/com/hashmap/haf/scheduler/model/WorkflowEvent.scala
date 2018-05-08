@@ -1,10 +1,15 @@
 package com.hashmap.haf.scheduler.model
 
+import org.springframework.data.annotation.Id
+import org.springframework.data.redis.core.RedisHash
+import org.springframework.data.redis.core.index.Indexed
+
 import scala.beans.BeanProperty
 
-case class WorkflowEvent(@BeanProperty id: String,
+@RedisHash("workflowEvents")
+case class WorkflowEvent(@BeanProperty @Indexed @Id id: String,
                          @BeanProperty cronExpression: String,
-                         @BeanProperty isRunning: Boolean = false) extends Event {
+                         @BeanProperty @Indexed isRunning: Boolean = false) extends Event {
   def this() = this("", "", false)
 }
 

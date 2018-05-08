@@ -13,6 +13,7 @@ object WorkflowEventListenerActor {
 
   final case class AddJob(workflowEvent: WorkflowEvent)
   final case class StopJob(workflowId: String)
+  final case class ResumeJob(workflowId: String)
   final case class DropJob(workflowId: String)
   final case class JobStatus(workflowId: String)
   final object RemoveAllJobs
@@ -32,6 +33,7 @@ class WorkflowEventListenerActor @Autowired()(system: ActorSystem, springExtensi
       schedulerActor ! CreateJob(workflowEvent)
       //schedulerActor ! StartJob(workflowEvent)
     case StopJob(id) => schedulerActor ! SuspendJob(id)
+    case ResumeJob(id) => schedulerActor ! RestartJob(id)
     case DropJob(id) => schedulerActor ! RemoveJob(id)
     case JobStatus(_) => ???
   }

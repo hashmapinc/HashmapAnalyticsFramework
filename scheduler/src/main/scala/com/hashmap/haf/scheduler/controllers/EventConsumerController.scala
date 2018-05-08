@@ -3,8 +3,8 @@ package com.hashmap.haf.scheduler.controllers
 import java.util
 
 import akka.actor.{ActorRef, ActorSystem}
-import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.{AddJob, DropJob}
-import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor.GetEvents
+import com.hashmap.haf.scheduler.actors.WorkflowEventListenerActor.{AddJob, DropJob, ResumeJob, StopJob}
+import com.hashmap.haf.scheduler.datastore.actors.DatastoreActor.{GetAll, GetEvents}
 import com.hashmap.haf.scheduler.extension.SpringExtension
 import com.hashmap.haf.scheduler.model.WorkflowEvent
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,6 +42,17 @@ class EventConsumerController @Autowired()(system: ActorSystem, springExtension:
   @ResponseStatus(value = HttpStatus.OK)
   def delete(@PathVariable("workflowId") workflowId: String) =
     workflowEventListenerActor ! DropJob(workflowId)
+
+  @RequestMapping(value = Array("/workflow/pause/{workflowId}"), method = Array(RequestMethod.GET))
+  @ResponseStatus(value = HttpStatus.OK)
+  def pause(@PathVariable("workflowId") workflowId: String) =
+    workflowEventListenerActor ! StopJob(workflowId)
+
+
+  @RequestMapping(value = Array("/workflow/resume/{workflowId}"), method = Array(RequestMethod.GET))
+  @ResponseStatus(value = HttpStatus.OK)
+  def resume(@PathVariable("workflowId") workflowId: String) =
+    workflowEventListenerActor ! ResumeJob(workflowId)
 
 
   @RequestMapping(value = Array("/workflows"), method = Array(RequestMethod.POST),
