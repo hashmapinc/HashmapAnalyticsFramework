@@ -49,6 +49,8 @@
         <module>functions</module>
         <module>scheduler</module>
         <module>identity-service</module>
+        <module>metadata-api</module>
+        <module>metadata-core</module>
         <!--<module>ui</module>-->
     </modules>
 
