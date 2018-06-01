@@ -1,6 +1,6 @@
 package com.hashmap.haf.metadata.config.dao;
 
-import static com.hashmap.haf.metadata.core.util.UUIDConverter.fromTimeUUID;
+import com.hashmap.haf.metadata.core.util.UUIDConverter;
 import com.hashmap.haf.metadata.config.entity.MetadataConfigEntity;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
 
     @Override
     public Optional<MetadataConfig> findById(UUID id) {
-        String key = fromTimeUUID(id);
+        String key = UUIDConverter.fromTimeUUID(id);
         return Optional.of(metadataConfigRepository.findOne(key).toData());
     }
 
@@ -40,7 +40,7 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
     @Override
     @Transactional
     public boolean removeById(UUID id){
-        String key = fromTimeUUID(id);
+        String key = UUIDConverter.fromTimeUUID(id);
         metadataConfigRepository.delete(key);
         return metadataConfigRepository.findOne(key) == null;
     }

@@ -33,6 +33,7 @@
         <akka.version>2.4.20</akka.version>
         <livy.version>0.3.0</livy.version>
         <docker.repository>hashmapinc</docker.repository>
+        <java.uuid.generator.version>3.1.4</java.uuid.generator.version>
     </properties>
 
     <modules>
@@ -235,6 +236,11 @@
                 <version>${ignite.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${java.uuid.generator.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-spark</artifactId>
                 <version>${ignite.version}</version>
@@ -290,6 +296,16 @@
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
                 <artifactId>workflow-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
