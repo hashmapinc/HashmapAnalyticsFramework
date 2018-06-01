@@ -17,6 +17,7 @@ public class ModelConstants {
     /**
      * Metadata Config Constants
      */
+    public static final String METADATA_CONFIG_OWNER_ID = "owner_id";
     public static final String METADATA_CONFIG_TABLE_NAME = "metadata_config";
     public static final String METADATA_CONFIG_NAME = "name";
     public static final String METADATA_CONFIG_SOURCE_ID = "source_id";
