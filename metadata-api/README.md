@@ -21,6 +21,7 @@ Sample Data
 ```text
 {
 	"name": "MetadataConfigName",
+	"ownerId":"cdab0659-3544-4ad8-9770-260187dbfe90",
 	"source": {
 		"type": "JDBC",
 		"dbUrl": "string1://test/sfaa",
@@ -45,5 +46,14 @@ http://localhost:9090/api/metaconfig/{ID}
 ```text
 http://localhost:9090/api/metaconfig/{ID}
 ```
-4. TODO are written on top of different classes, which is regarding different api's and adding some more functionality.
+4. Get Metadata Config By ownerId (GET) :
+  ```text
+  http://localhost:9090/api/metaconfig/owner/{ID}
+  ```
+5. Get All Metadata Config  (GET) :
+    ```text
+    http://localhost:9090/api/metaconfig
+    ```
+
+6. TODO are written on top of different classes, which is regarding different api's and adding some more functionality.
 

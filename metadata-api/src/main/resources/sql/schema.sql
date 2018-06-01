@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS metadata_config (
   id varchar(31) NOT NULL CONSTRAINT metadata_config_pkey PRIMARY KEY,
+  owner_id varchar(31),
   name varchar,
   trigger_schdl varchar,
   trigger_type varchar,

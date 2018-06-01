@@ -37,4 +37,4 @@ spring:
 #    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
 
 install:
-  data_dir: "/home/pc/metadata/MetadataIngestion/metadata-api/src/main/resources"
+  data_dir: "/home/vikash/HashmapAnalyticsFramework/metadata-api/src/main/resources"
