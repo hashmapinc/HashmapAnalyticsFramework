@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 //TODO: Add exception handling
 //TODO: Add Logging
-//TODO : Add Owner Id based API
-//TODO : findAll, update, findByOwnerId, testSource
+//TODO :  update,testSource
 @RestController
 @RequestMapping("/api")
 public class MetadataConfigController {
@@ -25,11 +25,25 @@ public class MetadataConfigController {
         return metadataConfigService.saveMetadataConfig(metadataConfig);
     }
 
+
     @RequestMapping(value = "/metaconfig/{id}", method = RequestMethod.GET)
     public MetadataConfig getMetadataConfig(@PathVariable String id){
         MetadataConfigId metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
         return metadataConfigService.findMetadataConfigById(metadataConfigId);
     }
+
+
+    @RequestMapping(value = "/metaconfig", method = RequestMethod.GET)
+    public List<MetadataConfig> getMetadataConfigs() {
+        return metadataConfigService.findAllMetadataConfig();
+    }
+
+
+    @RequestMapping(value = "/metaconfig/owner/{ownerId}", method = RequestMethod.GET)
+    public List<MetadataConfig> getMetadataConfigsByOwnerId(@PathVariable String ownerId) {
+        return metadataConfigService.findAllMetadataConfigByOwnerId(ownerId);
+    }
+
 
     @RequestMapping(value = "/metaconfig/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.OK)
@@ -37,4 +51,5 @@ public class MetadataConfigController {
         MetadataConfigId  metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
         metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
+
 }
