@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 public class MetadataConfig extends BaseData<MetadataConfigId> {
-
+    private String ownerId;
     private String name;
     private DataResource source;
     private DataResource sink;
@@ -24,11 +24,20 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
 
     public MetadataConfig(MetadataConfig metadataConfig) {
         super(metadataConfig);
+        this.ownerId = metadataConfig.ownerId;
         this.name = metadataConfig.name;
         this.source = metadataConfig.source;
         this.sink = metadataConfig.sink;
         this.triggerType = metadataConfig.triggerType;
         this.triggerSchedule = metadataConfig.triggerSchedule;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getName() {
@@ -74,6 +83,7 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
     @Override
     public String toString() {
         return "MetadataConfig{" +
+                "ownerId" + ownerId +
                 "name=" + name +
                 ", source=" + source +
                 ", sink=" + sink +

@@ -28,6 +28,9 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
     @Column(name = ModelConstants.METADATA_CONFIG_NAME)
     private String name;
 
+    @Column(name = ModelConstants.METADATA_CONFIG_OWNER_ID)
+    private String ownerId;
+
     @OneToOne(cascade = CascadeType.ALL)
     private DataResourceEntity source;
 
@@ -53,7 +56,7 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
         }
 
         this.name = metadataConfig.getName();
-
+        this.ownerId = metadataConfig.getOwnerId();
         this.source = getDataResourceEntity(metadataConfig.getSource());
         this.sink = getDataResourceEntity(metadataConfig.getSink());
         this.triggerType = metadataConfig.getTriggerType();
@@ -64,6 +67,7 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
     public MetadataConfig toData() {
         MetadataConfig metadataConfig = new MetadataConfig(new MetadataConfigId(getId()));
         metadataConfig.setName(name);
+        metadataConfig.setOwnerId(ownerId);
         metadataConfig.setSource(getDataResource(source));
         metadataConfig.setSink(getDataResource(sink));
         metadataConfig.setTriggerType(triggerType);
