@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,10 +16,16 @@ import java.util.Optional;
 public class MetadataConfigServiceImpl implements MetadataConfigService {
 
     private static final String INCORRECT_METADATACONFIG_ID = "Incorrect metaDataConfigId ";
+    private static final String INCORRECT_OWNER_ID = "Incorrect ownerId ";
 
     @Autowired
     private MetadataConfigDao metadataConfigDao;
 
+    @Override
+    public MetadataConfig saveMetadataConfig(MetadataConfig metadataConfig) {
+        log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
+        return metadataConfigDao.save(metadataConfig);
+    }
 
     @Override
     public MetadataConfig findMetadataConfigById(MetadataConfigId metadataConfigId) {
@@ -29,9 +36,16 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     }
 
     @Override
-    public MetadataConfig saveMetadataConfig(MetadataConfig metadataConfig) {
-        log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
-        return metadataConfigDao.save(metadataConfig);
+    public List<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId) {
+        log.trace("Executing findAllMetadataConfigByOwnerId [{}]", ownerId);
+        Validator.validateString(ownerId, INCORRECT_OWNER_ID + ownerId);
+        return metadataConfigDao.findByOwnerId(ownerId);
+    }
+
+    @Override
+    public List<MetadataConfig> findAllMetadataConfig() {
+        log.trace("Executing findAllMetadataConfig [{}]");
+        return metadataConfigDao.findAll();
     }
 
     @Override
