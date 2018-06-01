@@ -12,7 +12,9 @@ public interface MetadataConfigDao {
 
     Optional<MetadataConfig> findById(UUID id);
 
-    List<MetadataConfig> find();
+    List<MetadataConfig> findByOwnerId(String ownerId);
+
+    List<MetadataConfig> findAll();
 
     boolean removeById(UUID id);
 }

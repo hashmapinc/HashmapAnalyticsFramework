@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.config.dao;
 
+import com.hashmap.haf.metadata.core.common.Dao.DaoUtil;
 import com.hashmap.haf.metadata.core.util.UUIDConverter;
 import com.hashmap.haf.metadata.config.entity.MetadataConfigEntity;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
@@ -7,13 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
-//TODO: write the Dao utils having generic methods
-//TODO: See @Transactional functionality
 @Component
 public class MetadataConfigDaoImpl implements MetadataConfigDao {
 
@@ -23,18 +20,26 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
     @Override
     @Transactional
     public MetadataConfig save(MetadataConfig metadataConfig) {
-        return metadataConfigRepository.save(new MetadataConfigEntity(metadataConfig)).toData();
+        MetadataConfigEntity savedMetadataConfigEntity = metadataConfigRepository.save(new MetadataConfigEntity(metadataConfig));
+        return DaoUtil.getData(savedMetadataConfigEntity);
     }
 
     @Override
     public Optional<MetadataConfig> findById(UUID id) {
         String key = UUIDConverter.fromTimeUUID(id);
-        return Optional.of(metadataConfigRepository.findOne(key).toData());
+        return Optional.of(DaoUtil.getData(metadataConfigRepository.findOne(key)));
     }
 
     @Override
-    public List<MetadataConfig> find() {
-        return null;
+    public List<MetadataConfig> findByOwnerId(String ownerId) {
+        List<MetadataConfigEntity> metadataConfigEntities = metadataConfigRepository.findByOwnerId(ownerId);
+        return DaoUtil.convertDataList(metadataConfigEntities);
+    }
+
+    @Override
+    public List<MetadataConfig> findAll() {
+        List<MetadataConfigEntity> metadataConfigEntities = metadataConfigRepository.findAll();
+        return DaoUtil.convertDataList(metadataConfigEntities);
     }
 
     @Override
