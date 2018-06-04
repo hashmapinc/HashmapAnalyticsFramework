@@ -17,4 +17,6 @@ public interface MetadataConfigService  {
 
     List<MetadataConfig> findAllMetadataConfig();
 
+    MetadataConfig updateMetadataConfig(MetadataConfig metadataConfig);
+
 }
