@@ -1,4 +1,3 @@
-
 spring.application:
     name: functions-service
 
@@ -34,12 +33,12 @@ eureka:
 #      ddl-auto: "create"
 #      show_sql: true
 #      format_sql: true
-#    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
+#    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}"
 #  datasource:
-#    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
-#    url: "${SPRING_DATASOURCE_URL:jdbc:hsqldb:file:${SQL_DATA_FOLDER:/tmp}/functions;sql.enforce_size=false}"
-#    username: "${SPRING_DATASOURCE_USERNAME:sa}"
-#    password: "${SPRING_DATASOURCE_PASSWORD:}"
+#    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
+#    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://192.168.1.88:5432/thingsboard}"
+#    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
+#    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
 
 spring:
   data:
@@ -51,10 +50,23 @@ spring:
       ddl-auto: "create"
       show_sql: true
       format_sql: true
-    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}"
+    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
   datasource:
-    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
+    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
     #change url accordingly
-    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://172.17.0.2:5432/thingsboard}"
-    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
-    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
+    url: "${SPRING_DATASOURCE_URL:jdbc:hsqldb:file:${SQL_DATA_FOLDER:/tmp}/functions;sql.enforce_size=false}"
+    username: "${SPRING_DATASOURCE_USERNAME:sa}"
+    password: "${SPRING_DATASOURCE_PASSWORD:}"
+
+
+security:
+  oauth2:
+    client:
+      clientId: functions-service
+      clientSecret: ${FUNCTIONS_SERVICE_PASSWORD:password}
+      accessTokenUri: http://localhost:9002/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      tokenInfoUri: http://localhost:9002/oauth/check_token
+      #userInfoUri: http://localhost:9002/users/current --> Use either tokenInfoUri(Preferred) or userInfoUri

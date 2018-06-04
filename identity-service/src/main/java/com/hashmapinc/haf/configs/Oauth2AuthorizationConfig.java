@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.configs;
 
+import com.hashmapinc.haf.services.PropertiesClientUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,11 +12,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -25,6 +26,8 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Autowired private JwtSettings settings;
 
     @Autowired private ClientConfig config;
+
+    @Autowired private UserAuthenticationConverter userDetailsConverter;
 
     @Autowired
     @Qualifier("authenticationManagerBean")
@@ -38,9 +41,8 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore())
-                .tokenEnhancer(accessTokenConverter())
+                .tokenEnhancer(tokenEnhancerChain())
                 .tokenServices(tokenServices);
-        //TokenGranter can be customized to Generate new type of token
     }
 
     @Override
@@ -52,22 +54,8 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        config.getClients().forEach((k, v) -> {
-            try {
-                clients
-                        .inMemory()
-                        .withClient(k)
-                        .secret(v.getClientSecret())
-                        .authorizedGrantTypes(listToArray(v.getGrantTypes()))
-                        .scopes(listToArray(v.getScopes()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private String[] listToArray(List<String> l){
-        return l.toArray(new String[l.size()]);
+        //TODO: Inject a client details service which uses DB to identify clients information
+        clients.withClientDetails(new PropertiesClientUserDetailsService(config));
     }
 
     @Bean
@@ -78,8 +66,18 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+        accessTokenConverter.setUserTokenConverter(userDetailsConverter);
+        converter.setAccessTokenConverter(accessTokenConverter);
         converter.setSigningKey(settings.getTokenSigningKey());
         return converter;
+    }
+
+    @Bean
+    public TokenEnhancer tokenEnhancerChain(){
+        TokenEnhancerChain chain = new TokenEnhancerChain();
+        chain.setTokenEnhancers(Arrays.asList(accessTokenConverter()));
+        return chain;
     }
 
     @Bean

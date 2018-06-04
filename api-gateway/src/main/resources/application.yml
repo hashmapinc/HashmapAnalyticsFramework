@@ -26,7 +26,9 @@ zuul:
     idntity:
       path: /uaa/**
       sensitiveHeaders:
-      serviceId: auth-service
+      serviceId: identity-service
+      stripPrefix: false
+      #url: http://auth-service:9005 Uncomment this one and comment serviceId
     executor:
       path: /workflow-executor-api/**
       sensitiveHeaders:
@@ -59,6 +61,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 
+#By default every header is passthru, but we can control it if required
 #proxy:
 #  auth:
 #    routes:

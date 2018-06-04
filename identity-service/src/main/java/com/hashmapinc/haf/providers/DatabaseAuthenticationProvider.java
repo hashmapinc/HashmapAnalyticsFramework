@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 @Component
-@ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
+@ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
 
     private final DatabaseUserDetailsService userDetailsService;
@@ -45,7 +45,8 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             String password = (String) authentication.getCredentials();
             return authenticateByUsernameAndPassword(username, password);
         }else{
-            String username = (String)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            SecurityUser user = (SecurityUser)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            String username = user.getUser().getUserName();
             PreAuthenticatedAuthenticationToken auth  = (PreAuthenticatedAuthenticationToken)authentication;
             return reAuthenticateWithUsername(username, auth);
         }
@@ -69,7 +70,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
 
         SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
 
-        return new UsernamePasswordAuthenticationToken(username, password, securityUser.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(securityUser, password, securityUser.getAuthorities());
     }
 
     protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
@@ -85,7 +86,9 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
             throw new InsufficientAuthenticationException("User has no authority assigned");
 
-        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(userInfo.getUserName(), auth.getCredentials(), auth.getAuthorities());
+        SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
+
+        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(securityUser, auth.getCredentials(), securityUser.getAuthorities());
         result.setDetails(auth.getDetails());
 
         return result;

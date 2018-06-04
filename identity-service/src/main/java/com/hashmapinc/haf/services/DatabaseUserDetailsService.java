@@ -8,8 +8,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 @Component
-@ConditionalOnProperty(value = "users.provider", havingValue = "database")
+//@ConditionalOnProperty(value = "users.provider", havingValue = "database")
 public class DatabaseUserDetailsService implements UserDetailsService {
 
     @Autowired private UsersDao usersDao;
@@ -22,5 +25,20 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public User save(User user) {
         return usersDao.save(user);
+    }
+
+    @Override
+    public User findById(String id) {
+        return usersDao.findById(id);
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return usersDao.findAll();
+    }
+
+    @Override
+    public void deleteById(String userId) {
+        usersDao.deleteById(userId);
     }
 }
