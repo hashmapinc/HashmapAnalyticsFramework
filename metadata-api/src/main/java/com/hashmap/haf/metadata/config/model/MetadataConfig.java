@@ -80,6 +80,22 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
         this.triggerSchedule = triggerSchedule;
     }
 
+    public void update(MetadataConfig metadataConfig) {
+        this.setOwnerId(metadataConfig.getOwnerId());
+        this.setName(metadataConfig.getName());
+
+        DataResource updatedSink = metadataConfig.getSink();
+        updatedSink.setId(this.sink.getId());
+        this.setSink(updatedSink);
+
+        DataResource updatedSource = metadataConfig.getSource();
+        updatedSource.setId(this.source.getId());
+        this.setSource(updatedSource);
+
+        this.setTriggerType(metadataConfig.getTriggerType());
+        this.setTriggerSchedule(metadataConfig.getTriggerSchedule());
+    }
+
     @Override
     public String toString() {
         return "MetadataConfig{" +

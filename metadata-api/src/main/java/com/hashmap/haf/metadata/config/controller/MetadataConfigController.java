@@ -25,6 +25,11 @@ public class MetadataConfigController {
         return metadataConfigService.saveMetadataConfig(metadataConfig);
     }
 
+    @RequestMapping(value = "/metaconfig", method = RequestMethod.PUT)
+    public MetadataConfig updateMetadataConfig(@RequestBody MetadataConfig metadataConfig) {
+        return metadataConfigService.updateMetadataConfig(metadataConfig);
+    }
+
 
     @RequestMapping(value = "/metaconfig/{id}", method = RequestMethod.GET)
     public MetadataConfig getMetadataConfig(@PathVariable String id){

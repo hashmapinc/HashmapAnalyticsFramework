@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.service;
 
 import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
+import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.core.util.Validator;
@@ -40,6 +41,20 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         log.trace("Executing findAllMetadataConfigByOwnerId [{}]", ownerId);
         Validator.validateString(ownerId, INCORRECT_OWNER_ID + ownerId);
         return metadataConfigDao.findByOwnerId(ownerId);
+    }
+
+    @Override
+    public MetadataConfig updateMetadataConfig(MetadataConfig metadataConfig) {
+        log.trace("Executing updateMetadataConfigById [{}]", metadataConfig.getId());
+        Validator.validateId(metadataConfig.getId(), INCORRECT_METADATACONFIG_ID + metadataConfig.getId());
+        Optional<MetadataConfig> savedMetadataConfig = metadataConfigDao.findById(metadataConfig.getId().getId());
+
+        if(savedMetadataConfig.isPresent()){
+            savedMetadataConfig.get().update(metadataConfig);
+            return  metadataConfigDao.save(savedMetadataConfig.get());
+        }else {
+            throw new DataValidationException("Can't update for non-existent metaDataConfig!");
+        }
     }
 
     @Override
