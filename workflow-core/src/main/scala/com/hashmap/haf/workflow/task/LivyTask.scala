@@ -20,6 +20,8 @@ case class LivyTask(override val name: String,
 	//@ServiceResource(serviceName = "myClusterSingletonService", proxyInterface = classOf[Nothing])
 	//protected val mapSvc = _
 
+	private val serialVersionUID = 5681660255884837805L
+
 	def this(xml: NodeSeq) = this (
 		name = (xml \ NAME_ATTRIBUTE).text,
 		id = if ((xml \ ID_ATTRIBUTE).text != null && (xml \ ID_ATTRIBUTE).text.nonEmpty) UUIDConverter.fromString((xml \ ID_ATTRIBUTE).text) else UUID.randomUUID(),

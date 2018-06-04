@@ -15,7 +15,8 @@
 
   <div layout="row" layout-margin>
     <div flex="35">
-      <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.createWorkflow(vm.workflowXml)">Create New Workflow</md-button>
+      <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.createWorkflow(vm.workflowXml)">Create</md-button>
+      <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.executeWorkflow(vm.selectedIndex)">Execute</md-button>
       <md-list class="md-dense make-scrollable" flex>
         <md-list-item class="md-3-line" ng-repeat="workflow in vm.workflows"
             ng-click="vm.onClickSelectWorkflow($index)" ng-class="{selectedIndex: vm.selectedIndex===$index}">

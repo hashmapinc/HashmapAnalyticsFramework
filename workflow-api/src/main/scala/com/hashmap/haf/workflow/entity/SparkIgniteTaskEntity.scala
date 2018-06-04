@@ -16,6 +16,9 @@ class SparkIgniteTaskEntity(
 
   private def this() = this(null, null, null)
 
+  @Transient
+  private val serialVersionUID = 2244128686973414455L
+
   @BeanProperty
   @ElementCollection
   @MapKeyColumn(name="PARAM")
