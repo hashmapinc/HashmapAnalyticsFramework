@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 spring.application:
     name: metadata-service
 
-=======
->>>>>>> bd0f7257d29ad86db8c495427ee86b5f51592d1b
 server:
   # Server bind address
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
