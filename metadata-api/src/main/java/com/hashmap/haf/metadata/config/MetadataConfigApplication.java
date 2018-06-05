@@ -1,7 +1,6 @@
 package com.hashmap.haf.metadata.config;
 
 import com.hashmap.haf.metadata.config.install.MetadataServiceInstall;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
 import java.util.Arrays;
 
@@ -16,6 +16,7 @@ import java.util.Arrays;
 @SpringBootApplication
 @ComponentScan
 @Configuration
+@EnableOAuth2Client
 @PropertySource("classpath:metadata-api.yml")
 public class MetadataConfigApplication {
 

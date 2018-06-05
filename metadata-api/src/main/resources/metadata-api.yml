@@ -1,3 +1,6 @@
+spring.application:
+    name: metadata-service
+
 server:
   # Server bind address
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
@@ -37,4 +40,16 @@ spring:
 #    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
 
 install:
-  data_dir: "/home/vikash/HashmapAnalyticsFramework/metadata-api/src/main/resources"
+  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
+
+
+security:
+  oauth2:
+    client:
+      clientId: metadata-service
+      clientSecret: ${METADATA_SERVICE_PASSWORD:password}
+      accessTokenUri: http://localhost:9002/uaa/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      tokenInfoUri: http://localhost:9002/uaa/oauth/check_token
