@@ -45,6 +45,13 @@ oauth2.clients:
         - client_credentials
       scopes:
         - server
+  metadata-service:
+      clientSecret: ${METADATA_SERVICE_PASSWORD:password}
+      grantTypes:
+        - refresh_token
+        - client_credentials
+      scopes:
+        - server
 
 users:
   provider: database
