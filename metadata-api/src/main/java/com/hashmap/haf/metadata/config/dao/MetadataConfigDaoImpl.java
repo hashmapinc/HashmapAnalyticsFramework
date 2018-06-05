@@ -27,7 +27,7 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
     @Override
     public Optional<MetadataConfig> findById(UUID id) {
         String key = UUIDConverter.fromTimeUUID(id);
-        return Optional.of(DaoUtil.getData(metadataConfigRepository.findOne(key)));
+        return Optional.ofNullable(DaoUtil.getData(metadataConfigRepository.findOne(key)));
     }
 
     @Override

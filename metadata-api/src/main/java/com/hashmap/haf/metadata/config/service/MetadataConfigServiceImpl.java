@@ -24,6 +24,9 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
 
     @Override
     public MetadataConfig saveMetadataConfig(MetadataConfig metadataConfig) {
+        if (metadataConfig == null) {
+            throw new DataValidationException("Metadata-Config Object cannot be null");
+        }
         log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
         return metadataConfigDao.save(metadataConfig);
     }
@@ -45,6 +48,9 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
 
     @Override
     public MetadataConfig updateMetadataConfig(MetadataConfig metadataConfig) {
+        if (metadataConfig == null) {
+            throw new DataValidationException("Can't update non-existent metadata-config");
+        }
         log.trace("Executing updateMetadataConfigById [{}]", metadataConfig.getId());
         Validator.validateId(metadataConfig.getId(), INCORRECT_METADATACONFIG_ID + metadataConfig.getId());
         Optional<MetadataConfig> savedMetadataConfig = metadataConfigDao.findById(metadataConfig.getId().getId());
