@@ -72,5 +72,4 @@ public class MetadataConfigController {
         }
         return reference;
     }
-
 }

@@ -33,7 +33,6 @@ public class MetadataServiceInstall {
             log.info("Installing DataBase schema...");
 
             databaseSchemaService.createDatabaseSchema();
-
             log.info("Server Started...");
         } catch (Exception e) {
             log.error("Unexpected error during Metadata Ingestion Service installation!", e);
