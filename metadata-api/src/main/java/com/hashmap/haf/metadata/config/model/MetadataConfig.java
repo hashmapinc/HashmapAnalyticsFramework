@@ -85,11 +85,15 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
         this.setName(metadataConfig.getName());
 
         DataResource updatedSink = metadataConfig.getSink();
-        updatedSink.setId(this.sink.getId());
+        if (this.sink != null) {
+            updatedSink.setId(this.sink.getId());
+        }
         this.setSink(updatedSink);
 
         DataResource updatedSource = metadataConfig.getSource();
-        updatedSource.setId(this.source.getId());
+        if (this.source != null) {
+            updatedSource.setId(this.source.getId());
+        }
         this.setSource(updatedSource);
 
         this.setTriggerType(metadataConfig.getTriggerType());

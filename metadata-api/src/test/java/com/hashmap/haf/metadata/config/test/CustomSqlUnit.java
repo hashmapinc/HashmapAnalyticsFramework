@@ -54,7 +54,6 @@ public class CustomSqlUnit extends ExternalResource {
             for (String sqlFile : files) {
                 URL sqlFileUrl = Resources.getResource(sqlFile);
                 String sql = Resources.toString(sqlFileUrl, Charsets.UTF_8);
-                log.error("SQL : " + sql);
                 conn.createStatement().execute(sql);
             }
         } catch (IOException | SQLException e) {
