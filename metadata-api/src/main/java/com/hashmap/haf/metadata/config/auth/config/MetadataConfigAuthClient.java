@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.client.token.grant.client.ClientCrede
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class MetadataConfigClient {
+public class MetadataConfigAuthClient {
 
     @Bean
     @ConfigurationProperties(prefix = "security.oauth2.client")

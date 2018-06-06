@@ -1,7 +1,8 @@
-package com.hashmap.haf.metadata.config.entity;
+package com.hashmap.haf.metadata.core.data.resource.jdbc.entity;
 
 import com.fasterxml.uuid.Generators;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
+import com.hashmap.haf.metadata.core.data.resource.DataResourceEntity;
 import com.hashmap.haf.metadata.core.data.resource.jdbc.model.JdbcResource;
 import com.hashmap.haf.metadata.core.data.resource.jdbc.model.JdbcResourceId;
 import lombok.Data;

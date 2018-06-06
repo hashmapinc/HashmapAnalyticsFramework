@@ -1,4 +1,4 @@
-package com.hashmap.haf.metadata.config.entity;
+package com.hashmap.haf.metadata.core.data.resource;
 
 import com.hashmap.haf.metadata.core.common.entity.BaseSqlEntity;
 

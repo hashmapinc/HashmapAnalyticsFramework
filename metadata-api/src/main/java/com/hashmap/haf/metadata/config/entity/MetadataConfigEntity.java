@@ -6,15 +6,17 @@ import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
 import com.hashmap.haf.metadata.core.common.entity.BaseSqlEntity;
 import com.hashmap.haf.metadata.core.data.resource.DataResource;
+import com.hashmap.haf.metadata.core.data.resource.DataResourceEntity;
+import com.hashmap.haf.metadata.core.data.resource.jdbc.entity.JdbcResourceEntity;
 import com.hashmap.haf.metadata.core.data.resource.jdbc.model.JdbcResource;
 import com.hashmap.haf.metadata.core.data.resource.jdbc.model.JdbcResourceId;
+import com.hashmap.haf.metadata.core.data.resource.rest.entity.RestResourceEntity;
 import com.hashmap.haf.metadata.core.data.resource.rest.model.RestResource;
 import com.hashmap.haf.metadata.core.data.resource.rest.model.RestResourceId;
 import com.hashmap.haf.metadata.core.trigger.TriggerType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-
 
 import javax.persistence.*;
 
