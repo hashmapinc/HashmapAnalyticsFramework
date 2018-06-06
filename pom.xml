@@ -34,6 +34,9 @@
         <livy.version>0.3.0</livy.version>
         <docker.repository>hashmapinc</docker.repository>
         <java.uuid.generator.version>3.1.4</java.uuid.generator.version>
+        <takari-cpsuite.version>1.2.7</takari-cpsuite.version>
+        <guava.version>18.0</guava.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <modules>
@@ -238,6 +241,16 @@
                 <groupId>com.fasterxml.uuid</groupId>
                 <artifactId>java-uuid-generator</artifactId>
                 <version>${java.uuid.generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.takari.junit</groupId>
+                <artifactId>takari-cpsuite</artifactId>
+                <version>${takari-cpsuite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ignite</groupId>
