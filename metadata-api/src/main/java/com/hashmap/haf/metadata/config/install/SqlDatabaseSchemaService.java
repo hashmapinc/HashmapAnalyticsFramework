@@ -2,6 +2,7 @@ package com.hashmap.haf.metadata.config.install;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.Charset;
@@ -14,6 +15,7 @@ import java.sql.Statement;
 
 @Slf4j
 @Service
+@Profile("install")
 public class SqlDatabaseSchemaService implements DatabaseSchemaService {
 
     private static final String SQL_DIR = "sql";
