@@ -1,7 +1,9 @@
 package com.hashmap.haf.metadata.config.test.service;
 
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,18 @@ public class MetadataConfigServiceSqlTest {
         MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
         Assert.assertNotNull(savedMetadataConfig);
         Assert.assertNotNull(savedMetadataConfig.getId());
+    }
+
+    @Test
+    public void findMetadataConfigById() {
+        MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
+        Assert.assertNotNull(savedMetadataConfig);
+
+        MetadataConfigId metadataConfigId = savedMetadataConfig.getId();
+
+        MetadataConfig found = metadataConfigService.findMetadataConfigById(metadataConfigId);
+        Assert.assertNotNull(found);
+        Assert.assertEquals(metadataConfigId, found.getId());
     }
 
 }
