@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 @RunWith(ClasspathSuite.class)
 @ClasspathSuite.ClassnameFilters({
-        "com.hashmap.haf.metadata.config.test.service.*ServiceSqlTest"
+        "com.hashmap.haf.metadata.config.test.controller.*SqlTest"
 })
-public class ControllerSqlTestSuite {
+public class ControllerSqlITSuite {
 
     @ClassRule
     public static CustomSqlUnit sqlUnit = new CustomSqlUnit(

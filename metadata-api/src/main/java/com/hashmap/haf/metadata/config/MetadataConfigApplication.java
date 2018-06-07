@@ -17,7 +17,7 @@ import java.util.Arrays;
 @SpringBootApplication
 @Configuration
 @EnableOAuth2Client
-@PropertySource("classpath:metadata-api.yml")
+@PropertySource("classpath:metadata-api.yaml")
 @ComponentScan
 @EntityScan(basePackages = {"com.hashmap.haf.metadata.config",
         "com.hashmap.haf.metadata.core"})

@@ -1,6 +1,8 @@
 spring.application:
     name: metadata-service
 
+spring.profiles.active: test
+
 server:
   # Server bind address
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
@@ -23,24 +25,8 @@ spring:
     username: "${SPRING_DATASOURCE_USERNAME:sa}"
     password: "${SPRING_DATASOURCE_PASSWORD:}"
 
-# PostgreSQL DAO Configuration
-#spring:
-#  data:
-#    jpa:
-#      repositories:
-#        enabled: "true"
-#  jpa:
-#    hibernate:
-#      ddl-auto: "create"
-#    database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}"
-#  datasource:
-#    driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.postgresql.Driver}"
-#    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tempus}"
-#    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
-#    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
-
 install:
-  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
+  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/metadata/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
 
 
 security:

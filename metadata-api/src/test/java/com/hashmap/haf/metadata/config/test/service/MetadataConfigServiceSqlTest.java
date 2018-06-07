@@ -33,11 +33,16 @@ public class MetadataConfigServiceSqlTest {
         metadataConfig = new MetadataConfig();
     }
 
+    private void tearDown(MetadataConfigId metadataConfigId) {
+        metadataConfigService.deleteMetadataConfig(metadataConfigId);
+    }
+
     @Test
     public void saveMetadataConfig() {
         MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
         Assert.assertNotNull(savedMetadataConfig);
         Assert.assertNotNull(savedMetadataConfig.getId());
+        tearDown(savedMetadataConfig.getId());
     }
 
     @Test
@@ -50,6 +55,7 @@ public class MetadataConfigServiceSqlTest {
         MetadataConfig found = metadataConfigService.findMetadataConfigById(metadataConfigId);
         Assert.assertNotNull(found);
         Assert.assertEquals(metadataConfigId, found.getId());
+        tearDown(metadataConfigId);
     }
 
     @Test
@@ -72,6 +78,7 @@ public class MetadataConfigServiceSqlTest {
 
         List<MetadataConfig> found = metadataConfigService.findAllMetadataConfigByOwnerId(ownerId);
         Assert.assertEquals(1, found.size());
+        tearDown(savedMetadataConfig.getId());
     }
 
     @Test
@@ -85,6 +92,8 @@ public class MetadataConfigServiceSqlTest {
 
         List<MetadataConfig> found = metadataConfigService.findAllMetadataConfig();
         Assert.assertEquals(2, found.size());
+        tearDown(savedMetadataConfig.getId());
+        tearDown(savedMetadataConfig1.getId());
     }
 
     @Test
@@ -97,6 +106,7 @@ public class MetadataConfigServiceSqlTest {
         MetadataConfig updated = metadataConfigService.updateMetadataConfig(savedMetadataConfig);
         Assert.assertNotNull(updated);
         Assert.assertEquals("testMetadataConfig", updated.getName());
+        tearDown(savedMetadataConfig.getId());
     }
 
 }

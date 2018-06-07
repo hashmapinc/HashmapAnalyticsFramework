@@ -37,6 +37,7 @@
         <takari-cpsuite.version>1.2.7</takari-cpsuite.version>
         <guava.version>18.0</guava.version>
         <junit.version>4.12</junit.version>
+        <skipITs>true</skipITs>
     </properties>
 
     <modules>
