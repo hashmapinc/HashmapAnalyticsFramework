@@ -10,6 +10,8 @@ public class User implements UserInformation, Serializable{
     private String id;
     private String userName;
     private String tenantId;
+    private String customerId;
+    private String clientId;
     private String firstName;
     private String lastName;
     private List<String> authorities;
@@ -29,6 +31,8 @@ public class User implements UserInformation, Serializable{
         this.userName = user.getUserName();
         this.password = user.getPassword();
         this.tenantId = user.getTenantId();
+        this.customerId = user.getCustomerId();
+        this.clientId = user.getClientId();
         this.authorities = user.getAuthorities();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
@@ -102,6 +106,22 @@ public class User implements UserInformation, Serializable{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override

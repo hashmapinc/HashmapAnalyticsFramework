@@ -8,6 +8,8 @@ public class ModelConstants {
     public static final String ID_PROPERTY = "id";
     public static final String USER_NAME_PROPERTY = "user_name";
     public static final String TENANT_ID_PROPERTY = "tenant_id";
+    public static final String CUSTOMER_ID_PROPERTY = "customer_id";
+    public static final String CLIENT_ID_PROPERTY = "client_id";
     public static final String USER_FIRST_NAME_PROPERTY = "first_name";
     public static final String USER_LAST_NAME_PROPERTY = "last_name";
     public static final String USER_PASSWORD_PROPERTY = "password";
