@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface UserDetailsService {
 
-    UserInformation loadUserByUsername(String s) throws UsernameNotFoundException;
+    UserInformation loadUserByUsername(String s, String clientId) throws UsernameNotFoundException;
 
     User save(User user);
 

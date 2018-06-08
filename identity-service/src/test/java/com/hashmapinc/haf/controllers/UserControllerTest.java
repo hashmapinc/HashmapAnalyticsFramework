@@ -69,6 +69,7 @@ public class UserControllerTest {
         admin.setPassword("demo");
         admin.setEnabled(true);
         admin.setAuthorities(Arrays.asList("admin", "user"));
+        admin.setClientId(clientId);
         createUser(admin);
         admin.setPassword("demo");
 
@@ -76,6 +77,7 @@ public class UserControllerTest {
         user.setUserName("redTailUser");
         user.setPassword("password");
         user.setEnabled(true);
+        user.setClientId(clientId);
         user.setAuthorities(Arrays.asList("user"));
 
         createUser(user);

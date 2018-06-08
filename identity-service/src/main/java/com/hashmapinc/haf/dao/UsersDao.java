@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface UsersDao {
 
-    User findByUserName(String userName);
+    User findByUserName(String userName, String clientId);
 
     User save(User user);
 

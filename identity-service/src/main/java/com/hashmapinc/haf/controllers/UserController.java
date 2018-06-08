@@ -41,6 +41,7 @@ public class UserController {
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUserById(@PathVariable String userId){
+        String clientId = getCurrentClientId();
         User user = userService.findById(userId);
         if(user == null)
             return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);

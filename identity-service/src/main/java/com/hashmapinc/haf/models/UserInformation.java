@@ -19,4 +19,8 @@ public interface UserInformation {
     String getLastName();
 
     String getTenantId();
+
+    String getCustomerId();
+
+    String getClientId();
 }

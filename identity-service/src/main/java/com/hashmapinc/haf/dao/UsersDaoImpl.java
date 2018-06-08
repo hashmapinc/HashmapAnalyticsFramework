@@ -21,8 +21,8 @@ public class UsersDaoImpl implements UsersDao{
     BCryptPasswordEncoder encoder;
 
     @Override
-    public User findByUserName(String userName) {
-        List<UserEntity> userEntities = usersRepository.findByUserName(userName);
+    public User findByUserName(String userName, String clientId) {
+        List<UserEntity> userEntities = usersRepository.findByUserNameAndClientId(userName, clientId);
         if(userEntities != null && !userEntities.isEmpty()){
             UserEntity user = userEntities.get(0);
             if(user != null){

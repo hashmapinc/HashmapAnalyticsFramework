@@ -18,8 +18,8 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Autowired private UsersDao usersDao;
 
     @Override
-    public UserInformation loadUserByUsername(String s) throws UsernameNotFoundException {
-        return usersDao.findByUserName(s);
+    public UserInformation loadUserByUsername(String s, String clientId) throws UsernameNotFoundException {
+        return usersDao.findByUserName(s, clientId);
     }
 
     @Override
