@@ -4,6 +4,7 @@ package com.hashmapinc.haf.dao;
 import com.hashmapinc.haf.models.User;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface UsersDao {
 
@@ -13,7 +14,7 @@ public interface UsersDao {
 
     void deleteById(String userId);
 
-    User findById(String userId);
+    User findById(UUID userId);
 
     Collection<User> findAll();
 }

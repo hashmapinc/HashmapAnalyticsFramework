@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 @Component
 //@ConditionalOnProperty(value = "users.provider", havingValue = "database")
@@ -28,7 +29,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public User findById(String id) {
+    public User findById(UUID id) {
         return usersDao.findById(id);
     }
 

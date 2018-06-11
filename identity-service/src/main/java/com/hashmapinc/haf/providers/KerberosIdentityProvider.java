@@ -35,7 +35,7 @@ public class KerberosIdentityProvider extends CustomAuthenticationProvider{
         String validatedUsername = kerberosClient.login(auth.getName(), auth.getCredentials().toString());
         UserInformation userDetails = this.userDetailsService.loadUserByUsername(validatedUsername, "clientId");
         //SecurityUser securityUser = mapper.map(userDetails, userPrincipal);
-        return new UsernamePasswordAuthenticationToken(null, null, null);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, null);
     }
 
 }

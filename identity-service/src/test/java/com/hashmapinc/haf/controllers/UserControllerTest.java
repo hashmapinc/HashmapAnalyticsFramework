@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.controllers;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmapinc.haf.models.User;
@@ -25,6 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -64,7 +66,8 @@ public class UserControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(springSecurity()).build();
         mapper.addMixIn(User.class, UserPasswordMixin.class);
-        admin = new User("123123");
+        UUID adminId = UUIDs.timeBased();
+        admin = new User(adminId);
         admin.setUserName("demo");
         admin.setPassword("demo");
         admin.setEnabled(true);
@@ -73,7 +76,8 @@ public class UserControllerTest {
         createUser(admin);
         admin.setPassword("demo");
 
-        user = new User("1231");
+        UUID userId = UUIDs.timeBased();
+        user = new User(userId);
         user.setUserName("redTailUser");
         user.setPassword("password");
         user.setEnabled(true);
@@ -103,7 +107,7 @@ public class UserControllerTest {
     @Test
     public void shouldCreateNewUserWithCorrectAuthorization() throws Exception{
         User u = new User(user);
-        u.setId("456789");
+        u.setId(null);
         u.setUserName("temporary_user");
         u.setPassword("password");
         String json = mapper.writeValueAsString(u);
@@ -114,8 +118,7 @@ public class UserControllerTest {
                         .header("Content-Type", "application/json")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
-        ).andExpect(status().isCreated())
-        .andExpect(header().string("Location", new EndsWith("/users/"+u.getId())));
+        ).andExpect(status().isCreated());
     }
 
     @Test
@@ -141,7 +144,7 @@ public class UserControllerTest {
                         .header("Authorization", "Bearer "+ adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userAuthentication.principal.enabled").value(true))
-                .andExpect(jsonPath("$.userAuthentication.principal.user.id").value("123123"))
+                .andExpect(jsonPath("$.userAuthentication.principal.user.id").value(admin.getId().toString()))
                 .andExpect(jsonPath("$.userAuthentication.principal.user.userName").value("demo"));
     }
 
@@ -169,7 +172,7 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer "+ adminToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.userName").value(user.getUserName()))
                 .andExpect(jsonPath("$.password").doesNotExist());
     }

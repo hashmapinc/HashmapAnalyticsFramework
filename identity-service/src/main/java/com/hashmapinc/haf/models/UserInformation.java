@@ -1,6 +1,7 @@
 package com.hashmapinc.haf.models;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserInformation {
 
@@ -12,7 +13,7 @@ public interface UserInformation {
 
     String getUserName();
 
-    String getId();
+    UUID getId();
 
     String getFirstName();
 

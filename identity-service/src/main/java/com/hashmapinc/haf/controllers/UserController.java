@@ -19,6 +19,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -40,8 +41,8 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserById(@PathVariable String userId){
-        String clientId = getCurrentClientId();
+    public ResponseEntity<?> getUserById(@PathVariable UUID userId){
+        //String clientId = getCurrentClientId();
         User user = userService.findById(userId);
         if(user == null)
             return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);
@@ -53,7 +54,7 @@ public class UserController {
     public ResponseEntity<?> save(@RequestBody User user){
         String clientId = getCurrentClientId();
         if(provider.equalsIgnoreCase("database")) {
-            if(userService.findById(user.getId()) == null) {
+            if(user.getId() == null || userService.findById(user.getId()) == null) {
                 User savedUser = userService.save(user);
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()

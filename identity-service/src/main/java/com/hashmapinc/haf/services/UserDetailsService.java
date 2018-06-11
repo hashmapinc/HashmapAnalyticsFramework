@@ -5,6 +5,7 @@ import com.hashmapinc.haf.models.UserInformation;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface UserDetailsService {
 
@@ -12,7 +13,7 @@ public interface UserDetailsService {
 
     User save(User user);
 
-    User findById(String id);
+    User findById(UUID id);
 
     Collection<User> findAll();
 

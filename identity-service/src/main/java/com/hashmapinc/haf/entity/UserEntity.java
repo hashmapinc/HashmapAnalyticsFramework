@@ -3,6 +3,7 @@ package com.hashmapinc.haf.entity;
 
 import com.hashmapinc.haf.constants.ModelConstants;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.utils.UUIDConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -54,7 +55,7 @@ public class UserEntity implements Serializable{
 
     public UserEntity(User user) {
         if (user.getId() != null) {
-            this.setId(user.getId());
+            this.setId(UUIDConverter.fromTimeUUID(user.getId()));
         }
         this.userName = user.getUserName();
         this.enabled = user.isEnabled();
@@ -81,8 +82,12 @@ public class UserEntity implements Serializable{
         return this.id;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
     public User toData() {
-        User user = new User(getId());
+        User user = new User(UUIDConverter.fromString(getId()));
         //user.setCreatedTime(UUIDs.unixTimestamp(getId()));
         user.setAuthorities(authorities);
         if (tenantId != null) {
