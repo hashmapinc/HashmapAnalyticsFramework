@@ -1,7 +1,6 @@
 package com.hashmapinc.haf.controllers;
 
 import com.hashmapinc.haf.models.User;
-import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -55,6 +53,9 @@ public class UserController {
         String clientId = getCurrentClientId();
         if(provider.equalsIgnoreCase("database")) {
             if(user.getId() == null || userService.findById(user.getId()) == null) {
+                if(user.getClientId() == null){
+                    user.setClientId(clientId);
+                }
                 User savedUser = userService.save(user);
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()
@@ -75,7 +76,7 @@ public class UserController {
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllUsers(){
-        Collection<User> users = userService.findAll();
+        Collection<User> users = userService.findAllByClientId(getCurrentClientId());
         if(users == null || users.isEmpty())
             return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(users);

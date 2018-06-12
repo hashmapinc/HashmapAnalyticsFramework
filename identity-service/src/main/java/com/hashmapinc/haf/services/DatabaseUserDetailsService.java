@@ -4,11 +4,9 @@ import com.hashmapinc.haf.dao.UsersDao;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserInformation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -34,8 +32,8 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public Collection<User> findAll() {
-        return usersDao.findAll();
+    public Collection<User> findAllByClientId(String clientId) {
+        return usersDao.findAllByClientId(clientId);
     }
 
     @Override

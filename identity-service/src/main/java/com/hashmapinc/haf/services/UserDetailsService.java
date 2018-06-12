@@ -15,7 +15,7 @@ public interface UserDetailsService {
 
     User findById(UUID id);
 
-    Collection<User> findAll();
+    Collection<User> findAllByClientId(String clientId);
 
     void deleteById(String userId);
 

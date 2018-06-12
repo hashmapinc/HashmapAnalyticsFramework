@@ -58,8 +58,8 @@ public class UsersDaoImpl implements UsersDao{
     }
 
     @Override
-    public Collection<User> findAll() {
-        return convertDataList(usersRepository.findAll());
+    public Collection<User> findAllByClientId(String clientId) {
+        return convertDataList(usersRepository.findByClientId(clientId));
     }
 
     private List<User> convertDataList(Iterable<UserEntity> toDataList){

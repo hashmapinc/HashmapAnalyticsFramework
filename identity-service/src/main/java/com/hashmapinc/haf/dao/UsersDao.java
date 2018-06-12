@@ -16,5 +16,5 @@ public interface UsersDao {
 
     User findById(UUID userId);
 
-    Collection<User> findAll();
+    Collection<User> findAllByClientId(String clientId);
 }
