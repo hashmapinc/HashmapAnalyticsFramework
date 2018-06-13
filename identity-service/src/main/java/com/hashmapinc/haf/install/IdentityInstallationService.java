@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.install;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 public class IdentityInstallationService {
@@ -32,7 +34,8 @@ public class IdentityInstallationService {
 
         schemaService.createDatabaseSchema();
 
-        User user = new User("123456");
+        User user = new User(UUIDs.timeBased());
+        user.setClientId("identity-service");
         user.setUserName("demo");
         user.setPassword("demo");
         user.setTenantId("hashmapInc");

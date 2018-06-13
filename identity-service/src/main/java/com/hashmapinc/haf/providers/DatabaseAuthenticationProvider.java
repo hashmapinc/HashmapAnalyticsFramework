@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Map;
+
 @Component
 @ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
@@ -43,17 +45,22 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if(authentication instanceof UsernamePasswordAuthenticationToken) {
             String username = (String) authentication.getPrincipal();
             String password = (String) authentication.getCredentials();
-            return authenticateByUsernameAndPassword(username, password);
+            String clientId = null;
+            if(authentication.getDetails() instanceof Map) {
+                Map<String, String> details = (Map<String, String>) authentication.getDetails();
+                clientId = details.get("client_id");
+            }
+            return authenticateByUsernameAndPassword(username, password, clientId);
         }else{
             SecurityUser user = (SecurityUser)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
             String username = user.getUser().getUserName();
             PreAuthenticatedAuthenticationToken auth  = (PreAuthenticatedAuthenticationToken)authentication;
-            return reAuthenticateWithUsername(username, auth);
+            return reAuthenticateWithUsername(username, user.getUser().getClientId(), auth);
         }
     }
 
-    protected Authentication authenticateByUsernameAndPassword(String username, String password) {
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+    protected Authentication authenticateByUsernameAndPassword(String username, String password, String clientId) {
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username, clientId);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -73,8 +80,8 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         return new UsernamePasswordAuthenticationToken(securityUser, password, securityUser.getAuthorities());
     }
 
-    protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+    protected Authentication reAuthenticateWithUsername(String username, String clientId, PreAuthenticatedAuthenticationToken auth){
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username, clientId);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }

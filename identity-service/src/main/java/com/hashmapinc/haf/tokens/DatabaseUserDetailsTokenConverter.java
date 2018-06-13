@@ -32,6 +32,8 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
         response.put("firstName", user.getUser().getFirstName());
         response.put("lastName", user.getUser().getLastName());
         response.put("tenant_id", user.getUser().getTenantId());
+        response.put("customer_id", user.getUser().getCustomerId());
+        response.put("client_id", user.getUser().getClientId());
         response.put("enabled", user.isEnabled());
         if(authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
@@ -45,7 +47,7 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
         if(map.containsKey("user_name")) {
             Object principal = map.get("user_name");
             //TODO: Make sure to get the User using tenant_id as well
-            UserInformation user = userDetailsService.loadUserByUsername((String) principal);
+            UserInformation user = userDetailsService.loadUserByUsername((String) principal, (String) map.get("client_id"));
 
             if(user != null) {
                 SecurityUser securityUser = new SecurityUser(user, user.isEnabled());
