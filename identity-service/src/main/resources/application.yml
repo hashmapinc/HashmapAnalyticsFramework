@@ -49,6 +49,12 @@ oauth2.clients:
 users:
   provider: database
 
+ldap:
+  dn-pattern: "uid={0},ou=people"
+  group-search-base: "ou=groups"
+  context-source: "ldap://localhost:8389/dc=springframework,dc=org"
+
+
 #spring.jpa.properties.javax.persistence.schema-generation.create-source: metadata
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.action: create
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target: create.sql

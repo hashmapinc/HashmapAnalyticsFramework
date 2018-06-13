@@ -23,6 +23,7 @@
         <spring.version>4.3.13.RELEASE</spring.version>
         <spring-boot.version>1.5.9.RELEASE</spring-boot.version>
         <spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+        <spring-security-ldap.version>2.3.2.RELEASE</spring-security-ldap.version>
         <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
         <jjwt.version>0.7.0</jjwt.version>
         <velocity.version>1.7</velocity.version>
@@ -176,6 +177,22 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-jwt</artifactId>
                 <version>${spring-security-jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>${spring-security-ldap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-ldap</artifactId>
+                <version>${spring-security-ldap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.unboundid</groupId>
+                <artifactId>unboundid-ldapsdk</artifactId>
+                <version>4.0.6</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>

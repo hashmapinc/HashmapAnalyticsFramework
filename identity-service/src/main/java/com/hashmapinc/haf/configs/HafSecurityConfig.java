@@ -39,7 +39,9 @@ public class HafSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(customAuthenticationProvider);
+        auth
+                .authenticationProvider(customAuthenticationProvider)
+                .eraseCredentials(true);
     }
 
     @Override

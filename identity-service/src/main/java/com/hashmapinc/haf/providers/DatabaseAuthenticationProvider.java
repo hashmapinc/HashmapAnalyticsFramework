@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import java.util.Map;
 
 @Component
-@ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
+@ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local", matchIfMissing = true)
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
 
     private final DatabaseUserDetailsService userDetailsService;

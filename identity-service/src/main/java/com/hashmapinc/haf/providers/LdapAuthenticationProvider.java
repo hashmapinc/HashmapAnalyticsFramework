@@ -8,8 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(value = "security.provider", havingValue = "ldap")
 public class LdapAuthenticationProvider extends CustomAuthenticationProvider{
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         return null;
+    }
+
+    private void buildLdapProvider(){
+
     }
 }
