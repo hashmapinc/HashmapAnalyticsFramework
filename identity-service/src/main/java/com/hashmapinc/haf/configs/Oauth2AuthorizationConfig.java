@@ -1,6 +1,7 @@
 package com.hashmapinc.haf.configs;
 
 import com.hashmapinc.haf.services.PropertiesClientUserDetailsService;
+import com.hashmapinc.haf.tokens.IssuedAtTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +38,6 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         DefaultTokenServices tokenServices = tokenService();
         tokenServices.setClientDetailsService(endpoints.getClientDetailsService());
-        tokenServices.setTokenEnhancer(accessTokenConverter());
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore())
@@ -76,7 +76,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public TokenEnhancer tokenEnhancerChain(){
         TokenEnhancerChain chain = new TokenEnhancerChain();
-        chain.setTokenEnhancers(Arrays.asList(accessTokenConverter()));
+        chain.setTokenEnhancers(Arrays.asList(new IssuedAtTokenEnhancer(), accessTokenConverter()));
         return chain;
     }
 
@@ -85,6 +85,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     public DefaultTokenServices tokenService(){
         DefaultTokenServices service = new DefaultTokenServices();
         service.setTokenStore(tokenStore());
+        service.setTokenEnhancer(tokenEnhancerChain());
         service.setSupportRefreshToken(true);
         service.setAuthenticationManager(authenticationManager);
         service.setRefreshTokenValiditySeconds(settings.getRefreshTokenExpTime());
