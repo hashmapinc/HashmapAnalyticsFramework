@@ -33,6 +33,11 @@
         <akka.version>2.4.20</akka.version>
         <livy.version>0.3.0</livy.version>
         <docker.repository>hashmapinc</docker.repository>
+        <java.uuid.generator.version>3.1.4</java.uuid.generator.version>
+        <takari-cpsuite.version>1.2.7</takari-cpsuite.version>
+        <guava.version>18.0</guava.version>
+        <junit.version>4.12</junit.version>
+        <skipITs>true</skipITs>
         <cassandra.version>3.3.0</cassandra.version>
     </properties>
 
@@ -50,6 +55,8 @@
         <module>functions</module>
         <module>scheduler</module>
         <module>identity-service</module>
+        <module>metadata-api</module>
+        <module>metadata-core</module>
         <!--<module>ui</module>-->
     </modules>
 
@@ -233,6 +240,21 @@
                 <version>${ignite.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${java.uuid.generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.takari.junit</groupId>
+                <artifactId>takari-cpsuite</artifactId>
+                <version>${takari-cpsuite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-spark</artifactId>
                 <version>${ignite.version}</version>
@@ -288,6 +310,16 @@
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
                 <artifactId>workflow-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
