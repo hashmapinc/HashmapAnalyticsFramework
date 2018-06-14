@@ -1,15 +1,19 @@
 package com.hashmapinc.haf.models;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 public class User implements UserInformation, Serializable{
     private static final long serialVersionUID = -350874482962054954L;
 
-    private String id;
+    private UUID id;
     private String userName;
     private String tenantId;
+    private String customerId;
+    private String clientId;
     private String firstName;
     private String lastName;
     private List<String> authorities;
@@ -18,9 +22,11 @@ public class User implements UserInformation, Serializable{
     private String password;
     private boolean enabled;
 
-    public User(){}
+    public User(){
+        this(UUIDs.timeBased());
+    }
 
-    public User(String id){
+    public User(UUID id){
         this.id = id;
     }
 
@@ -29,6 +35,8 @@ public class User implements UserInformation, Serializable{
         this.userName = user.getUserName();
         this.password = user.getPassword();
         this.tenantId = user.getTenantId();
+        this.customerId = user.getCustomerId();
+        this.clientId = user.getClientId();
         this.authorities = user.getAuthorities();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
@@ -39,11 +47,11 @@ public class User implements UserInformation, Serializable{
         return serialVersionUID;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -102,6 +110,22 @@ public class User implements UserInformation, Serializable{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override

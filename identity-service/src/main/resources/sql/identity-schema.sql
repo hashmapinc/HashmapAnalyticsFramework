@@ -5,6 +5,8 @@ create table if not exists haf_users (
     last_name varchar(255),
     password varchar(255),
     tenant_id varchar(255),
+    client_id varchar(255),
+    customer_id varchar(255),
     user_name varchar(255)
 );
 

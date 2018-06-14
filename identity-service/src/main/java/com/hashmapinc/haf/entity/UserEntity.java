@@ -3,6 +3,7 @@ package com.hashmapinc.haf.entity;
 
 import com.hashmapinc.haf.constants.ModelConstants;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.utils.UUIDConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,6 +29,12 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.TENANT_ID_PROPERTY)
     private String tenantId;
 
+    @Column(name = ModelConstants.CUSTOMER_ID_PROPERTY)
+    private String customerId;
+
+    @Column(name = ModelConstants.CLIENT_ID_PROPERTY)
+    private String clientId;
+
     @Column(name = ModelConstants.USER_ENABLED_PROPERTY)
     private boolean enabled;
 
@@ -48,7 +55,7 @@ public class UserEntity implements Serializable{
 
     public UserEntity(User user) {
         if (user.getId() != null) {
-            this.setId(user.getId());
+            this.setId(UUIDConverter.fromTimeUUID(user.getId()));
         }
         this.userName = user.getUserName();
         this.enabled = user.isEnabled();
@@ -56,6 +63,12 @@ public class UserEntity implements Serializable{
         this.authorities = user.getAuthorities();
         if (user.getTenantId() != null) {
             this.tenantId = user.getTenantId();
+        }
+        if (user.getClientId() != null) {
+            this.clientId = user.getClientId();
+        }
+        if (user.getCustomerId() != null) {
+            this.customerId = user.getCustomerId();
         }
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
@@ -69,8 +82,12 @@ public class UserEntity implements Serializable{
         return this.id;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
     public User toData() {
-        User user = new User(getId());
+        User user = new User(UUIDConverter.fromString(getId()));
         //user.setCreatedTime(UUIDs.unixTimestamp(getId()));
         user.setAuthorities(authorities);
         if (tenantId != null) {
@@ -81,7 +98,8 @@ public class UserEntity implements Serializable{
         user.setEnabled(enabled);
         user.setFirstName(firstName);
         user.setLastName(lastName);
-
+        user.setClientId(clientId);
+        user.setCustomerId(customerId);
         return user;
     }
 
@@ -97,6 +115,9 @@ public class UserEntity implements Serializable{
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
+        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
+        if (clientId != null ? !clientId.equals(that.clientId) : that.clientId != null) return false;
+        if (customerId != null ? !customerId.equals(that.customerId) : that.customerId != null) return false;
         if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
         return authorities != null ? authorities.equals(that.authorities) : that.authorities == null;
@@ -108,6 +129,8 @@ public class UserEntity implements Serializable{
         result = 31 * result + (userName != null ? userName.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
+        result = 31 * result + (clientId != null ? clientId.hashCode() : 0);
+        result = 31 * result + (customerId != null ? customerId.hashCode() : 0);
         result = 31 * result + (enabled ? 1 : 0);
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
