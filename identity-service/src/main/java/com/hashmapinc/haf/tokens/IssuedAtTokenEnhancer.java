@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.tokens;
 
+import io.jsonwebtoken.Jwts;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -21,8 +22,7 @@ public class IssuedAtTokenEnhancer implements TokenEnhancer{
             claims.putAll(additionalInformation);
         }
 
-        ZonedDateTime currentTime = ZonedDateTime.now();
-        claims.put("iat", Date.from(currentTime.toInstant()));
+        claims.put("iat", System.currentTimeMillis() / 1000);
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(claims);
 

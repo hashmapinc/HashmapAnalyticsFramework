@@ -29,6 +29,7 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
         Map<String, Object> response = new LinkedHashMap();
         SecurityUser user = (SecurityUser) authentication.getPrincipal();
         response.put("user_name", user.getUser().getUserName());
+        response.put("id", user.getUser().getId());
         response.put("firstName", user.getUser().getFirstName());
         response.put("lastName", user.getUser().getLastName());
         response.put("tenant_id", user.getUser().getTenantId());

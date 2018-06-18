@@ -8,15 +8,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.*;
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
+import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter;
+import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
+import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,10 +47,12 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         DefaultTokenServices tokenServices = tokenService();
         tokenServices.setClientDetailsService(endpoints.getClientDetailsService());
+        TokenGranter tokenGranter = tokenGranter(endpoints.getClientDetailsService(), tokenServices, endpoints.getAuthorizationCodeServices(), endpoints.getOAuth2RequestFactory());
         endpoints
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain())
+                .tokenGranter(tokenGranter)
                 .tokenServices(tokenServices);
     }
 
@@ -92,4 +103,40 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         service.setAccessTokenValiditySeconds(settings.getTokenExpirationTime());
         return service;
     }
+
+
+    @Bean
+    @Primary
+    public TokenGranter tokenGranter(ClientDetailsService clientDetails, DefaultTokenServices tokenServices,
+                                     AuthorizationCodeServices authorizationCodeServices,OAuth2RequestFactory requestFactory) {
+        TokenGranter tokenGranter = new TokenGranter() {
+            private CompositeTokenGranter delegate;
+
+            @Override
+            public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
+                if (delegate == null) {
+                    delegate = new CompositeTokenGranter(getDefaultTokenGranters(clientDetails, tokenServices, authorizationCodeServices, requestFactory));
+                }
+                return delegate.grant(grantType, tokenRequest);
+            }
+        };
+        return tokenGranter;
+    }
+
+    private List<TokenGranter> getDefaultTokenGranters(ClientDetailsService clientDetails, DefaultTokenServices tokenServices,
+                                                       AuthorizationCodeServices authorizationCodeServices,OAuth2RequestFactory requestFactory) {
+        List<TokenGranter> tokenGranters = new ArrayList<TokenGranter>();
+        tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetails,
+                requestFactory));
+        tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetails, requestFactory));
+        ImplicitTokenGranter implicit = new ImplicitTokenGranter(tokenServices, clientDetails, requestFactory);
+        tokenGranters.add(implicit);
+        tokenGranters.add(new ClientCredentialsTokenGranter(tokenServices, clientDetails, requestFactory));
+        if (authenticationManager != null) {
+            tokenGranters.add(new ClientResourceOwnerPasswordTokenGranter(authenticationManager, tokenServices,
+                    clientDetails, requestFactory));
+        }
+        return tokenGranters;
+    }
+
 }
