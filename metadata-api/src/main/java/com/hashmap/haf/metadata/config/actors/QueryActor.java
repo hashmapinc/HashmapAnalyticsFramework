@@ -1,8 +1,8 @@
-package com.hashmap.haf.metadata.config.actor;
+package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
-import com.hashmap.haf.metadata.config.actor.message.query.StartQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.StartQueryMsg;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import lombok.extern.slf4j.Slf4j;
 

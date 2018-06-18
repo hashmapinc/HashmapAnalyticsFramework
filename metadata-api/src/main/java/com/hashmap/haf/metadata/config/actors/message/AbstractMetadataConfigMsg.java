@@ -1,4 +1,4 @@
-package com.hashmap.haf.metadata.config.actor.message;
+package com.hashmap.haf.metadata.config.actors.message;
 
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import lombok.Getter;

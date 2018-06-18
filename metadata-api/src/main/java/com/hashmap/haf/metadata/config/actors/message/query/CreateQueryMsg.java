@@ -1,6 +1,6 @@
-package com.hashmap.haf.metadata.config.actor.message.query;
+package com.hashmap.haf.metadata.config.actors.message.query;
 
-import com.hashmap.haf.metadata.config.actor.message.AbstractQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.AbstractQueryMsg;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 
 public class CreateQueryMsg extends AbstractQueryMsg {

@@ -1,15 +1,15 @@
-package com.hashmap.haf.metadata.config.actor;
+package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
-import com.hashmap.haf.metadata.config.actor.message.AbstractMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actor.message.TestConnectionMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.CreateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.CreateQueryMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.DeleteQueryMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.UpdateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.AbstractMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.RunIngestionMsg;
+import com.hashmap.haf.metadata.config.actors.message.TestConnectionMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.CreateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.DeleteQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.UpdateQueryMsg;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,11 +37,11 @@ public class ManagerActor extends AbstractLoggingActor {
 
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
-            log.info("Found metadata config owner group actor for {}", ownerId);
+            log.info("Found metadata config owner group actors for {}", ownerId);
             ref.tell(message, ActorRef.noSender());
         } else {
             if(message instanceof CreateMetadataConfigMsg) {
-                log.info("Creating metadata config owner group actor for {}", ownerId);
+                log.info("Creating metadata config owner group actors for {}", ownerId);
                 createMetaDataConfigOwnerActor(message, ownerId);
             }
         }
@@ -58,7 +58,7 @@ public class ManagerActor extends AbstractLoggingActor {
     private void onTerminated(Terminated t) {
         ActorRef ownerActor = t.getActor();
         String ownerId = actorToOwnerId.get(ownerActor);
-        log.info("Owner actor for {} has been terminated", ownerId);
+        log.info("Owner actors for {} has been terminated", ownerId);
         actorToOwnerId.remove(ownerActor);
         ownerIdToActor.remove(ownerId);
     }

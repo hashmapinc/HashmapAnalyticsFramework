@@ -1,4 +1,4 @@
-package com.hashmap.haf.metadata.config.actor;
+package com.hashmap.haf.metadata.config.actors;
 
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
 import lombok.Getter;

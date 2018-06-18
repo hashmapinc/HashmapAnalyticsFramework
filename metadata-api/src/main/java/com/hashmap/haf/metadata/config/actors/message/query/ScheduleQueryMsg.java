@@ -1,4 +1,4 @@
-package com.hashmap.haf.metadata.config.actor.message.query;
+package com.hashmap.haf.metadata.config.actors.message.query;
 
 import java.util.Set;
 

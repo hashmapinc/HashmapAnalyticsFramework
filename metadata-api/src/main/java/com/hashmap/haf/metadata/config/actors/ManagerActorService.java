@@ -1,14 +1,14 @@
-package com.hashmap.haf.metadata.config.actor;
+package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Terminated;
-import com.hashmap.haf.metadata.config.actor.message.metadata.CreateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.CreateQueryMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.DeleteQueryMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.UpdateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.CreateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.DeleteQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.UpdateQueryMsg;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class ManagerActorService {
             Terminated terminated = Await.result(status, Duration.Inf());
             log.info("Actor system terminated: {}", terminated);
         } catch (Exception e) {
-            log.error("Failed to terminate actor system.", e);
+            log.error("Failed to terminate actors system.", e);
         }
     }
 

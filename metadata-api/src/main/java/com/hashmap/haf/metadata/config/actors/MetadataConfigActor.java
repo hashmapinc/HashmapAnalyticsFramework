@@ -1,10 +1,10 @@
-package com.hashmap.haf.metadata.config.actor;
+package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
-import com.hashmap.haf.metadata.config.actor.message.*;
-import com.hashmap.haf.metadata.config.actor.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actor.message.query.*;
+import com.hashmap.haf.metadata.config.actors.message.*;
+import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.*;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.core.trigger.TriggerType;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
@@ -32,10 +32,10 @@ public class MetadataConfigActor extends AbstractActor {
 
     private  void processMetadataConfigMsg(Object message) {
         if (message instanceof UpdateMetadataConfigMsg) {
-            log.info("Updating metadataConfig actor for {}", metadataConfig.getId());
+            log.info("Updating metadataConfig actors for {}", metadataConfig.getId());
             metadataConfig = ((UpdateMetadataConfigMsg) message).getMetadataConfig();
         } else if (message instanceof DeleteMetadataConfigMsg) {
-            log.info("Deleting metadataConfig actor for {}",  metadataConfig.getId());
+            log.info("Deleting metadataConfig actors for {}",  metadataConfig.getId());
             context().stop(self());
         }
     }
