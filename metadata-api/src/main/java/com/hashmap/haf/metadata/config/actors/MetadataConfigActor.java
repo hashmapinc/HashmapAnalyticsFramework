@@ -32,10 +32,10 @@ public class MetadataConfigActor extends AbstractActor {
 
     private  void processMetadataConfigMsg(Object message) {
         if (message instanceof UpdateMetadataConfigMsg) {
-            log.info("Updating metadataConfig actors for {}", metadataConfig.getId());
+            log.debug("Updating metadataConfig actors for {}", metadataConfig.getId());
             metadataConfig = ((UpdateMetadataConfigMsg) message).getMetadataConfig();
         } else if (message instanceof DeleteMetadataConfigMsg) {
-            log.info("Deleting metadataConfig actors for {}",  metadataConfig.getId());
+            log.debug("Deleting metadataConfig actors for {}",  metadataConfig.getId());
             schedulerExtension.cancelJob("queryScheduler" + metadataConfig.getId());
             context().stop(self());
         }
@@ -43,9 +43,8 @@ public class MetadataConfigActor extends AbstractActor {
 
     private void processQueryMsg(Object message) {
         if (message instanceof CreateQueryMsg) {
-            log.info("Message type CreateQueryMsg");
+            log.debug("Message type CreateQueryMsg");
             queries.add(((CreateQueryMsg) message).getQuery());
-            log.info("queries", queries.toString());
             executeQuery(queries);
         } else if (message instanceof UpdateQueryMsg) {
             //TODO : Will be implemented after query support according to QueryId
@@ -56,7 +55,7 @@ public class MetadataConfigActor extends AbstractActor {
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
         } else if (message instanceof ScheduleQueryMsg) {
-            log.info("Has Query : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
+            log.debug("Has Query : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
             executeQuery(queries);
         }
     }

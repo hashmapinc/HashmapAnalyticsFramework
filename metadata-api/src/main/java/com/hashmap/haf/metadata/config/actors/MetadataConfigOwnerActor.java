@@ -50,13 +50,13 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         if (this.ownerId.equals(ownerId)) {
             ActorRef metadataConfigActor = metadataConfigIdToActor.get(metadataConfigId);
             if (metadataConfigActor != null) {
-                log.info("Found metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
+                log.debug("Found metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
                 if (!(message instanceof CreateMetadataConfigMsg)) {
                     metadataConfigActor.tell(message, ActorRef.noSender());
                 }
             } else {
                 if (message instanceof CreateMetadataConfigMsg) {
-                    log.info("Creating metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
+                    log.debug("Creating metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
                     metadataConfigActor = getContext().actorOf(MetadataConfigActor.props(metadataConfig, schedulerExtension), "metadataConfig-" + metadataConfigId);
                     getContext().watch(metadataConfigActor);
                     actorToMetadataConfigId.put(metadataConfigActor, metadataConfigId);
@@ -92,7 +92,7 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         if (this.ownerId.equals(ownerId)) {
             ActorRef ref = metadataConfigIdToActor.get(metadataConfigId);
             if (ref != null) {
-                log.info("Found metadataConfig group actors for MetadataConfigId : {}", metadataConfigId);
+                log.debug("Found metadataConfig group actors for MetadataConfigId : {}", metadataConfigId);
                 ref.tell(message, ActorRef.noSender());
             }
         }else {

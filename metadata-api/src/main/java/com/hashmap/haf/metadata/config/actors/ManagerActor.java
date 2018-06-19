@@ -38,11 +38,11 @@ public class ManagerActor extends AbstractLoggingActor {
 
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
-            log.info("Found metadata config owner group actors for OwnerId : {}", ownerId);
+            log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
             ref.tell(message, ActorRef.noSender());
         } else {
             if(message instanceof CreateMetadataConfigMsg) {
-                log.info("Creating metadata config owner group actors for OwnerId : {}", ownerId);
+                log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
                 createMetaDataConfigOwnerActor(message, ownerId);
             }
         }
@@ -69,7 +69,7 @@ public class ManagerActor extends AbstractLoggingActor {
         String ownerId = ((AbstractQueryMsg)message).getMetadataConfig().getOwnerId();
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
-            log.info("Found metadata config owner group actors for OwnerId : {}", ownerId);
+            log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
             ref.tell(message, ActorRef.noSender());
         }
     }

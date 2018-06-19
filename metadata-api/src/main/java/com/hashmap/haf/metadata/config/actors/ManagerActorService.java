@@ -56,32 +56,32 @@ public class ManagerActorService {
     }
 
     public void createMetadataConfig(MetadataConfig metadataConfig) {
-        log.info("Processing Create Metadata Config msg");
+        log.trace("Processing Create Metadata Config msg");
         managerActor.tell(new CreateMetadataConfigMsg(metadataConfig), ActorRef.noSender());
     }
 
     public void updateMetadataConfig(MetadataConfig metadataConfig) {
-        log.info("Processing Update Metadata Config  msg");
+        log.trace("Processing Update Metadata Config  msg");
         managerActor.tell(new UpdateMetadataConfigMsg(metadataConfig), ActorRef.noSender());
     }
 
     public void deleteMetadataConfig(MetadataConfig metadataConfig) {
-        log.info("Processing Delete Metadata Config  msg");
+        log.trace("Processing Delete Metadata Config  msg");
         managerActor.tell(new DeleteMetadataConfigMsg(metadataConfig), ActorRef.noSender());
     }
 
     public void createQuery(String query, MetadataConfig metadataConfig) {
-        log.info("Processing Create Query  msg");
+        log.trace("Processing Create Query  msg");
         managerActor.tell(new CreateQueryMsg(query, metadataConfig), ActorRef.noSender());
     }
 
     public void updateQuery(String query, MetadataConfig metadataConfig) {
-        log.info("Processing Update Query msg");
+        log.trace("Processing Update Query msg");
         managerActor.tell(new UpdateQueryMsg(query, metadataConfig), ActorRef.noSender());
     }
 
     public void deleteQuery(String query, MetadataConfig metadataConfig) {
-        log.info("Processing Delete Query  msg");
+        log.trace("Processing Delete Query  msg");
         managerActor.tell(new DeleteQueryMsg(query, metadataConfig), ActorRef.noSender());
     }
 }
