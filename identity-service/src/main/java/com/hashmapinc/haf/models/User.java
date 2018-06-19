@@ -27,9 +27,7 @@ public class User implements UserInformation, Serializable{
     private String password;
     private boolean enabled;
 
-    public User(){
-        this(UUIDs.timeBased());
-    }
+    public User(){}
 
     public User(UUID id){
         this.id = id;

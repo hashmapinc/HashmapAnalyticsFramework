@@ -5,12 +5,18 @@ import java.util.UUID;
 public class UserCredentials {
 
     private UUID id;
+    private UUID userId;
     private String password;
     private ActivationType type;
     private String activationToken;
     private String resetToken;
 
     public UserCredentials(){
+    }
+
+
+    public UserCredentials(UUID id){
+        this.id = id;
     }
 
     public String getPassword() {
@@ -51,5 +57,13 @@ public class UserCredentials {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }

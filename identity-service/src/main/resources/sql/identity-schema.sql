@@ -27,6 +27,16 @@ create table if not exists haf_user_details (
     primary key (user_id, key_name)
 );
 
+
+create table if not exists haf_user_credentials (
+    id varchar(31) NOT NULL CONSTRAINT haf_user_credentials_pkey PRIMARY KEY,
+    activation_token varchar(255) UNIQUE,
+    password varchar(255),
+    activation_type varchar(255),
+    reset_token varchar(255) UNIQUE,
+    user_id varchar(31) UNIQUE
+);
+
 /*alter table haf_user_authorities add constraint haf_user_foreign_key_auth foreign key (user_id) references haf_users;
 #alter table haf_user_permissions add constraint haf_user_foreign_key_perm foreign key (user_id) references haf_users;
 #alter table haf_user_details add constraint haf_user_foreign_key_details foreign key (user_id) references haf_users;*/

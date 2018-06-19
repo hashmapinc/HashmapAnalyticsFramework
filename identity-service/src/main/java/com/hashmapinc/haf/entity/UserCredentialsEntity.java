@@ -2,12 +2,11 @@ package com.hashmapinc.haf.entity;
 
 
 import com.hashmapinc.haf.constants.ModelConstants;
+import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.UserCredentials;
+import com.hashmapinc.haf.utils.UUIDConverter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -17,33 +16,58 @@ public class UserCredentialsEntity implements Serializable{
 
     @Id
     @Column(name = ModelConstants.ID_PROPERTY)
-    private UUID id;
+    private String id;
 
     @Column(name = ModelConstants.USER_CREDENTIALS_PASSWORD_PROPERTY)
     private String password;
 
+    @Column(name = ModelConstants.USER_CREDENTIALS_USER_ID_PROPERTY, unique = true)
+    private String userId;
+
     @Column(name = ModelConstants.USER_CREDENTIALS_ACT_TOKEN_PROPERTY)
     private String activationToken;
 
-    @Column(name = ModelConstants.USER_CREDENTIALS_RESET_TOKEN_PROPERTY)
+    @Column(name = ModelConstants.USER_CREDENTIALS_RESET_TOKEN_PROPERTY, unique = true)
     private String resetToken;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = ModelConstants.USER_CREDENTIALS_ACT_TYPE_PROPERTY)
-    private String activationType;
+    private ActivationType activationType;
+
+
+
+    public UserCredentialsEntity() {
+    }
 
     public UserCredentialsEntity(UserCredentials credentials){
-        setId(credentials.getId());
+        if (credentials.getId() != null) {
+            this.setId(UUIDConverter.fromTimeUUID(credentials.getId()));
+        }
+
+        if (credentials.getUserId() != null) {
+            this.userId = UUIDConverter.fromTimeUUID(credentials.getUserId());
+        }
         this.password = credentials.getPassword();
-        this.activationType = credentials.getType().toValue();
+        this.activationType = credentials.getType();
         this.activationToken = credentials.getActivationToken();
         this.resetToken = credentials.getResetToken();
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public UserCredentials toData() {
+        UserCredentials userCredentials = new UserCredentials(UUIDConverter.fromString(getId()));
+        userCredentials.setUserId(UUIDConverter.fromString(userId));
+        userCredentials.setPassword(password);
+        userCredentials.setActivationToken(activationToken);
+        userCredentials.setResetToken(resetToken);
+        userCredentials.setType(activationType);
+        return userCredentials;
     }
 }

@@ -36,7 +36,10 @@ public class UsersDaoImpl implements UsersDao{
 
     @Override
     public User save(User user) {
-        String encoded = encoder.encode(user.getPassword());
+        String encoded = null;
+        if(user.getPassword() != null) {
+            encoded = encoder.encode(user.getPassword());
+        }
         user.setPassword(encoded);
         if(user.getId() == null){
             user.setId(UUIDs.timeBased());
