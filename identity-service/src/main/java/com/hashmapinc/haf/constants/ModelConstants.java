@@ -23,4 +23,10 @@ public class ModelConstants {
     public static final String USER_AUTHORITIES_TABLE = "haf_user_authorities";
     public static final String USER_PERMISSIONS_TABLE = "haf_user_permissions";
     public static final String USER_ADDITIONAL_DETAILS_TABLE = "haf_user_details";
+
+    public static final String USER_CREDENTIALS_TABLE = "haf_user_credentials";
+    public static final String USER_CREDENTIALS_PASSWORD_PROPERTY = "password";
+    public static final String USER_CREDENTIALS_ACT_TOKEN_PROPERTY = "activation_token";
+    public static final String USER_CREDENTIALS_RESET_TOKEN_PROPERTY = "reset_token";
+    public static final String USER_CREDENTIALS_ACT_TYPE_PROPERTY = "activation_type";
 }
