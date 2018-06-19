@@ -19,3 +19,14 @@ create table if not exists haf_user_permissions (
     user_id varchar(255),
     permission varchar(255)
 );
+
+create table if not exists haf_user_details (
+    user_id varchar(255) not null,
+    key_value varchar(255),
+    key_name varchar(255) not null,
+    primary key (user_id, key_name)
+);
+
+/*alter table haf_user_authorities add constraint haf_user_foreign_key_auth foreign key (user_id) references haf_users;
+#alter table haf_user_permissions add constraint haf_user_foreign_key_perm foreign key (user_id) references haf_users;
+#alter table haf_user_details add constraint haf_user_foreign_key_details foreign key (user_id) references haf_users;*/

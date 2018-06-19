@@ -2,8 +2,11 @@ package com.hashmapinc.haf.models;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class User implements UserInformation, Serializable{
@@ -18,6 +21,7 @@ public class User implements UserInformation, Serializable{
     private String lastName;
     private List<String> authorities;
     private List<String> permissions;
+    private Map<String, String> additionalDetails;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -136,36 +140,35 @@ public class User implements UserInformation, Serializable{
         this.clientId = clientId;
     }
 
+    public Map<String, String> getAdditionalDetails() {
+        return additionalDetails;
+    }
+
+    public void setAdditionalDetails(Map<String, String> additionalDetails) {
+        this.additionalDetails = additionalDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-
         User user = (User) o;
-
-        if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) return false;
-        if (getUserName() != null ? !getUserName().equals(user.getUserName()) : user.getUserName() != null)
-            return false;
-        if (getTenantId() != null ? !getTenantId().equals(user.getTenantId()) : user.getTenantId() != null)
-            return false;
-        if (getFirstName() != null ? !getFirstName().equals(user.getFirstName()) : user.getFirstName() != null)
-            return false;
-        if (getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null)
-            return false;
-        if (getPermissions() != null ? !getPermissions().equals(user.getPermissions()) : user.getPermissions() != null)
-            return false;
-        return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
+        return isEnabled() == user.isEnabled() &&
+                Objects.equals(getId(), user.getId()) &&
+                Objects.equals(getUserName(), user.getUserName()) &&
+                Objects.equals(getTenantId(), user.getTenantId()) &&
+                Objects.equals(getCustomerId(), user.getCustomerId()) &&
+                Objects.equals(getClientId(), user.getClientId()) &&
+                Objects.equals(getFirstName(), user.getFirstName()) &&
+                Objects.equals(getLastName(), user.getLastName()) &&
+                Objects.equals(getAuthorities(), user.getAuthorities()) &&
+                Objects.equals(getPermissions(), user.getPermissions()) &&
+                Objects.equals(getAdditionalDetails(), user.getAdditionalDetails()) &&
+                Objects.equals(getPassword(), user.getPassword());
     }
 
     @Override
     public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getUserName() != null ? getUserName().hashCode() : 0);
-        result = 31 * result + (getTenantId() != null ? getTenantId().hashCode() : 0);
-        result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
-        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
-        result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
-        result = 31 * result + (getPermissions() != null ? getPermissions().hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getPermissions(), getAdditionalDetails(), getPassword(), isEnabled());
     }
 }

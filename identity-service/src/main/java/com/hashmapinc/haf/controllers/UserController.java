@@ -74,6 +74,28 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@PathVariable UUID userId, @RequestBody User user){
+        String clientId = getCurrentClientId();
+        if(provider.equalsIgnoreCase("database")) {
+            if(userId != null && userService.findById(userId) != null) {
+                if(user.getClientId() == null){
+                    user.setClientId(clientId);
+                }
+                user.setId(userId);
+                User savedUser = userService.save(user);
+                return ResponseEntity.ok(savedUser);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found for given id");
+            }
+        }
+        else
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .body("User can't be created as provider is set to " + provider);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllUsers(){
         Collection<User> users = userService.findAllByClientId(getCurrentClientId());

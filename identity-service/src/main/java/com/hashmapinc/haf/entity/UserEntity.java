@@ -4,12 +4,11 @@ package com.hashmapinc.haf.entity;
 import com.hashmapinc.haf.constants.ModelConstants;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.utils.UUIDConverter;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = ModelConstants.USERS_TABLE)
@@ -46,17 +45,21 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.USER_LAST_NAME_PROPERTY)
     private String lastName;
 
-    @ElementCollection()
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = ModelConstants.USER_AUTHORITIES_TABLE, joinColumns = @JoinColumn(name = ModelConstants.ID_PROPERTY))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = ModelConstants.USER_PERMISSIONS_TABLE, joinColumns = @JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
+    @Column(name = ModelConstants.USER_PERMISSIONS_COLUMN)
+    private List<String> permissions;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = ModelConstants.USER_AUTHORITIES_TABLE, joinColumns = @JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
     @Column(name = ModelConstants.USER_AUTHORITIES_COLUMN)
     private List<String> authorities;
 
-    @ElementCollection()
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = ModelConstants.USER_PERMISSIONS_TABLE, joinColumns = @JoinColumn(name = ModelConstants.ID_PROPERTY))
-    @Column(name = ModelConstants.USER_PERMISSIONS_COLUMN)
-    private List<String> permissions;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = ModelConstants.USER_DETAILS_KEY_COLUMN)
+    @Column(name = ModelConstants.USER_DETAILS_VALUE_COLUMN)
+    @CollectionTable(name=ModelConstants.USER_ADDITIONAL_DETAILS_TABLE, joinColumns=@JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
+    private Map<String, String> additionalDetails;
 
     public UserEntity() {
     }
@@ -81,6 +84,7 @@ public class UserEntity implements Serializable{
         }
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.additionalDetails = user.getAdditionalDetails();
     }
 
     protected void setId(String id){
@@ -110,6 +114,7 @@ public class UserEntity implements Serializable{
         user.setLastName(lastName);
         user.setClientId(clientId);
         user.setCustomerId(customerId);
+        user.setAdditionalDetails(additionalDetails);
         return user;
     }
 
