@@ -66,6 +66,16 @@ public class MetadataConfigController {
         metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
 
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @RequestMapping(value = "/metaconfig/{id}/query", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void createQuery(@PathVariable String id, @RequestBody String query) {
+        MetadataConfigId  metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
+        MetadataConfig foundMetadataConfig = metadataConfigService.findMetadataConfigById(metadataConfigId);
+        metadataConfigService.createQueryMsg(query, foundMetadataConfig);
+    }
+
+
     private <T> T checkNotNull(T reference) throws MetadataException {
         if (reference == null) {
             throw new MetadataException("Requested item wasn't found!");

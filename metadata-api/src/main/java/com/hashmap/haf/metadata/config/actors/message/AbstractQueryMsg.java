@@ -1,6 +1,6 @@
 package com.hashmap.haf.metadata.config.actors.message;
 
-import com.hashmap.haf.metadata.config.model.MetadataConfigId;
+import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import lombok.Getter;
 
 public class AbstractQueryMsg {
@@ -9,10 +9,10 @@ public class AbstractQueryMsg {
     private final String query;
 
     @Getter
-    private final MetadataConfigId metadataConfigId;
+    private final MetadataConfig metadataConfig;
 
-    public AbstractQueryMsg(String query, MetadataConfigId metadataConfigId) {
+    public AbstractQueryMsg(String query, MetadataConfig metadataConfig) {
         this.query = query;
-        this.metadataConfigId = metadataConfigId;
+        this.metadataConfig = metadataConfig;
     }
 }

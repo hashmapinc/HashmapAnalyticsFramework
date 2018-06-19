@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.test.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
@@ -45,6 +46,9 @@ public class MetadataConfigControllerSqlIT {
     MetadataConfigService metadataConfigService;
 
     @Autowired
+    MetadataConfigDao metadataConfigDao;
+
+    @Autowired
     RestTemplate restTemplate;
 
     private MockMvc mockMvc;
@@ -82,6 +86,8 @@ public class MetadataConfigControllerSqlIT {
         MetadataConfig saved = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
+
+        Assert.assertEquals(saved, metadataConfigDao.findById(saved.getUuidId()).get());
         tearDown(saved.getId());
     }
 
@@ -100,11 +106,14 @@ public class MetadataConfigControllerSqlIT {
                         .content(json)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+
         MetadataConfig updatedMetadataConfig = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(updatedMetadataConfig);
         Assert.assertEquals(savedMetadataConfig.getId(), updatedMetadataConfig.getId());
         Assert.assertNotEquals(updatedMetadataConfig.getName(), savedMetadataConfig.getName());
         Assert.assertEquals(updatedMetadataConfig.getName(), "Configuration");
+        Assert.assertEquals(updatedMetadataConfig, metadataConfigDao.findById(updatedMetadataConfig.getUuidId()).get());
+
         tearDown(savedMetadataConfig.getId());
     }
 
@@ -120,6 +129,7 @@ public class MetadataConfigControllerSqlIT {
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+
         MetadataConfig found = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(metadataConfigId, found.getId());
@@ -176,5 +186,6 @@ public class MetadataConfigControllerSqlIT {
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
         Assert.assertNull(metadataConfigService.findMetadataConfigById(savedMetadataConfig.getId()));
+        Assert.assertNotNull(metadataConfigDao.findById(savedMetadataConfig.getUuidId()));
     }
 }

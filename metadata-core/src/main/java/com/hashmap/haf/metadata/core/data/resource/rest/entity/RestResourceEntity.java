@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.core.data.resource.rest.entity;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.uuid.Generators;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
 import com.hashmap.haf.metadata.core.data.resource.DataResourceEntity;
@@ -48,6 +49,7 @@ public class RestResourceEntity extends DataResourceEntity<RestResource> {
     @Override
     public RestResource toData() {
         RestResource restResource = new RestResource(new RestResourceId(getId()));
+        restResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
         restResource.setUrl(url);
         restResource.setUsername(username);
         restResource.setPassword(password);

@@ -26,7 +26,7 @@ spring:
     password: "${SPRING_DATASOURCE_PASSWORD:}"
 
 install:
-  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/metadata/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
+  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
 
 
 security:

@@ -2,6 +2,7 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
 import com.hashmap.haf.metadata.config.actors.message.AbstractMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.AbstractQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
@@ -49,13 +50,13 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         if (this.ownerId.equals(ownerId)) {
             ActorRef metadataConfigActor = metadataConfigIdToActor.get(metadataConfigId);
             if (metadataConfigActor != null) {
-                log.info("Found metadataConfig actors for {}", metadataConfigId);
+                log.info("Found metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
                 if (!(message instanceof CreateMetadataConfigMsg)) {
                     metadataConfigActor.tell(message, ActorRef.noSender());
                 }
             } else {
                 if (message instanceof CreateMetadataConfigMsg) {
-                    log.info("Creating metadataConfig actors for {}", metadataConfigId);
+                    log.info("Creating metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
                     metadataConfigActor = getContext().actorOf(MetadataConfigActor.props(metadataConfig, schedulerExtension), "metadataConfig-" + metadataConfigId);
                     getContext().watch(metadataConfigActor);
                     actorToMetadataConfigId.put(metadataConfigActor, metadataConfigId);
@@ -77,10 +78,29 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         log.info("MetadataConfig actors for {} has been terminated", metadataConfigId);
         actorToMetadataConfigId.remove(metadataConfigActor);
         metadataConfigIdToActor.remove(metadataConfigId);
+        if (actorToMetadataConfigId.size() == 0) {
+            context().stop(self());
+        }
     }
 
-    //TODO:add query handling needs to be done after query support
-    private  void processQueryMsg(Object message) {
+    private void processQueryMsg(Object message){
+        //TODO: Process all query Message
+        MetadataConfig metadataConfig = ((AbstractQueryMsg)message).getMetadataConfig();
+        MetadataConfigId metadataConfigId = metadataConfig.getId();
+        String ownerId = metadataConfig.getOwnerId();
+
+        if (this.ownerId.equals(ownerId)) {
+            ActorRef ref = metadataConfigIdToActor.get(metadataConfigId);
+            if (ref != null) {
+                log.info("Found metadataConfig group actors for MetadataConfigId : {}", metadataConfigId);
+                ref.tell(message, ActorRef.noSender());
+            }
+        }else {
+            log.warn(
+                    "Ignoring Query message request for {}. This actors is responsible for {}.",
+                    ownerId, this.ownerId
+            );
+        }
     }
 
 

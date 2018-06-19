@@ -44,7 +44,7 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
 
     @Override
     @Transactional
-    public boolean removeById(UUID id){
+    public boolean removeById(UUID id) {
         String key = UUIDConverter.fromTimeUUID(id);
         metadataConfigRepository.delete(key);
         return metadataConfigRepository.findOne(key) == null;

@@ -36,15 +36,16 @@ public class MetadataConfigActor extends AbstractActor {
             metadataConfig = ((UpdateMetadataConfigMsg) message).getMetadataConfig();
         } else if (message instanceof DeleteMetadataConfigMsg) {
             log.info("Deleting metadataConfig actors for {}",  metadataConfig.getId());
+            schedulerExtension.cancelJob("queryScheduler" + metadataConfig.getId());
             context().stop(self());
         }
     }
 
     private void processQueryMsg(Object message) {
         if (message instanceof CreateQueryMsg) {
-            log.info("message type CreateQueryMsg");
-            queries.add("Test-Query");
-            log.info("queries",queries.toString());
+            log.info("Message type CreateQueryMsg");
+            queries.add(((CreateQueryMsg) message).getQuery());
+            log.info("queries", queries.toString());
             executeQuery(queries);
         } else if (message instanceof UpdateQueryMsg) {
             //TODO : Will be implemented after query support according to QueryId
@@ -55,7 +56,7 @@ public class MetadataConfigActor extends AbstractActor {
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
         } else if (message instanceof ScheduleQueryMsg) {
-            log.info("Is Empty : {}" + metadataConfig.getId() + " ", queries.isEmpty());
+            log.info("Has Query : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
             executeQuery(queries);
         }
     }
@@ -63,8 +64,7 @@ public class MetadataConfigActor extends AbstractActor {
     private void executeQuery(Set<String> queries) {
         for(String q : queries) {
             ActorRef queryActor;
-            log.info("In Execute Query");
-            queryActor = getContext().actorOf(QueryActor.props(metadataConfig, q), "query-" + q);
+            queryActor = getContext().actorOf(QueryActor.props(metadataConfig, q), "query-" + q.hashCode());
             queryActor.tell(new StartQueryMsg(), ActorRef.noSender());
         }
     }

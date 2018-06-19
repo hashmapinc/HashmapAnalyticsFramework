@@ -31,7 +31,6 @@ public class MetadataConfigApplication {
         ConfigurableApplicationContext context = application.run(updateArguments(args));
 
         context.getBean(MetadataServiceInstall.class).performInstall();
-//        SpringApplication.run(MetadataConfigApplication.class, args);
     }
 
     private static String[] updateArguments(String[] args) {

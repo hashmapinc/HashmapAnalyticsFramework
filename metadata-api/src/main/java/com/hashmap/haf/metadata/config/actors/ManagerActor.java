@@ -2,6 +2,7 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
 import com.hashmap.haf.metadata.config.actors.message.AbstractMetadataConfigMsg;
+import com.hashmap.haf.metadata.config.actors.message.AbstractQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
@@ -37,11 +38,11 @@ public class ManagerActor extends AbstractLoggingActor {
 
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
-            log.info("Found metadata config owner group actors for {}", ownerId);
+            log.info("Found metadata config owner group actors for OwnerId : {}", ownerId);
             ref.tell(message, ActorRef.noSender());
         } else {
             if(message instanceof CreateMetadataConfigMsg) {
-                log.info("Creating metadata config owner group actors for {}", ownerId);
+                log.info("Creating metadata config owner group actors for OwnerId : {}", ownerId);
                 createMetaDataConfigOwnerActor(message, ownerId);
             }
         }
@@ -65,6 +66,12 @@ public class ManagerActor extends AbstractLoggingActor {
 
     private void processQueryMsg(Object message){
         //TODO: Process all query Message
+        String ownerId = ((AbstractQueryMsg)message).getMetadataConfig().getOwnerId();
+        ActorRef ref = ownerIdToActor.get(ownerId);
+        if (ref != null) {
+            log.info("Found metadata config owner group actors for OwnerId : {}", ownerId);
+            ref.tell(message, ActorRef.noSender());
+        }
     }
 
     @Override

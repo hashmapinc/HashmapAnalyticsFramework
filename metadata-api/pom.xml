@@ -11,11 +11,6 @@
 
     <artifactId>metadata-api</artifactId>
 
-    <!--<properties>-->
-        <!--<scala.compat.version>2.12</scala.compat.version>-->
-        <!--<akka.version>2.5.12</akka.version>-->
-    <!--</properties>-->
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -82,6 +77,10 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.enragedginger</groupId>

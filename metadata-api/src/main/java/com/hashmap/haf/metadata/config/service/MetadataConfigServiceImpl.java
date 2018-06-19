@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.config.service;
 
+import com.hashmap.haf.metadata.config.actors.ManagerActor;
 import com.hashmap.haf.metadata.config.actors.ManagerActorService;
 import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
@@ -82,9 +83,14 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         log.trace("Executing deleteMetadataConfig [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
-        if (metadataConfigDao.removeById(metadataConfigId.getId())) {
+        if (metadataConfig != null) {
+            metadataConfigDao.removeById(metadataConfigId.getId());
             managerActorService.deleteMetadataConfig(metadataConfig);
         }
     }
 
+    @Override
+    public void createQueryMsg(String query , MetadataConfig metadataConfig) {
+        managerActorService.createQuery(query,metadataConfig);
+    }
 }
