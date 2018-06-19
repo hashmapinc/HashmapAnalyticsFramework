@@ -13,7 +13,7 @@ eureka:
 security.provider: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
 
 install:
-  data_dir: /home/pc/git/HashmapAnalyticsFramework/identity-service/src/main/resources
+  data_dir: /Users/jayeshkapadnis/Projects/hashmap/HashmapAnalyticsFramework/identity-service/src/main/resources
 
 # JWT Token parameters
 security.jwt:
