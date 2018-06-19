@@ -1,6 +1,7 @@
 package com.hashmapinc.haf.tokens;
 
 import com.hashmapinc.haf.models.SecurityUser;
+import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,16 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
         Map<String, Object> response = new LinkedHashMap();
         SecurityUser user = (SecurityUser) authentication.getPrincipal();
-        response.put("user_name", user.getUser().getUserName());
-        response.put("id", user.getUser().getId());
-        response.put("firstName", user.getUser().getFirstName());
-        response.put("lastName", user.getUser().getLastName());
-        response.put("tenant_id", user.getUser().getTenantId());
-        response.put("customer_id", user.getUser().getCustomerId());
-        response.put("client_id", user.getUser().getClientId());
+        User userInfo = (User)user.getUser();
+        response.put("user_name", userInfo.getUserName());
+        response.put("id", userInfo.getId());
+        response.put("firstName", userInfo.getFirstName());
+        response.put("lastName", userInfo.getLastName());
+        response.put("tenant_id", userInfo.getTenantId());
+        response.put("customer_id", userInfo.getCustomerId());
+        response.put("client_id", userInfo.getClientId());
         response.put("enabled", user.isEnabled());
+        response.putAll(userInfo.getAdditionalDetails());
         if(authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
         }
