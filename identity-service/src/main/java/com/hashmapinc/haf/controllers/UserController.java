@@ -28,9 +28,6 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
-    //TODO: update this once controller is added
-    public static final String ACTIVATE_URL_PATTERN = "%s/api/noauth/activate?activateToken=%s";
-
     @Autowired
     UserDetailsService userService;
 
@@ -131,25 +128,5 @@ public class UserController {
             return oauth.getOAuth2Request().getClientId();
         }
         return identityServiceName;
-    }
-
-    protected String constructBaseUrl(HttpServletRequest request) {
-        String scheme = request.getScheme();
-        if (request.getHeader("x-forwarded-proto") != null) {
-            scheme = request.getHeader("x-forwarded-proto");
-        }
-        int serverPort = request.getServerPort();
-        if (request.getHeader("x-forwarded-port") != null) {
-            try {
-                serverPort = request.getIntHeader("x-forwarded-port");
-            } catch (NumberFormatException e) {
-            }
-        }
-
-        String baseUrl = String.format("%s://%s:%d",
-                scheme,
-                request.getServerName(),
-                serverPort);
-        return baseUrl;
     }
 }
