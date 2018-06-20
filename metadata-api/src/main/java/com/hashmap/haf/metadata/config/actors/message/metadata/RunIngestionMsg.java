@@ -1,10 +1,10 @@
-package com.hashmap.haf.metadata.config.actors.message;
+package com.hashmap.haf.metadata.config.actors.message.metadata;
 
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 
-public final class RunIngestionMsg extends AbstractMetadataConfigMsg {
+public final class RunIngestionMsg {
 
-    public RunIngestionMsg(MetadataConfig metadataConfig) {
-        super(metadataConfig);
+    public RunIngestionMsg() {
     }
 }
