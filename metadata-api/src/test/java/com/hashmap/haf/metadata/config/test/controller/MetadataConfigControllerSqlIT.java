@@ -23,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.UUID;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -127,13 +129,27 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
 
         MetadataConfig found = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(metadataConfigId, found.getId());
         tearDown(found.getId());
+    }
+
+    @Test
+    public void getMetadataConfigByInvalidId() throws Exception {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString("ed11697a-745a-11e8-aef0-939173014f2b"));
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/metaconfig/" + metadataConfigId)
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        String reponse = mvcResult.getResponse().getContentAsString();
+        Assert.assertEquals("{\"error\":\"Requested item wasn't found!\"}",reponse);
     }
 
     @Test
@@ -147,13 +163,23 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(2, found.size());
         tearDown(savedMetadataConfig1.getId());
         tearDown(savedMetadataConfig2.getId());
+    }
+
+    @Test
+    public void shouldReturnUnauthorizedResponseWhileGetMetadataConfigs() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/metaconfig")
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + "Fake_Token")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -167,13 +193,14 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(1, found.size());
         tearDown(savedMetadataConfig.getId());
     }
+
 
     @Test
     public void deleteMetadataConfig() throws Exception {
