@@ -225,11 +225,6 @@
                 <version>${play2.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.1.4</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sksamuel.avro4s</groupId>
                 <artifactId>avro4s-core_${scala.compat.version}</artifactId>
                 <version>1.8.0</version>
