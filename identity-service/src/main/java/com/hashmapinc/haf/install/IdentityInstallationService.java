@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.install;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.services.UserDetailsService;
@@ -33,7 +34,7 @@ public class IdentityInstallationService {
 
         schemaService.createDatabaseSchema();
 
-        User user = new User();
+        User user = new User(UUIDs.timeBased());
         user.setClientId("identity-service");
         user.setUserName("demo");
         user.setTenantId("hashmapInc");

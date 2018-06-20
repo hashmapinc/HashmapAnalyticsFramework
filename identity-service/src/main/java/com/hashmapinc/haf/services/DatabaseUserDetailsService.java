@@ -31,7 +31,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
     @Override
     public User save(User user) {
-        boolean isNewUser = user.getId() == null;
+        boolean isNewUser = user.getId() == null || findById(user.getId()) == null;
         User savedUser  = usersDao.save(user);
         if (isNewUser) {
             UserCredentials userCredentials = new UserCredentials();
