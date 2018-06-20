@@ -129,7 +129,7 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isFound())
+        ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
 
         MetadataConfig found = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
@@ -163,7 +163,7 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isFound())
+        ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         Assert.assertNotNull(found);
@@ -193,7 +193,7 @@ public class MetadataConfigControllerSqlIT {
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isFound())
+        ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         Assert.assertNotNull(found);

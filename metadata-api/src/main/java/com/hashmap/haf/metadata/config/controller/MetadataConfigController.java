@@ -4,7 +4,6 @@ import com.hashmap.haf.metadata.config.exceptions.MetadataException;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +43,7 @@ public class MetadataConfigController {
         MetadataConfigId metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
         try {
             MetadataConfig metadataConfig = checkNotNull(metadataConfigService.findMetadataConfigById(metadataConfigId));
-            return  ResponseEntity.status(HttpStatus.FOUND)
+            return  ResponseEntity.status(HttpStatus.OK)
                     .body(metadataConfig);
         } catch (MetadataException exp) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -57,7 +56,7 @@ public class MetadataConfigController {
     public ResponseEntity getMetadataConfigs() {
         try {
             List<MetadataConfig> metadataConfigs = checkNotNull(metadataConfigService.findAllMetadataConfig());
-            return ResponseEntity.status(HttpStatus.FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
             .body(metadataConfigs);
         }catch (MetadataException exp){
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -70,7 +69,7 @@ public class MetadataConfigController {
     public ResponseEntity getMetadataConfigsByOwnerId(@PathVariable String ownerId) {
         try {
             List<MetadataConfig> metadataConfigs = checkNotNull(metadataConfigService.findAllMetadataConfigByOwnerId(ownerId));
-            return ResponseEntity.status(HttpStatus.FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(metadataConfigs);
         }catch (MetadataException exp) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
