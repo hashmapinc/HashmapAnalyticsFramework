@@ -1,7 +1,9 @@
 package com.hashmap.haf.metadata.config.service;
 
-import com.hashmap.haf.metadata.config.actors.ManagerActor;
 import com.hashmap.haf.metadata.config.actors.ManagerActorService;
+import com.hashmap.haf.metadata.config.actors.message.MessageType;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
@@ -33,9 +35,9 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
             throw new DataValidationException("Metadata-Config Object cannot be null");
         }
         log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
-        MetadataConfig metadataConfig1 = metadataConfigDao.save(metadataConfig);
-        managerActorService.createMetadataConfig(metadataConfig1);
-        return metadataConfig1;
+        MetadataConfig savedMetadataConfig = metadataConfigDao.save(metadataConfig);
+        managerActorService.process(new MetadataMessage(savedMetadataConfig, MessageType.CREATE));
+        return savedMetadataConfig;
     }
 
     @Override
@@ -65,7 +67,7 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         if (savedMetadataConfig.isPresent()){
             savedMetadataConfig.get().update(metadataConfig);
             MetadataConfig updatedMetadataConfig = metadataConfigDao.save(savedMetadataConfig.get());
-            managerActorService.updateMetadataConfig(updatedMetadataConfig);
+            managerActorService.process(new MetadataMessage(updatedMetadataConfig, MessageType.UPDATE));
             return updatedMetadataConfig;
         } else {
             throw new DataValidationException("Can't update for non-existent metaDataConfig!");
@@ -85,12 +87,12 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
         if (metadataConfig != null) {
             metadataConfigDao.removeById(metadataConfigId.getId());
-            managerActorService.deleteMetadataConfig(metadataConfig);
+            managerActorService.process(new MetadataMessage(metadataConfig, MessageType.DELETE));
         }
     }
 
     @Override
     public void createQueryMsg(String query , MetadataConfig metadataConfig) {
-        managerActorService.createQuery(query,metadataConfig);
+        managerActorService.process(new QueryMessage(query, metadataConfig, MessageType.CREATE));
     }
 }
