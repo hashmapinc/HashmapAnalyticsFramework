@@ -9,4 +9,6 @@ public interface UserCredentialsDao {
     UserCredentials save(UserCredentials userCredentials);
 
     UserCredentials findByUserId(UUID userId);
+
+    UserCredentials findByActivationToken(String activationToken);
 }

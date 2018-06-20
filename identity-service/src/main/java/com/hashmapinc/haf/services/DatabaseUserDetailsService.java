@@ -6,6 +6,7 @@ import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
+import com.hashmapinc.haf.requests.ActivateUserRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -60,6 +61,32 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public UserCredentials findCredentialsByUserId(UUID userId) {
         return userCredentialsDao.findByUserId(userId);
+    }
+
+    @Override
+    public UserCredentials findCredentialsByActivationToken(String activationToken) {
+        return userCredentialsDao.findByActivationToken(activationToken);
+    }
+
+    @Override
+    public UserCredentials activateUserCredentials(ActivateUserRequest activateUserRequest) {
+        UserCredentials userCredentials = findCredentialsByActivationToken(activateUserRequest.getActivateToken());
+        if (userCredentials == null) {
+            throw new IllegalArgumentException(String.format("Unable to find user credentials by activateToken [%s]", activateUserRequest.getActivateToken()));
+        }
+
+        User user = findById(userCredentials.getUserId());
+        if (user.isEnabled()) {
+            throw new IllegalStateException("User is already activated");
+        }
+
+        userCredentials.setPassword(activateUserRequest.getPassword());
+        userCredentials.setActivationToken(null);
+        UserCredentials savedUserCreds = userCredentialsDao.save(userCredentials);
+        user.setEnabled(true);
+        save(user);
+        return savedUserCreds;
+
     }
 
     @Override

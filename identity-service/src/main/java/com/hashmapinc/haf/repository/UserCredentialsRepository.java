@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface UserCredentialsRepository extends JpaRepository<UserCredentialsEntity, String> {
 
     UserCredentialsEntity findByUserId(String userId);
+
+    UserCredentialsEntity findByActivationToken(String activationToken);
 }

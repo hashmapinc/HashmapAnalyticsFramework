@@ -1,8 +1,10 @@
 package com.hashmapinc.haf.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
+import com.hashmapinc.haf.requests.ActivateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserResponse;
 import com.hashmapinc.haf.services.UserDetailsService;
@@ -131,6 +133,21 @@ public class UserController {
             return new ResponseEntity<>("No Token found", HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(credentials.getActivationToken());
     }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/activate", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> getUserCredentialsByActivateToken(@RequestBody ActivateUserRequest activateUserRequest,
+                                                               HttpServletRequest request){
+        UserCredentials credentials = userService.activateUserCredentials(activateUserRequest);
+        if(credentials == null)
+            return new ResponseEntity<>("No Token found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(credentials);
+    }
+
+
+
 
     private String getCurrentClientId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

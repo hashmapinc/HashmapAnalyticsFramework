@@ -38,4 +38,10 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
         return userCredentialsRepository.findByUserId(UUIDConverter.fromTimeUUID(userId)).toData();
     }
 
+    @Override
+    public UserCredentials findByActivationToken(String activationToken) {
+        return userCredentialsRepository.findByActivationToken(activationToken).toData();
+    }
+
+
 }
