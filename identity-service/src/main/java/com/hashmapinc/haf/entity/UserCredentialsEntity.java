@@ -30,11 +30,6 @@ public class UserCredentialsEntity implements Serializable{
     @Column(name = ModelConstants.USER_CREDENTIALS_RESET_TOKEN_PROPERTY, unique = true)
     private String resetToken;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = ModelConstants.USER_CREDENTIALS_ACT_TYPE_PROPERTY)
-    private ActivationType activationType;
-
-
 
     public UserCredentialsEntity() {
     }
@@ -48,7 +43,6 @@ public class UserCredentialsEntity implements Serializable{
             this.userId = UUIDConverter.fromTimeUUID(credentials.getUserId());
         }
         this.password = credentials.getPassword();
-        this.activationType = credentials.getType();
         this.activationToken = credentials.getActivationToken();
         this.resetToken = credentials.getResetToken();
     }
@@ -67,7 +61,6 @@ public class UserCredentialsEntity implements Serializable{
         userCredentials.setPassword(password);
         userCredentials.setActivationToken(activationToken);
         userCredentials.setResetToken(resetToken);
-        userCredentials.setType(activationType);
         return userCredentials;
     }
 }

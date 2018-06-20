@@ -32,7 +32,6 @@ create table if not exists haf_user_credentials (
     id varchar(31) NOT NULL CONSTRAINT haf_user_credentials_pkey PRIMARY KEY,
     activation_token varchar(255) UNIQUE,
     password varchar(255),
-    activation_type varchar(255),
     reset_token varchar(255) UNIQUE,
     user_id varchar(31) UNIQUE
 );

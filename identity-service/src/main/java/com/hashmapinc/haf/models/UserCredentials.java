@@ -7,7 +7,6 @@ public class UserCredentials {
     private UUID id;
     private UUID userId;
     private String password;
-    private ActivationType type;
     private String activationToken;
     private String resetToken;
 
@@ -25,14 +24,6 @@ public class UserCredentials {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public ActivationType getType() {
-        return type;
-    }
-
-    public void setType(ActivationType type) {
-        this.type = type;
     }
 
     public String getActivationToken() {

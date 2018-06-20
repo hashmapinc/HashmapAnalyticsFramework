@@ -1,6 +1,5 @@
 package com.hashmapinc.haf.models;
 
-import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;

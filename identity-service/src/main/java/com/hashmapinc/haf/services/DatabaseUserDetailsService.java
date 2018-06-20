@@ -37,7 +37,6 @@ public class DatabaseUserDetailsService implements UserDetailsService {
             UserCredentials userCredentials = new UserCredentials();
             userCredentials.setActivationToken(RandomStringUtils.randomAlphanumeric(DEFAULT_TOKEN_LENGTH));
             userCredentials.setUserId(savedUser.getId());
-            userCredentials.setType(ActivationType.NONE);
             userCredentialsDao.save(userCredentials);
         }
         return savedUser;

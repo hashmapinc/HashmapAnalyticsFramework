@@ -21,9 +21,8 @@ public class CreateUserRequestTest {
 
         UserCredentials credentials = new UserCredentials();
         credentials.setPassword("password");
-        credentials.setType(ActivationType.NONE);
 
-        CreateUserRequest request = new CreateUserRequest(user, credentials);
+        CreateUserRequest request = new CreateUserRequest(user, credentials, ActivationType.NONE);
 
         ObjectMapper mapper = new ObjectMapper();
 
