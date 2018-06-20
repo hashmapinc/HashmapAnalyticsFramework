@@ -1,16 +1,11 @@
 package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
-import com.hashmap.haf.metadata.config.actors.message.AbstractMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.AbstractQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.TestConnectionMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.CreateQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.DeleteQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.UpdateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.*;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
@@ -42,8 +37,8 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         return SupervisionStrategy.getStrategy();
     }
 
-    private void processMetadataConfigMsg(Object message) {
-        MetadataConfig metadataConfig = ((AbstractMetadataConfigMsg)message).getMetadataConfig();
+    private void processMetadataConfigMsg(MetadataMessage message) {
+        MetadataConfig metadataConfig = message.getMetadataConfig();
         MetadataConfigId metadataConfigId = metadataConfig.getId();
         String ownerId = metadataConfig.getOwnerId();
 
@@ -51,11 +46,11 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
             ActorRef metadataConfigActor = metadataConfigIdToActor.get(metadataConfigId);
             if (metadataConfigActor != null) {
                 log.debug("Found metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
-                if (!(message instanceof CreateMetadataConfigMsg)) {
+                if (!(message.getMessageType() == MessageType.CREATE)) {
                     metadataConfigActor.tell(message, ActorRef.noSender());
                 }
             } else {
-                if (message instanceof CreateMetadataConfigMsg) {
+                if (message.getMessageType() == MessageType.CREATE) {
                     log.debug("Creating metadataConfig actors for MetadataConfigId : {}", metadataConfigId);
                     metadataConfigActor = getContext().actorOf(MetadataConfigActor.props(metadataConfig, schedulerExtension), "metadataConfig-" + metadataConfigId);
                     getContext().watch(metadataConfigActor);
@@ -83,9 +78,8 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         }
     }
 
-    private void processQueryMsg(Object message){
-        //TODO: Process all query Message
-        MetadataConfig metadataConfig = ((AbstractQueryMsg)message).getMetadataConfig();
+    private void processQueryMsg(QueryMessage message){
+        MetadataConfig metadataConfig = message.getMetadataConfig();
         MetadataConfigId metadataConfigId = metadataConfig.getId();
         String ownerId = metadataConfig.getOwnerId();
 
@@ -103,19 +97,23 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         }
     }
 
+    private void processMessage(Object message) {
+        //TODO: Needs to be implemented for runIngestion and testConnection
+        if (message instanceof TestConnectionMsg) {
+            //TODO : Will be implemented after query support
+        } else if (message instanceof RunIngestionMsg) {
+            //TODO : Will be implemented after query support
+        }
+    }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(CreateMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(DeleteMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(UpdateMetadataConfigMsg.class, this::processMetadataConfigMsg )
-                .match(CreateQueryMsg.class, this::processQueryMsg)
-                .match(DeleteQueryMsg.class, this::processQueryMsg)
-                .match(UpdateQueryMsg.class, this::processQueryMsg)
+                .match(MetadataMessage.class, this::processMetadataConfigMsg)
+                .match(QueryMessage.class, this::processQueryMsg)
                 .match(Terminated.class, this::onTerminated)
-                .match(TestConnectionMsg.class, this::processQueryMsg)
-                .match(RunIngestionMsg.class, this::processQueryMsg)
+                .match(TestConnectionMsg.class, this::processMessage)
+                .match(RunIngestionMsg.class, this::processMessage)
                 .build();
     }
 }

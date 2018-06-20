@@ -2,7 +2,7 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
-import com.hashmap.haf.metadata.config.actors.message.query.StartQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +22,7 @@ public class QueryActor extends AbstractActor {
     }
 
     private  void processMessage(Object message) {
-        if (message instanceof StartQueryMsg) {
+        if (message instanceof ExecuteQueryMsg) {
             log.debug("QueryActor : MetadataConfig : {}", metadataConfig.toString());
             log.debug("QueryActor : Query : {}", query);
             context().stop(self());
@@ -32,7 +32,7 @@ public class QueryActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(StartQueryMsg.class, this::processMessage)
+                .match(ExecuteQueryMsg.class, this::processMessage)
                 .build();
     }
 }

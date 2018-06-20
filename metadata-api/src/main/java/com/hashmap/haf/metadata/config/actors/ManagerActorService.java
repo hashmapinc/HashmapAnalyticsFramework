@@ -3,14 +3,8 @@ package com.hashmap.haf.metadata.config.actors;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Terminated;
-import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.CreateQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.DeleteQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.UpdateQueryMsg;
-import com.hashmap.haf.metadata.config.model.MetadataConfig;
-import com.hashmap.haf.metadata.config.model.MetadataConfigId;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,33 +49,14 @@ public class ManagerActorService {
         }
     }
 
-    public void createMetadataConfig(MetadataConfig metadataConfig) {
-        log.trace("Processing Create Metadata Config msg");
-        managerActor.tell(new CreateMetadataConfigMsg(metadataConfig), ActorRef.noSender());
+
+    public void process(MetadataMessage metadataMessage) {
+        log.trace("Process Metadata Message msgType : {}", metadataMessage.getMessageType());
+        managerActor.tell(metadataMessage, ActorRef.noSender());
     }
 
-    public void updateMetadataConfig(MetadataConfig metadataConfig) {
-        log.trace("Processing Update Metadata Config  msg");
-        managerActor.tell(new UpdateMetadataConfigMsg(metadataConfig), ActorRef.noSender());
-    }
-
-    public void deleteMetadataConfig(MetadataConfig metadataConfig) {
-        log.trace("Processing Delete Metadata Config  msg");
-        managerActor.tell(new DeleteMetadataConfigMsg(metadataConfig), ActorRef.noSender());
-    }
-
-    public void createQuery(String query, MetadataConfig metadataConfig) {
-        log.trace("Processing Create Query  msg");
-        managerActor.tell(new CreateQueryMsg(query, metadataConfig), ActorRef.noSender());
-    }
-
-    public void updateQuery(String query, MetadataConfig metadataConfig) {
-        log.trace("Processing Update Query msg");
-        managerActor.tell(new UpdateQueryMsg(query, metadataConfig), ActorRef.noSender());
-    }
-
-    public void deleteQuery(String query, MetadataConfig metadataConfig) {
-        log.trace("Processing Delete Query  msg");
-        managerActor.tell(new DeleteQueryMsg(query, metadataConfig), ActorRef.noSender());
+    public void process(QueryMessage queryMessage) {
+        log.trace("Process Query Message msgType : {}", queryMessage.getMessageType());
+        managerActor.tell(queryMessage, ActorRef.noSender());
     }
 }

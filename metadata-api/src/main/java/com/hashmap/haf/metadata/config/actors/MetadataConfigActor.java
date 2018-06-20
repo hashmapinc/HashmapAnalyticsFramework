@@ -2,9 +2,12 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
 import com.hashmap.haf.metadata.config.actors.message.*;
-import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.*;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.message.query.ScheduleQueryMsg;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.core.trigger.TriggerType;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
@@ -30,27 +33,31 @@ public class MetadataConfigActor extends AbstractActor {
         return Props.create(MetadataConfigActor.class, () -> new MetadataConfigActor(metadataConfig, schedulerExtension));
     }
 
-    private  void processMetadataConfigMsg(Object message) {
-        if (message instanceof UpdateMetadataConfigMsg) {
+    private  void processMetadataConfigMsg(MetadataMessage message) {
+        if (message.getMessageType() == MessageType.UPDATE) {
             log.debug("Updating metadataConfig actors for {}", metadataConfig.getId());
-            metadataConfig = ((UpdateMetadataConfigMsg) message).getMetadataConfig();
-        } else if (message instanceof DeleteMetadataConfigMsg) {
+            metadataConfig = message.getMetadataConfig();
+        } else if (message.getMessageType() == MessageType.DELETE) {
             log.debug("Deleting metadataConfig actors for {}",  metadataConfig.getId());
             schedulerExtension.cancelJob("queryScheduler" + metadataConfig.getId());
             context().stop(self());
         }
     }
 
-    private void processQueryMsg(Object message) {
-        if (message instanceof CreateQueryMsg) {
+    private void processQueryMsg(QueryMessage message) {
+        if (message.getMessageType() == MessageType.CREATE) {
             log.debug("Message type CreateQueryMsg");
-            queries.add(((CreateQueryMsg) message).getQuery());
+            queries.add(message.getQuery());
             executeQuery(queries);
-        } else if (message instanceof UpdateQueryMsg) {
+        } else if (message.getMessageType() == MessageType.UPDATE) {
             //TODO : Will be implemented after query support according to QueryId
-        } else if (message instanceof DeleteQueryMsg) {
+        } else if (message.getMessageType() == MessageType.DELETE) {
             //TODO : Will be implemented after query support according to QueryId
-        } else if (message instanceof TestConnectionMsg) {
+        }
+    }
+    
+    private void processMessage(Object message) {
+        if (message instanceof TestConnectionMsg) {
             //TODO : Will be implemented after query support
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
@@ -64,21 +71,18 @@ public class MetadataConfigActor extends AbstractActor {
         for(String q : queries) {
             ActorRef queryActor;
             queryActor = getContext().actorOf(QueryActor.props(metadataConfig, q), "query-" + q.hashCode());
-            queryActor.tell(new StartQueryMsg(), ActorRef.noSender());
+            queryActor.tell(new ExecuteQueryMsg(), ActorRef.noSender());
         }
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(UpdateMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(DeleteMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(CreateQueryMsg.class, this::processQueryMsg)
-                .match(DeleteQueryMsg.class, this::processQueryMsg)
-                .match(UpdateQueryMsg.class, this::processQueryMsg)
-                .match(ScheduleQueryMsg.class, this::processQueryMsg)
-                .match(TestConnectionMsg.class, this::processQueryMsg)
-                .match(RunIngestionMsg.class, this::processQueryMsg)
+                .match(MetadataMessage.class, this::processMetadataConfigMsg)
+                .match(QueryMessage.class, this::processQueryMsg)
+                .match(ScheduleQueryMsg.class, this::processMessage)
+                .match(TestConnectionMsg.class, this::processMessage)
+                .match(RunIngestionMsg.class, this::processMessage)
                 .build();
     }
 

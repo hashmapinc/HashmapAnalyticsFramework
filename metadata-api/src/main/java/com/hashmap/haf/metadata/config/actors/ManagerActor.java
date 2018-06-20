@@ -1,16 +1,11 @@
 package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
-import com.hashmap.haf.metadata.config.actors.message.AbstractMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.AbstractQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.TestConnectionMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.CreateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.DeleteMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.UpdateMetadataConfigMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.CreateQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.DeleteQueryMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.UpdateQueryMsg;
+import com.hashmap.haf.metadata.config.actors.message.*;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
+import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,15 +28,15 @@ public class ManagerActor extends AbstractLoggingActor {
         return SupervisionStrategy.getStrategy();
     }
 
-    private void processMetadataConfigMsg(Object message) {
-        String ownerId = ((AbstractMetadataConfigMsg)message).getMetadataConfig().getOwnerId();
+    private void processMetadataConfigMsg(MetadataMessage message) {
+        String ownerId = message.getMetadataConfig().getOwnerId();
 
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
             log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
             ref.tell(message, ActorRef.noSender());
         } else {
-            if(message instanceof CreateMetadataConfigMsg) {
+            if(message.getMessageType() == MessageType.CREATE) {
                 log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
                 createMetaDataConfigOwnerActor(message, ownerId);
             }
@@ -64,9 +59,8 @@ public class ManagerActor extends AbstractLoggingActor {
         ownerIdToActor.remove(ownerId);
     }
 
-    private void processQueryMsg(Object message){
-        //TODO: Process all query Message
-        String ownerId = ((AbstractQueryMsg)message).getMetadataConfig().getOwnerId();
+    private void processQueryMsg(QueryMessage message){
+        String ownerId = message.getMetadataConfig().getOwnerId();
         ActorRef ref = ownerIdToActor.get(ownerId);
         if (ref != null) {
             log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
@@ -74,17 +68,22 @@ public class ManagerActor extends AbstractLoggingActor {
         }
     }
 
+    private void processMessage(Object message) {
+       //TODO: Needs to be implemented for runIngestion and testConnection
+        if (message instanceof TestConnectionMsg) {
+            //TODO : Will be implemented after query support
+        } else if (message instanceof RunIngestionMsg) {
+            //TODO : Will be implemented after query support
+        }
+    }
+
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(CreateMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(DeleteMetadataConfigMsg.class, this::processMetadataConfigMsg)
-                .match(UpdateMetadataConfigMsg.class, this::processMetadataConfigMsg )
-                .match(CreateQueryMsg.class, this::processQueryMsg)
-                .match(DeleteQueryMsg.class, this::processQueryMsg)
-                .match(UpdateQueryMsg.class, this::processQueryMsg)
-                .match(TestConnectionMsg.class, this::processQueryMsg)
-                .match(RunIngestionMsg.class, this::processQueryMsg)
+                .match(MetadataMessage.class, this::processMetadataConfigMsg)
+                .match(QueryMessage.class, this::processQueryMsg)
+                .match(TestConnectionMsg.class, this::processMessage)
+                .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)
                 .build();
     }
