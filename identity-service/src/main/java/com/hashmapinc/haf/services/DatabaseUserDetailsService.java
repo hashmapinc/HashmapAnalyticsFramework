@@ -56,4 +56,9 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public void deleteById(String userId) {
         usersDao.deleteById(userId);
     }
+
+    @Override
+    public UserCredentials findCredentialsByUserId(UUID userId) {
+        return userCredentialsDao.findByUserId(userId);
+    }
 }

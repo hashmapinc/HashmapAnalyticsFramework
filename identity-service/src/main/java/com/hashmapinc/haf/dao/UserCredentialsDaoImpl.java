@@ -7,6 +7,8 @@ import com.hashmapinc.haf.repository.UserCredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class UserCredentialsDaoImpl implements UserCredentialsDao{
 
@@ -22,5 +24,9 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
 
     }
 
+    @Override
+    public UserCredentials findByUserId(UUID userId) {
+        return userCredentialsRepository.findByUserId(userId.toString()).toData();
+    }
 
 }

@@ -1,6 +1,9 @@
 package com.hashmapinc.haf.controllers;
 
+import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.models.UserCredentials;
+import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +14,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
 import java.util.Collection;
@@ -22,6 +27,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    //TODO: update this once controller is added
+    public static final String ACTIVATE_URL_PATTERN = "%s/api/noauth/activate?activateToken=%s";
 
     @Autowired
     UserDetailsService userService;
@@ -49,14 +57,28 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody User user){
+    public ResponseEntity<?> save(@RequestBody CreateUserRequest userRequest, HttpServletRequest request){
         String clientId = getCurrentClientId();
+        User user = userRequest.getUser();
         if(provider.equalsIgnoreCase("database")) {
             if(user.getId() == null || userService.findById(user.getId()) == null) {
                 if(user.getClientId() == null){
                     user.setClientId(clientId);
                 }
+                if(!userRequest.getActivationType().equals(ActivationType.NONE)){
+                    user.setEnabled(false);
+                }else{
+                    if(StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
+                        return ResponseEntity.badRequest().body("Password can't be null");
+                    }
+                }
                 User savedUser = userService.save(user);
+                if(userRequest.getActivationType().equals(ActivationType.EMAIL)){
+                    UserCredentials userCredentials = userService.findCredentialsByUserId(savedUser.getId());
+                    String baseUrl = constructBaseUrl(request);
+                    String activateUrl = String.format(ACTIVATE_URL_PATTERN, baseUrl,
+                            userCredentials.getActivationToken());
+                }
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{userId}")
@@ -111,5 +133,25 @@ public class UserController {
             return oauth.getOAuth2Request().getClientId();
         }
         return identityServiceName;
+    }
+
+    protected String constructBaseUrl(HttpServletRequest request) {
+        String scheme = request.getScheme();
+        if (request.getHeader("x-forwarded-proto") != null) {
+            scheme = request.getHeader("x-forwarded-proto");
+        }
+        int serverPort = request.getServerPort();
+        if (request.getHeader("x-forwarded-port") != null) {
+            try {
+                serverPort = request.getIntHeader("x-forwarded-port");
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        String baseUrl = String.format("%s://%s:%d",
+                scheme,
+                request.getServerName(),
+                serverPort);
+        return baseUrl;
     }
 }

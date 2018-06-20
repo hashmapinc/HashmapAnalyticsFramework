@@ -1,6 +1,7 @@
 package com.hashmapinc.haf.services;
 
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -18,5 +19,7 @@ public interface UserDetailsService {
     Collection<User> findAllByClientId(String clientId);
 
     void deleteById(String userId);
+
+    UserCredentials findCredentialsByUserId(UUID userId);
 
 }
