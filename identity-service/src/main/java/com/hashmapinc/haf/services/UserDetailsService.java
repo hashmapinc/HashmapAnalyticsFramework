@@ -22,4 +22,6 @@ public interface UserDetailsService {
 
     UserCredentials findCredentialsByUserId(UUID userId);
 
+    UserCredentials saveUserCredentials(UserCredentials credentials);
+
 }

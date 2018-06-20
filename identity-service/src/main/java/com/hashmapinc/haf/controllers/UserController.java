@@ -68,16 +68,14 @@ public class UserController {
                 if(!userRequest.getActivationType().equals(ActivationType.NONE)){
                     user.setEnabled(false);
                 }else{
-                    if(StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
+                    if(userRequest.getCredentials() == null || StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
                         return ResponseEntity.badRequest().body("Password can't be null");
                     }
                 }
                 User savedUser = userService.save(user);
-                if(userRequest.getActivationType().equals(ActivationType.EMAIL)){
-                    UserCredentials userCredentials = userService.findCredentialsByUserId(savedUser.getId());
-                    String baseUrl = constructBaseUrl(request);
-                    String activateUrl = String.format(ACTIVATE_URL_PATTERN, baseUrl,
-                            userCredentials.getActivationToken());
+                if(userRequest.getCredentials() != null && !StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
+                    UserCredentials savedCredentials = userService.findCredentialsByUserId(savedUser.getId());
+                    savedCredentials.setPassword(userRequest.getCredentials().getPassword());
                 }
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()

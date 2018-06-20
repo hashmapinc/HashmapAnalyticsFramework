@@ -11,8 +11,6 @@ public interface UserInformation {
 
     boolean isEnabled();
 
-    String getPassword();
-
     String getUserName();
 
     UUID getId();

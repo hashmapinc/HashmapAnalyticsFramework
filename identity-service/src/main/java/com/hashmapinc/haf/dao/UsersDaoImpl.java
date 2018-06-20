@@ -19,9 +19,6 @@ public class UsersDaoImpl implements UsersDao{
     @Autowired
     private UsersRepository usersRepository;
 
-    @Autowired
-    BCryptPasswordEncoder encoder;
-
     @Override
     public User findByUserName(String userName, String clientId) {
         List<UserEntity> userEntities = usersRepository.findByUserNameAndClientId(userName, clientId);
@@ -36,11 +33,6 @@ public class UsersDaoImpl implements UsersDao{
 
     @Override
     public User save(User user) {
-        String encoded = null;
-        if(user.getPassword() != null) {
-            encoded = encoder.encode(user.getPassword());
-        }
-        user.setPassword(encoded);
         if(user.getId() == null){
             user.setId(UUIDs.timeBased());
         }

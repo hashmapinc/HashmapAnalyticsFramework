@@ -3,7 +3,6 @@ create table if not exists haf_users (
     enabled boolean default false,
     first_name varchar(255),
     last_name varchar(255),
-    password varchar(255),
     tenant_id varchar(255),
     client_id varchar(255),
     customer_id varchar(255),

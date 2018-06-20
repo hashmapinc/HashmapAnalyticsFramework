@@ -61,4 +61,9 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public UserCredentials findCredentialsByUserId(UUID userId) {
         return userCredentialsDao.findByUserId(userId);
     }
+
+    @Override
+    public UserCredentials saveUserCredentials(UserCredentials credentials) {
+        return userCredentialsDao.save(credentials);
+    }
 }

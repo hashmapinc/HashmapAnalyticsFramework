@@ -1,9 +1,14 @@
 package com.hashmapinc.haf.controllers;
 
-import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hashmapinc.haf.entity.UserCredentialsEntity;
+import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.models.UserCredentials;
+import com.hashmapinc.haf.repository.UserCredentialsRepository;
+import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,8 +30,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -67,35 +72,29 @@ public class UserControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(springSecurity()).build();
         mapper.addMixIn(User.class, UserPasswordMixin.class);
-        UUID adminId = UUIDs.timeBased();
-        admin = new User(adminId);
+        admin = new User();
         admin.setUserName("demo");
-        admin.setPassword("demo");
         admin.setEnabled(true);
         admin.setAuthorities(Arrays.asList("admin", "user"));
         admin.setPermissions(Arrays.asList("subject1:*"));
         admin.setClientId(clientId);
         createUser(admin);
-        admin.setPassword("demo");
 
-        UUID userId = UUIDs.timeBased();
-        user = new User(userId);
+        user = new User();
         user.setUserName("redTailUser");
-        user.setPassword("password");
         user.setEnabled(true);
         user.setClientId(clientId);
         user.setAuthorities(Arrays.asList("user"));
         user.setPermissions(Arrays.asList("subject1:resource1:READ", "subject1:resource2:READ"));
 
         createUser(user);
-        user.setPassword("password");
 
-        adminToken = obtainAccessToken("demo", "demo");
+        adminToken = obtainAccessToken("demo", "password");
     }
 
     @Test
     public void shouldReturnUnauthorizedResponseWhileCreatingUser() throws Exception {
-        String json = mapper.writeValueAsString(user);
+        String json = mapper.writeValueAsString(new CreateUserRequest(user, getCredentials(), ActivationType.NONE));
 
         mockMvc.perform(
                 post("/users")
@@ -112,8 +111,7 @@ public class UserControllerTest {
         User u = new User(user);
         u.setId(null);
         u.setUserName("temporary_user");
-        u.setPassword("password");
-        String json = mapper.writeValueAsString(u);
+        String json = mapper.writeValueAsString(new CreateUserRequest(u, getCredentials(), ActivationType.NONE));
 
         mockMvc.perform(
                 post("/users")
@@ -125,8 +123,41 @@ public class UserControllerTest {
     }
 
     @Test
+    public void shouldReturnBadRequestIfActivationTypeIsNoneAndPasswordIsNotProvided() throws Exception{
+        User u = new User(user);
+        u.setId(null);
+        u.setUserName("temporary_user");
+        String json = mapper.writeValueAsString(new CreateUserRequest(u, null, ActivationType.NONE));
+
+        mockMvc.perform(
+                post("/users")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .header("Content-Type", "application/json")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldCreateUserDisabledIfActivationIsNotNone() throws Exception {
+        User u = new User(user);
+        u.setId(null);
+        u.setUserName("temporary_user");
+        u.setEnabled(true);
+        String json = mapper.writeValueAsString(new CreateUserRequest(u, getCredentials(), ActivationType.LINK));
+
+        mockMvc.perform(
+                post("/users")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .header("Content-Type", "application/json")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json)
+        ).andExpect(status().isCreated()).andExpect(jsonPath("$.enabled").value(false));
+    }
+
+    @Test
     public void shouldReturnConflictIfUserAlreadyPresentWhilePost() throws Exception {
-        String json = mapper.writeValueAsString(user);
+        String json = mapper.writeValueAsString(new CreateUserRequest(user, getCredentials(), ActivationType.NONE));
 
         mockMvc.perform(
                 post("/users")
@@ -195,7 +226,7 @@ public class UserControllerTest {
         params.add("grant_type", "password");
         params.add("client_id", clientId);
         params.add("username", user.getUserName());
-        params.add("password", user.getPassword());
+        params.add("password", "password");
 
         Map<String, Object> info = accessOAuth2Endpoint(params, "/oauth/token");
 
@@ -214,7 +245,7 @@ public class UserControllerTest {
         params.add("grant_type", "password");
         params.add("client_id", clientId);
         params.add("username", user.getUserName());
-        params.add("password", user.getPassword());
+        params.add("password", "password");
 
         Map<String, Object> response = accessOAuth2Endpoint(params, "/oauth/token");
         String refreshToken = (String)response.get("refresh_token");
@@ -287,7 +318,21 @@ public class UserControllerTest {
 
     private void createUser(User user){
         User saved = userService.save(user);
-        if(saved == null)
+        if(saved == null) {
             throw new RuntimeException("User creation failed");
+        }else{
+            UserCredentials credentials = userService.findCredentialsByUserId(saved.getId());
+            credentials.setPassword("password");
+            UserCredentials savedCred = userService.saveUserCredentials(credentials);
+            if(savedCred == null){
+                throw new RuntimeException("User creation failed");
+            }
+        }
+    }
+
+    private UserCredentials getCredentials() {
+        UserCredentials credentials = new UserCredentials();
+        credentials.setPassword("password");
+        return credentials;
     }
 }

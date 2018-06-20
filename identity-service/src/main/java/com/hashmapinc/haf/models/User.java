@@ -1,7 +1,5 @@
 package com.hashmapinc.haf.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +20,6 @@ public class User implements UserInformation, Serializable{
     private List<String> permissions;
     private Map<String, String> additionalDetails;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
     private boolean enabled;
 
     public User(){}
@@ -35,7 +31,6 @@ public class User implements UserInformation, Serializable{
     public User(User user) {
         this.id = user.getId();
         this.userName = user.getUserName();
-        this.password = user.getPassword();
         this.tenantId = user.getTenantId();
         this.customerId = user.getCustomerId();
         this.clientId = user.getClientId();
@@ -109,14 +104,6 @@ public class User implements UserInformation, Serializable{
 
     public void setPermissions(List<String> permissions) { this.permissions = permissions; }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -160,12 +147,11 @@ public class User implements UserInformation, Serializable{
                 Objects.equals(getLastName(), user.getLastName()) &&
                 Objects.equals(getAuthorities(), user.getAuthorities()) &&
                 Objects.equals(getPermissions(), user.getPermissions()) &&
-                Objects.equals(getAdditionalDetails(), user.getAdditionalDetails()) &&
-                Objects.equals(getPassword(), user.getPassword());
+                Objects.equals(getAdditionalDetails(), user.getAdditionalDetails());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getPermissions(), getAdditionalDetails(), getPassword(), isEnabled());
+        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getPermissions(), getAdditionalDetails(), isEnabled());
     }
 }
