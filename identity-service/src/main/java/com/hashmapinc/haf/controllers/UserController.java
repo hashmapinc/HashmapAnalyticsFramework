@@ -4,6 +4,7 @@ import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.requests.CreateUserRequest;
+import com.hashmapinc.haf.requests.CreateUserResponse;
 import com.hashmapinc.haf.services.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,16 +71,17 @@ public class UserController {
                     }
                 }
                 User savedUser = userService.save(user);
+                UserCredentials savedCredentials = userService.findCredentialsByUserId(savedUser.getId());
                 if(userRequest.getCredentials() != null && !StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
-                    UserCredentials savedCredentials = userService.findCredentialsByUserId(savedUser.getId());
                     savedCredentials.setPassword(userRequest.getCredentials().getPassword());
+                    userService.saveUserCredentials(savedCredentials);
                 }
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{userId}")
                         .buildAndExpand(savedUser.getId())
                         .toUri();
-                return ResponseEntity.created(uri).body(savedUser);
+                return ResponseEntity.created(uri).body(new CreateUserResponse(savedUser, savedCredentials.getActivationToken()));
             }else{
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already present");
             }
@@ -119,6 +121,15 @@ public class UserController {
         if(users == null || users.isEmpty())
             return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(users);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/{userId}/activation-token", method = RequestMethod.GET)
+    public ResponseEntity<?> getActivationToken(@PathVariable UUID userId){
+        UserCredentials credentials = userService.findCredentialsByUserId(userId);
+        if(credentials == null)
+            return new ResponseEntity<>("No Token found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(credentials.getActivationToken());
     }
 
     private String getCurrentClientId(){

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ActivationType {
-    EMAIL("email"), LINK("link"), NONE("none");
+    EMAIL("mail"), LINK("link"), NONE("none");
 
     private String type;
 
