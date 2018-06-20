@@ -1,7 +1,7 @@
 package com.hashmap.haf.metadata.config.actors.message.query;
 
-public class StartQueryMsg {
+public class ExecuteQueryMsg {
 
-    public StartQueryMsg() {
+    public ExecuteQueryMsg() {
     }
 }
