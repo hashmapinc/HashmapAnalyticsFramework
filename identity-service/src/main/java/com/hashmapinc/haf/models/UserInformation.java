@@ -7,6 +7,8 @@ public interface UserInformation {
 
     List<String> getAuthorities();
 
+    List<String> getPermissions();
+
     boolean isEnabled();
 
     String getPassword();

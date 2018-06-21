@@ -14,8 +14,10 @@ public class ModelConstants {
     public static final String USER_LAST_NAME_PROPERTY = "last_name";
     public static final String USER_PASSWORD_PROPERTY = "password";
     public static final String USER_AUTHORITIES_COLUMN = "authorities_id";
+    public static final String USER_PERMISSIONS_COLUMN = "permission";
 
 
     public static final String USER_ENABLED_PROPERTY = "enabled";
     public static final String USER_AUTHORITIES_TABLE = "haf_user_authorities";
+    public static final String USER_PERMISSIONS_TABLE = "haf_user_permissions";
 }

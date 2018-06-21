@@ -17,6 +17,7 @@ public class User implements UserInformation, Serializable{
     private String firstName;
     private String lastName;
     private List<String> authorities;
+    private List<String> permissions;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -38,6 +39,7 @@ public class User implements UserInformation, Serializable{
         this.customerId = user.getCustomerId();
         this.clientId = user.getClientId();
         this.authorities = user.getAuthorities();
+        this.permissions = user.getPermissions();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.enabled = user.isEnabled();
@@ -91,6 +93,10 @@ public class User implements UserInformation, Serializable{
         return authorities;
     }
 
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
     @Override
     public boolean isEnabled() {
         return this.enabled;
@@ -99,6 +105,8 @@ public class User implements UserInformation, Serializable{
     public void setAuthorities(List<String> authorities) {
         this.authorities = authorities;
     }
+
+    public void setPermissions(List<String> permissions) { this.permissions = permissions; }
 
     public String getPassword() {
         return password;
@@ -144,6 +152,8 @@ public class User implements UserInformation, Serializable{
             return false;
         if (getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null)
             return false;
+        if (getPermissions() != null ? !getPermissions().equals(user.getPermissions()) : user.getPermissions() != null)
+            return false;
         return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
     }
 
@@ -155,6 +165,7 @@ public class User implements UserInformation, Serializable{
         result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
         result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
         result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
+        result = 31 * result + (getPermissions() != null ? getPermissions().hashCode() : 0);
         return result;
     }
 }
