@@ -49,5 +49,4 @@ public class ModelConstants {
     public static final String METADATA_QUERY_TRIGGER_TYPE = "trigger_type";
     public static final String METADATA_QUERY_TRIGGER_SCHEDULE = "trigger_schdl";
 
-
 }
