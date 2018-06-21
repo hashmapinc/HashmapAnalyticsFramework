@@ -50,9 +50,9 @@ public class MetadataConfigActor extends AbstractActor {
             queries.add(message.getQuery());
             executeQuery(queries);
         } else if (message.getMessageType() == MessageType.UPDATE) {
-            //TODO : Will be implemented after query support according to QueryId
+            //TODO : Will be implemented after query support according to MetadataQueryId
         } else if (message.getMessageType() == MessageType.DELETE) {
-            //TODO : Will be implemented after query support according to QueryId
+            //TODO : Will be implemented after query support according to MetadataQueryId
         }
     }
     
@@ -62,7 +62,7 @@ public class MetadataConfigActor extends AbstractActor {
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
         } else if (message instanceof ScheduleQueryMsg) {
-            log.debug("Has Query : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
+            log.debug("Has MetadataQuery : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
             executeQuery(queries);
         }
     }

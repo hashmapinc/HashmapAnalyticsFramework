@@ -24,7 +24,7 @@ public class QueryActor extends AbstractActor {
     private  void processMessage(Object message) {
         if (message instanceof ExecuteQueryMsg) {
             log.debug("QueryActor : MetadataConfig : {}", metadataConfig.toString());
-            log.debug("QueryActor : Query : {}", query);
+            log.debug("QueryActor : MetadataQuery : {}", query);
             context().stop(self());
         }
     }

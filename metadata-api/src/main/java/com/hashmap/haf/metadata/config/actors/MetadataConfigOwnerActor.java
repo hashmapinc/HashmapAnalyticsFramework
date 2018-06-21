@@ -91,7 +91,7 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
             }
         }else {
             log.warn(
-                    "Ignoring Query message request for {}. This actors is responsible for {}.",
+                    "Ignoring MetadataQuery message request for {}. This actors is responsible for {}.",
                     ownerId, this.ownerId
             );
         }
