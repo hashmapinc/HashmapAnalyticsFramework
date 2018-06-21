@@ -11,4 +11,6 @@ public interface UserCredentialsDao {
     UserCredentials findByUserId(UUID userId);
 
     UserCredentials findByActivationToken(String activationToken);
+
+    UserCredentials findByResetToken(String resetToken);
 }

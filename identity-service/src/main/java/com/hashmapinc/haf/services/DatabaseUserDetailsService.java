@@ -69,6 +69,26 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    public UserCredentials requestPasswordReset(String email, String clientId){
+        User user =  usersDao.findByUserName(email, clientId);
+        if (user == null) {
+            throw new IllegalArgumentException(String.format("Unable to find user with id [%s] for client [%s]", email, clientId));
+        } else if(!user.isEnabled()) {
+            throw new IllegalArgumentException(String.format("Unable to reset password for user with id [%s] for client [%s] as user is not enabled", email, clientId));
+        }
+
+        UserCredentials userCredentials = userCredentialsDao.findByUserId(user.getId());
+        userCredentials.setResetToken(RandomStringUtils.randomAlphanumeric(DEFAULT_TOKEN_LENGTH));
+        return saveUserCredentials(userCredentials);
+    }
+
+    @Override
+    public UserCredentials findUserCredentialsByResetToken(String resetToken) {
+        return userCredentialsDao.findByResetToken(resetToken);
+    }
+
+
+    @Override
     public UserCredentials activateUserCredentials(ActivateUserRequest activateUserRequest) {
         UserCredentials userCredentials = findCredentialsByActivationToken(activateUserRequest.getActivateToken());
         if (userCredentials == null) {

@@ -43,5 +43,10 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
         return userCredentialsRepository.findByActivationToken(activationToken).toData();
     }
 
+    @Override
+    public UserCredentials findByResetToken(String resetToken) {
+        return userCredentialsRepository.findByResetToken(resetToken).toData();
+    }
+
 
 }

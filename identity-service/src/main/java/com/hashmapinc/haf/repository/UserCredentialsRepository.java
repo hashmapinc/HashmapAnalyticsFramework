@@ -10,4 +10,6 @@ public interface UserCredentialsRepository extends JpaRepository<UserCredentials
     UserCredentialsEntity findByUserId(String userId);
 
     UserCredentialsEntity findByActivationToken(String activationToken);
+
+    UserCredentialsEntity findByResetToken(String resetToken);
 }

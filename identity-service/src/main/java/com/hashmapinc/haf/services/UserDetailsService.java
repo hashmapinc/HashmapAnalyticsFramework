@@ -29,4 +29,8 @@ public interface UserDetailsService {
 
     UserCredentials saveUserCredentials(UserCredentials credentials);
 
+    UserCredentials requestPasswordReset(String email, String clientId);
+
+    UserCredentials findUserCredentialsByResetToken(String resetToken);
+
 }

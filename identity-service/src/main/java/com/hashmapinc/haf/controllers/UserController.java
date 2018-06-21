@@ -95,6 +95,13 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/user-credentials", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> save(@RequestBody UserCredentials userCredentials, HttpServletRequest request){
+          UserCredentials savdUserCredentials = userService.saveUserCredentials(userCredentials);
+          return ResponseEntity.ok(savdUserCredentials);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@PathVariable UUID userId, @RequestBody User user){
         String clientId = getCurrentClientId();
@@ -138,7 +145,7 @@ public class UserController {
     @RequestMapping(value = "/activate", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> getUserCredentialsByActivateToken(@RequestBody ActivateUserRequest activateUserRequest,
+    public ResponseEntity<?> activateUserCredentials(@RequestBody ActivateUserRequest activateUserRequest,
                                                                HttpServletRequest request){
         UserCredentials credentials = userService.activateUserCredentials(activateUserRequest);
         if(credentials == null)
@@ -146,6 +153,30 @@ public class UserController {
         return ResponseEntity.ok(credentials);
     }
 
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/{resetToken}/user-credentials", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> findUserCredentialsByResetToken(@PathVariable String resetToken){
+        UserCredentials credentials = userService.findUserCredentialsByResetToken(resetToken);
+        if(credentials == null)
+            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(credentials);
+    }
+
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/resetPasswordByEmail", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> requestPasswordRequest(@RequestBody JsonNode resetPasswordByEmailRequest,
+                                                    HttpServletRequest request){
+        String email = resetPasswordByEmailRequest.get("email").asText();
+        String clientId = getCurrentClientId();
+        UserCredentials userCredentials = userService.requestPasswordReset(email, clientId);
+        return ResponseEntity.ok(userCredentials);
+    }
 
 
 
