@@ -40,4 +40,13 @@ public class ModelConstants {
     public static final String REST_URL = "url";
     public static final String REST_USERNAME = "username";
     public static final String REST_PASSWORD = "password";
+
+    /**
+     * Metadata Query Constants
+     */
+
+    public static final String METADATA_QUERY_TABLE_NAME = "query_config";
+    public static final String METADATA_QUERY = "query";
+
+
 }
