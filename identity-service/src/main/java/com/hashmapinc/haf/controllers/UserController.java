@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -52,6 +53,17 @@ public class UserController {
         User user = userService.findById(userId);
         if(user == null)
             return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/username/{userName}", method = RequestMethod.GET)
+    public ResponseEntity<?> findByUsername(@PathVariable String userName){
+        String clientId = getCurrentClientId();
+        String decoded = new String(Base64.getUrlDecoder().decode(userName));
+        User user = (User)userService.loadUserByUsername(decoded, clientId);
+        if(user == null)
+            return new ResponseEntity<>("No User found with username "+ decoded, HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(user);
     }
 
@@ -155,11 +167,22 @@ public class UserController {
 
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "/{resetToken}/user-credentials", method = RequestMethod.GET)
+    @RequestMapping(value = "reset/{resetToken}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> findUserCredentialsByResetToken(@PathVariable String resetToken){
         UserCredentials credentials = userService.findUserCredentialsByResetToken(resetToken);
+        if(credentials == null)
+            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(credentials);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "activate/{activationToken}/user-credentials", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> findUserCredentialsByActivationToken(@PathVariable String activationToken){
+        UserCredentials credentials = userService.findCredentialsByActivationToken(activationToken);
         if(credentials == null)
             return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(credentials);
