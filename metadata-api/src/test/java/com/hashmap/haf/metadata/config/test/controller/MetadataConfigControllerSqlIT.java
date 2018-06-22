@@ -26,10 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -83,7 +81,7 @@ public class MetadataConfigControllerSqlIT {
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         MetadataConfig saved = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(saved);
@@ -101,7 +99,7 @@ public class MetadataConfigControllerSqlIT {
         metadataConfig.setName("Configuration");
         String json = mapper.writeValueAsString(metadataConfig);
         MvcResult mvcResult = mockMvc.perform(
-                post("/api/metaconfig")
+                put("/api/metaconfig")
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
