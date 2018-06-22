@@ -188,6 +188,17 @@ public class UserController {
         return ResponseEntity.ok(credentials);
     }
 
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "{userId}/user-credentials", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> findUserCredentialsByUserId(@PathVariable UUID userId){
+        UserCredentials credentials = userService.findCredentialsByUserId(userId);
+        if(credentials == null)
+            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(credentials);
+    }
+
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/resetPasswordByEmail", method = RequestMethod.POST)
@@ -201,6 +212,16 @@ public class UserController {
         return ResponseEntity.ok(userCredentials);
     }
 
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "{id}/user-credentials", method = RequestMethod.PUT)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> updateUserCredentialsById(@PathVariable UUID id, @RequestBody UserCredentials credentials){
+        UserCredentials updated = userService.saveUserCredentials(credentials);
+        if(updated == null)
+            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(updated);
+    }
 
 
     private String getCurrentClientId(){
