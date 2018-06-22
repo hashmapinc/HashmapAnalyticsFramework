@@ -27,7 +27,7 @@ public class MetadataConfigController {
     @RequestMapping(value = "/metaconfig", method = RequestMethod.POST)
     public ResponseEntity saveMetadataConfig(@RequestBody MetadataConfig metadataConfig) {
         MetadataConfig savedMetadataConfig = checkNotNull(metadataConfigService.saveMetadataConfig(metadataConfig));
-        return ResponseEntity.status(HttpStatus.OK).body(savedMetadataConfig);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedMetadataConfig);
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")
