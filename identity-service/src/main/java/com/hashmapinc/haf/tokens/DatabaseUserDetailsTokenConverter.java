@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,6 +40,9 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
         response.put("enabled", user.isEnabled());
         if(authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
+        }
+        if(user.getUser().getPermissions() != null && !user.getUser().getPermissions().isEmpty()) {
+            response.put("permissions", new HashSet(user.getUser().getPermissions()));
         }
 
         return response;
