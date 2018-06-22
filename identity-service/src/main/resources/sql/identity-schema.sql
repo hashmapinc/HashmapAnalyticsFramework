@@ -14,3 +14,8 @@ create table if not exists haf_user_authorities (
     user_id varchar(255),
     authorities_id varchar(255)
 );
+
+create table if not exists haf_user_permissions (
+    user_id varchar(255),
+    permission varchar(255)
+);

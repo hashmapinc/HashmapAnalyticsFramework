@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.EndsWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -24,13 +23,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -72,6 +73,7 @@ public class UserControllerTest {
         admin.setPassword("demo");
         admin.setEnabled(true);
         admin.setAuthorities(Arrays.asList("admin", "user"));
+        admin.setPermissions(Arrays.asList("subject1:*"));
         admin.setClientId(clientId);
         createUser(admin);
         admin.setPassword("demo");
@@ -83,6 +85,7 @@ public class UserControllerTest {
         user.setEnabled(true);
         user.setClientId(clientId);
         user.setAuthorities(Arrays.asList("user"));
+        user.setPermissions(Arrays.asList("subject1:resource1:READ", "subject1:resource2:READ"));
 
         createUser(user);
         user.setPassword("password");
@@ -174,7 +177,8 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.userName").value(user.getUserName()))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.permissions[0]").value(user.getPermissions().get(0)));
     }
 
     @Test

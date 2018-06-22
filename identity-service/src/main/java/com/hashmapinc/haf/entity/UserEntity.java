@@ -4,6 +4,8 @@ package com.hashmapinc.haf.entity;
 import com.hashmapinc.haf.constants.ModelConstants;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.utils.UUIDConverter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -44,11 +46,17 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.USER_LAST_NAME_PROPERTY)
     private String lastName;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = ModelConstants.USER_AUTHORITIES_TABLE, joinColumns = @JoinColumn(name = ModelConstants.ID_PROPERTY))
     @Column(name = ModelConstants.USER_AUTHORITIES_COLUMN)
     private List<String> authorities;
 
+    @ElementCollection()
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @CollectionTable(name = ModelConstants.USER_PERMISSIONS_TABLE, joinColumns = @JoinColumn(name = ModelConstants.ID_PROPERTY))
+    @Column(name = ModelConstants.USER_PERMISSIONS_COLUMN)
+    private List<String> permissions;
 
     public UserEntity() {
     }
@@ -61,6 +69,7 @@ public class UserEntity implements Serializable{
         this.enabled = user.isEnabled();
         this.password = user.getPassword();
         this.authorities = user.getAuthorities();
+        this.permissions = user.getPermissions();
         if (user.getTenantId() != null) {
             this.tenantId = user.getTenantId();
         }
@@ -90,6 +99,7 @@ public class UserEntity implements Serializable{
         User user = new User(UUIDConverter.fromString(getId()));
         //user.setCreatedTime(UUIDs.unixTimestamp(getId()));
         user.setAuthorities(authorities);
+        user.setPermissions(permissions);
         if (tenantId != null) {
             user.setTenantId(tenantId);
         }
@@ -115,11 +125,11 @@ public class UserEntity implements Serializable{
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
-        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
         if (clientId != null ? !clientId.equals(that.clientId) : that.clientId != null) return false;
         if (customerId != null ? !customerId.equals(that.customerId) : that.customerId != null) return false;
         if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
+        if (permissions != null ? !permissions.equals(that.permissions) : that.permissions != null ) return false;
         return authorities != null ? authorities.equals(that.authorities) : that.authorities == null;
     }
 
@@ -135,6 +145,7 @@ public class UserEntity implements Serializable{
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (authorities != null ? authorities.hashCode() : 0);
+        result = 31 * result + (permissions != null ? permissions.hashCode() : 0);
         return result;
     }
 }
