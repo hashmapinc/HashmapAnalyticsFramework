@@ -53,6 +53,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         if (metadataQuery.getMetadataConfigId() != null) {
             this.metadataConfigId = metadataQuery.getMetadataConfigId().getId().toString();
         }
+
         this.queryStmt = metadataQuery.getQueryStmt();
         this.triggerType = metadataQuery.getTriggerType();
         this.triggerSchedule = metadataQuery.getTriggerSchedule();
