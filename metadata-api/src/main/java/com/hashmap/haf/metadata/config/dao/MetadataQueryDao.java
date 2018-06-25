@@ -14,7 +14,7 @@ public interface MetadataQueryDao {
 
     List<MetadataQuery> findAll();
 
-    List<MetadataQuery> findByMetadataId(UUID metadataId);
+    List<MetadataQuery> findByMetadataConfigId(UUID metadataId);
 
     boolean removeById(UUID id);
 
