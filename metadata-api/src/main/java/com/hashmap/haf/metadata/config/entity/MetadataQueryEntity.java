@@ -7,6 +7,7 @@ import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.MetadataQueryId;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
 import com.hashmap.haf.metadata.core.common.entity.BaseSqlEntity;
+import com.hashmap.haf.metadata.core.trigger.TriggerType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,13 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
     @OneToOne(cascade = CascadeType.REMOVE)
     MetadataConfigId metadataConfigId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = ModelConstants.METADATA_QUERY_TRIGGER_TYPE)
+    private TriggerType triggerType;
+
+    @Column(name = ModelConstants.METADATA_QUERY_TRIGGER_SCHEDULE)
+    private String triggerSchedule;
+
     public MetadataQueryEntity() {
         super();
     }
@@ -40,6 +48,9 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         }
 
         this.metadataConfigId = metadataQuery.getMetadataConfigId();
+        this.queryStmt = metadataQuery.getQueryStmt();
+        this.triggerType = metadataQuery.getTriggerType();
+        this.triggerSchedule = metadataQuery.getTriggerSchedule();
     }
 
     @Override
@@ -48,6 +59,8 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         metadataQuery.setCreatedTime(UUIDs.unixTimestamp(getId()));
         metadataQuery.setMetadataConfigId(this.metadataConfigId);
         metadataQuery.setQueryStmt(this.queryStmt);
+        metadataQuery.setTriggerType(this.triggerType);
+        metadataQuery.setTriggerSchedule(this.triggerSchedule);
         return metadataQuery;
     }
 }

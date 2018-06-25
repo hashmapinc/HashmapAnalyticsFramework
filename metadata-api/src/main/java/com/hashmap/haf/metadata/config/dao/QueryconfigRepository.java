@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface QueryconfigRepository  extends JpaRepository<MetadataQueryEntity, String> {
-    List<MetadataQueryEntity> findByMetadataId(String metadataId);
 
+    List<MetadataQueryEntity> findByMetadataId(String metadataId);
 }

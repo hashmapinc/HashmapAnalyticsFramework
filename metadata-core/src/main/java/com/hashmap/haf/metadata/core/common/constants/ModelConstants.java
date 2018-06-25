@@ -44,9 +44,10 @@ public class ModelConstants {
     /**
      * Metadata Query Constants
      */
-
     public static final String METADATA_QUERY_TABLE_NAME = "query_config";
     public static final String METADATA_QUERY = "query";
+    public static final String METADATA_QUERY_TRIGGER_TYPE = "trigger_type";
+    public static final String METADATA_QUERY_TRIGGER_SCHEDULE = "trigger_schdl";
 
 
 }
