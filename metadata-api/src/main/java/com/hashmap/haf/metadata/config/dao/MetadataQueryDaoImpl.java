@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class MetadataQueryImpl implements MetadataQueryDao {
+public class MetadataQueryDaoImpl implements MetadataQueryDao {
 
     @Autowired
     private MetadataQueryRepository metadataQueryRepository;
@@ -33,7 +33,7 @@ public class MetadataQueryImpl implements MetadataQueryDao {
 
     @Override
     public List<MetadataQuery> findByMetadataConfigId(UUID metadataId) {
-        String key = UUIDConverter.fromTimeUUID(metadataId);
+        String key = metadataId.toString();
         List<MetadataQueryEntity> metadataConfigEntities = metadataQueryRepository.findByMetadataConfigId(key);
         return DaoUtil.convertDataList(metadataConfigEntities);
     }
