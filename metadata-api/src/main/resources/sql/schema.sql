@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS rest (
 
 
 CREATE TABLE IF NOT EXISTS query_config (
-  id varchar(31) NOT NULL CONSTRAINT rest_pkey PRIMARY KEY,
+  id varchar(31) NOT NULL CONSTRAINT query_pkey PRIMARY KEY,
   query varchar NOT NULL UNIQUE,
   metadata_id varchar(31) NOT NULL,
   trigger_schdl varchar,
