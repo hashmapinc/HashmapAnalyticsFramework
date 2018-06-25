@@ -57,7 +57,7 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
     public List<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId) {
         log.trace("Executing findAllMetadataQueryByMetadataId [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
-        return metadataQueryDao.findByMetadataId(metadataConfigId.getId());
+        return metadataQueryDao.findByMetadataConfigId(metadataConfigId.getId());
     }
 
     @Override

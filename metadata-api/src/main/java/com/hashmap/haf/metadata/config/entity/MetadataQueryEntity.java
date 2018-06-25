@@ -8,11 +8,13 @@ import com.hashmap.haf.metadata.config.model.MetadataQueryId;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
 import com.hashmap.haf.metadata.core.common.entity.BaseSqlEntity;
 import com.hashmap.haf.metadata.core.trigger.TriggerType;
+import com.hashmap.haf.metadata.core.util.UUIDConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 
 @Data
@@ -23,10 +25,11 @@ import javax.persistence.*;
 public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
 
     @Column(name = ModelConstants.METADATA_QUERY)
-    String queryStmt;
+    private String queryStmt;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    MetadataConfigId metadataConfigId;
+//    @OneToOne(cascade = CascadeType.REMOVE)
+    @Column(name = "metadata_id")
+    private String metadataConfigId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = ModelConstants.METADATA_QUERY_TRIGGER_TYPE)
@@ -47,7 +50,9 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
             this.setId(Generators.timeBasedGenerator().generate());
         }
 
-        this.metadataConfigId = metadataQuery.getMetadataConfigId();
+        if (metadataQuery.getMetadataConfigId() != null) {
+            this.metadataConfigId = metadataQuery.getMetadataConfigId().getId().toString();
+        }
         this.queryStmt = metadataQuery.getQueryStmt();
         this.triggerType = metadataQuery.getTriggerType();
         this.triggerSchedule = metadataQuery.getTriggerSchedule();
@@ -57,7 +62,9 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
     public MetadataQuery toData() {
         MetadataQuery metadataQuery = new MetadataQuery(new MetadataQueryId(getId()));
         metadataQuery.setCreatedTime(UUIDs.unixTimestamp(getId()));
-        metadataQuery.setMetadataConfigId(this.metadataConfigId);
+        if (metadataConfigId != null) {
+            metadataQuery.setMetadataConfigId(new MetadataConfigId(UUID.fromString(this.metadataConfigId)));
+        }
         metadataQuery.setQueryStmt(this.queryStmt);
         metadataQuery.setTriggerType(this.triggerType);
         metadataQuery.setTriggerSchedule(this.triggerSchedule);
