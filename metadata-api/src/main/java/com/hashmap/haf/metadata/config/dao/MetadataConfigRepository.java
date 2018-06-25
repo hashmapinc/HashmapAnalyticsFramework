@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface MetadataConfigRepository extends JpaRepository<MetadataConfigEntity, String> {
+
     List<MetadataConfigEntity> findByOwnerId(String ownerId);
 }
