@@ -39,6 +39,7 @@
         <junit.version>4.12</junit.version>
         <skipITs>true</skipITs>
         <cassandra.version>3.3.0</cassandra.version>
+        <lombok.version>1.18.0</lombok.version>
     </properties>
 
     <modules>
@@ -123,6 +124,14 @@
             <layout>default</layout>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -427,6 +436,12 @@
                 <groupId>com.datastax.cassandra</groupId>
                 <artifactId>cassandra-driver-extras</artifactId>
                 <version>${cassandra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
+import com.hashmapinc.haf.page.PaginatedRequest;
+import com.hashmapinc.haf.page.TextPageLink;
+import com.hashmapinc.haf.repository.UsersRepository;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserResponse;
@@ -24,9 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     UserDetailsService userService;
+
+    @Autowired
+    UsersRepository repository;
 
     @Value("${users.provider}")
     private String provider;
@@ -167,7 +171,7 @@ public class UserController {
 
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "reset/{resetToken}/user-credentials", method = RequestMethod.GET)
+    @RequestMapping(value = "/reset/{resetToken}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> findUserCredentialsByResetToken(@PathVariable String resetToken){
@@ -178,7 +182,7 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "activate/{activationToken}/user-credentials", method = RequestMethod.GET)
+    @RequestMapping(value = "/activate/{activationToken}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> findUserCredentialsByActivationToken(@PathVariable String activationToken){
@@ -189,7 +193,7 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "{userId}/user-credentials", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> findUserCredentialsByUserId(@PathVariable UUID userId){
@@ -213,14 +217,63 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "{id}/user-credentials", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/user-credentials", method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> updateUserCredentialsById(@PathVariable UUID id, @RequestBody UserCredentials credentials){
-        UserCredentials updated = userService.saveUserCredentials(credentials);
-        if(updated == null)
+        UserCredentials credentialsByUserId = userService.findCredentialsByUserId(credentials.getUserId());
+        if(credentialsByUserId != null) {
+            UserCredentials updated = userService.saveUserCredentials(credentials);
+            if (updated == null) {
+                return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+            }else {
+                if(StringUtils.isEmpty(updated.getActivationToken()) && !StringUtils.isEmpty(updated.getPassword())){
+                    User user = userService.findById(updated.getUserId());
+                    user.setEnabled(true);
+                    userService.save(user);
+                }
+            }
+            return ResponseEntity.ok(updated);
+        }else {
             return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
-        return ResponseEntity.ok(updated);
+        }
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> delete(@PathVariable UUID userId){
+        UserCredentials credentials = userService.findCredentialsByUserId(userId);
+        if(credentials != null)
+            userService.deleteUserCredentialsById(credentials.getId());
+        userService.deleteById(userId.toString());
+        return ResponseEntity.ok("User with id "+ userId + " deleted successfully");
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/list", params = { "limit", "tenantId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> findUsers(@RequestParam int limit,
+                                       @RequestParam UUID tenantId,
+                                       @RequestParam String authority,
+                                       @RequestParam(required = false) String customerId,
+                                       @RequestParam(required = false) String textSearch,
+                                       @RequestParam(required = false) String idOffset,
+                                       @RequestParam(required = false) String textOffset){
+        Map<String, Object> criteria = new HashMap<>();
+        criteria.put("authorities", Arrays.asList(authority));
+
+        repository.findByAuthorities("TENANT_ADMIN");
+        PaginatedRequest.PaginatedRequestBuilder builder = PaginatedRequest.builder()
+                .criteria(criteria)
+                .tenantId(tenantId)
+                .pageLink(createPageLink(limit, textSearch, idOffset, textOffset));
+        if(!StringUtils.isEmpty(customerId)){
+            builder.customerId(UUID.fromString(customerId));
+        }
+
+        return ResponseEntity.ok(userService.findPaginatedUsersByCriteria(builder.build()));
     }
 
 
@@ -231,5 +284,13 @@ public class UserController {
             return oauth.getOAuth2Request().getClientId();
         }
         return identityServiceName;
+    }
+
+    private TextPageLink createPageLink(int limit, String textSearch, String idOffset, String textOffset) {
+        UUID idOffsetUuid = null;
+        if (!StringUtils.isEmpty(idOffset)) {
+            idOffsetUuid = UUID.fromString(idOffset);
+        }
+        return new TextPageLink(limit, textSearch, idOffsetUuid, textOffset);
     }
 }

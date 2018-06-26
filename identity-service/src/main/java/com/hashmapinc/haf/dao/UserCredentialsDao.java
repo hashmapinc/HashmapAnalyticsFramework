@@ -13,4 +13,6 @@ public interface UserCredentialsDao {
     UserCredentials findByActivationToken(String activationToken);
 
     UserCredentials findByResetToken(String resetToken);
+
+    void delete(UUID id);
 }

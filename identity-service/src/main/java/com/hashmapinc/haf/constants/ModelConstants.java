@@ -1,9 +1,14 @@
 package com.hashmapinc.haf.constants;
 
+import com.datastax.driver.core.utils.UUIDs;
+
+import java.util.UUID;
+
 public class ModelConstants {
     private ModelConstants() {
     }
 
+    public static final UUID NULL_UUID = UUIDs.startOf(0);
     public static final String USERS_TABLE = "haf_users";
     public static final String ID_PROPERTY = "id";
     public static final String USER_NAME_PROPERTY = "user_name";

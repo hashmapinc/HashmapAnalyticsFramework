@@ -78,8 +78,8 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: "create"
-      #show_sql: true
-      #format_sql: true
+      show_sql: true
+      format_sql: true
     database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"

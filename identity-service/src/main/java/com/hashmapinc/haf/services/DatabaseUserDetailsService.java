@@ -6,6 +6,9 @@ import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
+import com.hashmapinc.haf.page.PaginatedRequest;
+import com.hashmapinc.haf.page.TextPageData;
+import com.hashmapinc.haf.page.TextPageLink;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +88,16 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public UserCredentials findUserCredentialsByResetToken(String resetToken) {
         return userCredentialsDao.findByResetToken(resetToken);
+    }
+
+    @Override
+    public void deleteUserCredentialsById(UUID id) {
+        userCredentialsDao.delete(id);
+    }
+
+    @Override
+    public TextPageData<User> findPaginatedUsersByCriteria(PaginatedRequest request) {
+        return new TextPageData<>(usersDao.findByCriteria(request), request.getPageLink());
     }
 
 

@@ -48,5 +48,10 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
         return userCredentialsRepository.findByResetToken(resetToken).toData();
     }
 
+    @Override
+    public void delete(UUID id) {
+        userCredentialsRepository.delete(id.toString());
+    }
+
 
 }

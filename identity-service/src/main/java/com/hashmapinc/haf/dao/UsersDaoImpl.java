@@ -3,9 +3,11 @@ package com.hashmapinc.haf.dao;
 import com.datastax.driver.core.utils.UUIDs;
 import com.hashmapinc.haf.entity.UserEntity;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.page.PaginatedRequest;
 import com.hashmapinc.haf.repository.UsersRepository;
 import com.hashmapinc.haf.utils.UUIDConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -55,6 +57,11 @@ public class UsersDaoImpl implements UsersDao{
     @Override
     public Collection<User> findAllByClientId(String clientId) {
         return convertDataList(usersRepository.findByClientId(clientId));
+    }
+
+    @Override
+    public List<User> findByCriteria(PaginatedRequest request) {
+        return convertDataList(usersRepository.findPaginated(request, new PageRequest(0, request.getPageLink().getLimit())));
     }
 
     private List<User> convertDataList(Iterable<UserEntity> toDataList){
