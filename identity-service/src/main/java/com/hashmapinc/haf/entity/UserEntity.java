@@ -4,6 +4,8 @@ package com.hashmapinc.haf.entity;
 import com.hashmapinc.haf.constants.ModelConstants;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.utils.UUIDConverter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,7 +44,8 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.USER_LAST_NAME_PROPERTY)
     private String lastName;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = ModelConstants.USER_PERMISSIONS_TABLE, joinColumns = @JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
     @Column(name = ModelConstants.USER_PERMISSIONS_COLUMN)
     private List<String> permissions;
