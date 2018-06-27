@@ -77,7 +77,7 @@ public class UserController {
         String clientId = getCurrentClientId();
         User user = userRequest.getUser();
         if(provider.equalsIgnoreCase("database")) {
-            if(user.getId() == null || userService.findById(user.getId()) == null) {
+            if((user.getId() == null || userService.findById(user.getId()) == null) && userService.loadUserByUsername(user.getUserName(), clientId) == null) {
                 if(user.getClientId() == null){
                     user.setClientId(clientId);
                 }

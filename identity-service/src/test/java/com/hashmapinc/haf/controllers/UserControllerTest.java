@@ -110,7 +110,7 @@ public class UserControllerTest {
     public void shouldCreateNewUserWithCorrectAuthorization() throws Exception{
         User u = new User(user);
         u.setId(null);
-        u.setUserName("temporary_user");
+        u.setUserName("temporary_user1");
         String json = mapper.writeValueAsString(new CreateUserRequest(u, getCredentials(), ActivationType.NONE));
 
         mockMvc.perform(
@@ -126,7 +126,7 @@ public class UserControllerTest {
     public void shouldReturnBadRequestIfActivationTypeIsNoneAndPasswordIsNotProvided() throws Exception{
         User u = new User(user);
         u.setId(null);
-        u.setUserName("temporary_user");
+        u.setUserName("temporary_user2");
         String json = mapper.writeValueAsString(new CreateUserRequest(u, null, ActivationType.NONE));
 
         mockMvc.perform(
@@ -142,7 +142,7 @@ public class UserControllerTest {
     public void shouldCreateUserDisabledIfActivationIsNotNone() throws Exception {
         User u = new User(user);
         u.setId(null);
-        u.setUserName("temporary_user");
+        u.setUserName("temporary_user3");
         u.setEnabled(true);
         String json = mapper.writeValueAsString(new CreateUserRequest(u, getCredentials(), ActivationType.LINK));
 
@@ -152,12 +152,29 @@ public class UserControllerTest {
                         .header("Content-Type", "application/json")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
-        ).andExpect(status().isCreated()).andExpect(jsonPath("$.enabled").value(false));
+        ).andExpect(status().isCreated()).andExpect(jsonPath("$.user.enabled").value(false));
     }
 
     @Test
     public void shouldReturnConflictIfUserAlreadyPresentWhilePost() throws Exception {
         String json = mapper.writeValueAsString(new CreateUserRequest(user, getCredentials(), ActivationType.NONE));
+
+        mockMvc.perform(
+                post("/users")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .header("Content-Type", "application/json")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json)
+        ).andExpect(
+                status().isConflict()
+        );
+    }
+
+    @Test
+    public void shouldReturnConflictIfUserNameAlreadyPresentForRequestingClient() throws Exception {
+        User u = new User(user);
+        u.setId(null);
+        String json = mapper.writeValueAsString(new CreateUserRequest(u, getCredentials(), ActivationType.NONE));
 
         mockMvc.perform(
                 post("/users")

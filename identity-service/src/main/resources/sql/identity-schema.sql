@@ -6,7 +6,8 @@ create table if not exists haf_users (
     tenant_id varchar(255),
     client_id varchar(255),
     customer_id varchar(255),
-    user_name varchar(255)
+    user_name varchar(255),
+    CONSTRAINT haf_users_unq_key UNIQUE (client_id, user_name)
 );
 
 create table if not exists haf_user_authorities (
