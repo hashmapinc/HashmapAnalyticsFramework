@@ -21,10 +21,6 @@ public class MetadataSchedulerActor extends AbstractLoggingActor {
     Option<String> cronCalender = Option.empty();
     TimeZone timeZone = TimeZone.getTimeZone(context().system().settings().config().getString("akka.quartz.defaultTimezone"));
 
-    public MetadataSchedulerActor() {
-        log.info("JAVA_HOME : {}", context().system().settings().config().getString("akka.test"));
-    }
-
     public static Props props() {
         return Props.create(MetadataSchedulerActor.class);
     }
