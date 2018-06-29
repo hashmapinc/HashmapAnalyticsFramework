@@ -1,54 +1,82 @@
 package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
-import com.hashmap.haf.metadata.config.actors.message.*;
+import akka.japi.pf.DeciderBuilder;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
-import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
+import scala.concurrent.duration.Duration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ManagerActor extends AbstractLoggingActor {
 
     final Map<String, ActorRef> ownerIdToActor = new HashMap<>();
     final Map<ActorRef, String> actorToOwnerId = new HashMap<>();
-    QuartzSchedulerExtension schedulerExtension = new QuartzSchedulerExtension((ExtendedActorSystem) context().system());
 
     public static Props props() {
         return Props.create(ManagerActor.class);
     }
 
+    private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
+                    DeciderBuilder
+                            .match(Exception.class, e -> {
+                                log.info("Exception {}", e.getMessage());
+                                return akka.actor.SupervisorStrategy.resume();
+                            })
+                            .matchAny(o -> akka.actor.SupervisorStrategy.escalate())
+                            .build());
+
     @Override
     public SupervisorStrategy supervisorStrategy() {
-        return SupervisionStrategy.getStrategy();
+        return strategy;
     }
 
     private void processMetadataConfigMsg(MetadataMessage message) {
         String ownerId = message.getMetadataConfig().getOwnerId();
 
-        ActorRef ref = ownerIdToActor.get(ownerId);
-        if (ref != null) {
+        ActorRef ownerActor = ownerIdToActor.get(ownerId);
+        if (ownerActor != null) {
             log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
-            ref.tell(message, ActorRef.noSender());
+            ownerActor.tell(message, ActorRef.noSender());
         } else {
-            if(message.getMessageType() == MessageType.CREATE) {
-                log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
-                createMetaDataConfigOwnerActor(message, ownerId);
-            }
+            log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
+            createMetaDataConfigOwnerActor(message, ownerId);
+        }
+    }
+
+    private void processQueryMsg(QueryMessage message){
+        String ownerId = message.getMetadataConfig().getOwnerId();
+        ActorRef ownerActor = ownerIdToActor.get(ownerId);
+        if (ownerActor != null) {
+            log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
+            ownerActor.tell(message, ActorRef.noSender());
+        } else {
+            log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
+            createMetaDataConfigOwnerActor(message, ownerId);
+        }
+    }
+
+    private void processMessage(Object message) {
+        //TODO: Needs to be implemented for runIngestion and testConnection
+        if (message instanceof TestConnectionMsg) {
+            //TODO : Will be implemented after query support
+        } else if (message instanceof RunIngestionMsg) {
+            //TODO : Will be implemented after query support
         }
     }
 
     private void createMetaDataConfigOwnerActor(Object message ,String ownerId) {
-        ActorRef ownerActor = getContext().actorOf(MetadataConfigOwnerActor.props(ownerId, schedulerExtension), "ownerId-" + ownerId);
+        ActorRef ownerActor = getContext().actorOf(MetadataConfigOwnerActor.props(ownerId), ownerId);
         getContext().watch(ownerActor);
-        ownerActor.tell(message, ActorRef.noSender());
         ownerIdToActor.put(ownerId, ownerActor);
         actorToOwnerId.put(ownerActor, ownerId);
+        ownerActor.tell(message, ActorRef.noSender());
     }
 
     private void onTerminated(Terminated t) {
@@ -59,24 +87,6 @@ public class ManagerActor extends AbstractLoggingActor {
         ownerIdToActor.remove(ownerId);
     }
 
-    private void processQueryMsg(QueryMessage message){
-        String ownerId = message.getMetadataConfig().getOwnerId();
-        ActorRef ref = ownerIdToActor.get(ownerId);
-        if (ref != null) {
-            log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
-            ref.tell(message, ActorRef.noSender());
-        }
-    }
-
-    private void processMessage(Object message) {
-       //TODO: Needs to be implemented for runIngestion and testConnection
-        if (message instanceof TestConnectionMsg) {
-            //TODO : Will be implemented after query support
-        } else if (message instanceof RunIngestionMsg) {
-            //TODO : Will be implemented after query support
-        }
-    }
-
     @Override
     public Receive createReceive() {
         return receiveBuilder()
@@ -85,6 +95,7 @@ public class ManagerActor extends AbstractLoggingActor {
                 .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)
+                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 }

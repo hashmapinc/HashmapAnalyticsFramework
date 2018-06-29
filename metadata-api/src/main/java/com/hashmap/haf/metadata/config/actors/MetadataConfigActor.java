@@ -1,78 +1,92 @@
 package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
+import akka.japi.pf.DeciderBuilder;
 import com.hashmap.haf.metadata.config.actors.message.*;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
-import com.hashmap.haf.metadata.config.actors.message.query.ScheduleQueryMsg;
+import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
-import com.hashmap.haf.metadata.core.trigger.TriggerType;
-import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
-import scala.Option;
-import scala.Some;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import scala.concurrent.duration.Duration;
 
 @Slf4j
 public class MetadataConfigActor extends AbstractActor {
 
     private MetadataConfig metadataConfig;
-    Set<String> queries = new HashSet<>();
-    private final QuartzSchedulerExtension schedulerExtension;
+    final Map<Integer, ActorRef> metadataQueryIdToActor = new HashMap<>();
+    final Map<ActorRef, Integer> actorToMetadataQueryId = new HashMap<>();
 
-    private MetadataConfigActor(MetadataConfig metadataConfig, QuartzSchedulerExtension schedulerExtension) {
-        this.metadataConfig = metadataConfig;
-        this.schedulerExtension = schedulerExtension;
+    static public Props props() {
+        return Props.create(MetadataConfigActor.class).withDispatcher(getMetadataDispatcher());
     }
 
-    static public Props props(MetadataConfig metadataConfig, QuartzSchedulerExtension schedulerExtension) {
-        return Props.create(MetadataConfigActor.class, () -> new MetadataConfigActor(metadataConfig, schedulerExtension));
+    private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
+            DeciderBuilder.match(Exception.class, e -> {
+                log.info("Exception {}", e.getMessage());
+                return akka.actor.SupervisorStrategy.restart();
+            })
+                    .matchAny(o -> akka.actor.SupervisorStrategy.escalate())
+                    .build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 
     private  void processMetadataConfigMsg(MetadataMessage message) {
-        if (message.getMessageType() == MessageType.UPDATE) {
+        metadataConfig = message.getMetadataConfig();
+        if (message.getMessageType() == MessageType.CREATE) {
+            log.debug("Message Create metadataConfig actor");
+        } else if (message.getMessageType() == MessageType.UPDATE) {
             log.debug("Updating metadataConfig actors for {}", metadataConfig.getId());
             metadataConfig = message.getMetadataConfig();
         } else if (message.getMessageType() == MessageType.DELETE) {
             log.debug("Deleting metadataConfig actors for {}",  metadataConfig.getId());
-            schedulerExtension.cancelJob("queryScheduler" + metadataConfig.getId());
             context().stop(self());
         }
     }
 
     private void processQueryMsg(QueryMessage message) {
-        if (message.getMessageType() == MessageType.CREATE) {
-            log.debug("Message type CreateQueryMsg");
-            queries.add(message.getQuery());
-            executeQuery(queries);
-        } else if (message.getMessageType() == MessageType.UPDATE) {
-            //TODO : Will be implemented after query support according to QueryId
-        } else if (message.getMessageType() == MessageType.DELETE) {
-            //TODO : Will be implemented after query support according to QueryId
+        metadataConfig = message.getMetadataConfig();
+        String query = message.getQuery();
+        ActorRef metadataQueryActor = metadataQueryIdToActor.get(query.hashCode());
+        if(metadataQueryActor != null) {
+            log.debug("Found metadataQuery actors for MetadataQueryId : {}", query.hashCode());
+            metadataQueryActor.tell(message, ActorRef.noSender());
+        } else {
+            log.debug("Creating metadataQuery actors for MetadataQueryId : {}", query.hashCode());
+            createMetadataQueryActor(message, metadataConfig);
         }
     }
-    
+
+    private void createMetadataQueryActor(QueryMessage message, MetadataConfig metadataConfig) {
+        ActorRef metadataQueryActor = getContext().actorOf(MetadataQueryActor.props(metadataConfig, message.getQuery()/*, schedulerExtension*/), Integer.toString(message.getQuery().hashCode()));
+        getContext().watch(metadataQueryActor);
+        metadataQueryIdToActor.put(message.getQuery().hashCode(),metadataQueryActor);
+        actorToMetadataQueryId.put(metadataQueryActor,message.getQuery().hashCode());
+        metadataQueryActor.tell(message, ActorRef.noSender());
+    }
+
     private void processMessage(Object message) {
         if (message instanceof TestConnectionMsg) {
             //TODO : Will be implemented after query support
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
-        } else if (message instanceof ScheduleQueryMsg) {
-            log.debug("Has Query : {}, MetadataConfigId : {}", !queries.isEmpty(), metadataConfig.getId());
-            executeQuery(queries);
         }
     }
 
-    private void executeQuery(Set<String> queries) {
-        for(String q : queries) {
-            ActorRef queryActor;
-            queryActor = getContext().actorOf(QueryActor.props(metadataConfig, q), "query-" + q.hashCode());
-            queryActor.tell(new ExecuteQueryMsg(), ActorRef.noSender());
-        }
+    private void onTerminated(Terminated t) {
+        ActorRef metadataQueryActor = t.getActor();
+        Integer metadataQueryId = actorToMetadataQueryId.get(metadataQueryActor);
+        log.info("MetadataQuery actors for {} has been terminated", metadataQueryId);
+        actorToMetadataQueryId.remove(metadataQueryActor);
+        metadataQueryIdToActor.remove(metadataQueryId);
     }
 
     @Override
@@ -80,22 +94,14 @@ public class MetadataConfigActor extends AbstractActor {
         return receiveBuilder()
                 .match(MetadataMessage.class, this::processMetadataConfigMsg)
                 .match(QueryMessage.class, this::processQueryMsg)
-                .match(ScheduleQueryMsg.class, this::processMessage)
                 .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
+                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 
-    @Override
-    public void preStart() throws Exception {
-        super.preStart();
-        Option<String> description = new Some("description");
-        Option<String> cronCalender = Option.empty();
-        TimeZone timeZone = TimeZone.getTimeZone("UTC");
-
-        if (metadataConfig.getTriggerType() == TriggerType.CRON) {
-            schedulerExtension.createSchedule("queryScheduler" + metadataConfig.getId(), description, metadataConfig.getTriggerSchedule(), cronCalender, timeZone);
-            schedulerExtension.schedule("queryScheduler" + metadataConfig.getId(), self(), new ScheduleQueryMsg(queries));
-        }
+    private static String getMetadataDispatcher() {
+        return ManagerActorService.METADATA_DISPATCHER;
     }
+
 }

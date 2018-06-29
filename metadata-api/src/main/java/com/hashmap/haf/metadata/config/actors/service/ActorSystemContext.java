@@ -1,4 +1,4 @@
-package com.hashmap.haf.metadata.config.actors;
+package com.hashmap.haf.metadata.config.actors.service;
 
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
 import com.typesafe.config.Config;

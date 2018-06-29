@@ -1,9 +1,10 @@
-package com.hashmap.haf.metadata.config.actors;
+package com.hashmap.haf.metadata.config.actors.service;
 
 import akka.actor.*;
+import com.hashmap.haf.metadata.config.actors.ManagerActor;
+import com.hashmap.haf.metadata.config.actors.MetadataSchedulerActor;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
-import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
