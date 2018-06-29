@@ -1,10 +1,9 @@
 package com.hashmap.haf.metadata.config.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Terminated;
+import akka.actor.*;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,11 @@ import javax.annotation.PreDestroy;
 @Slf4j
 public class ManagerActorService {
 
+    public static final String OWNER_DISPATCHER = "owner-dispatcher";
+    public static final String METADATA_DISPATCHER = "metadata-dispatcher";
+    public static final String QUERY_DISPATCHER = "query-dispatcher";
+    public static String schedulerPath;
+
     @Autowired
     private ActorSystemContext actorSystemContext;
 
@@ -26,12 +30,18 @@ public class ManagerActorService {
 
     private ActorRef managerActor;
 
+    private ActorRef schedulerActor;
+
     @PostConstruct
     public void initActorSystem() {
         log.info("Initializing Metadata Config Actor System");
         actorSystemContext.setActorService(this);
 
-        system = ActorSystem.create("MetadataConfigActorSystem");
+        system = ActorSystem.create("MetadataConfigActorSystem", actorSystemContext.getConfig());
+
+        log.info("Creating Metadata Scheduler Actor");
+        schedulerActor = system.actorOf(MetadataSchedulerActor.props(), "MetadataSchedulerActor");
+        schedulerPath = schedulerActor.path().toString();
 
         log.info("Creating Metadata Manager Actor");
         managerActor = system.actorOf(ManagerActor.props(), "MetadataConfigManagerActor");
@@ -47,6 +57,10 @@ public class ManagerActorService {
         } catch (Exception e) {
             log.error("Failed to terminate actors system.", e);
         }
+    }
+
+    public static String getSchedulerPath() {
+        return schedulerPath;
     }
 
 

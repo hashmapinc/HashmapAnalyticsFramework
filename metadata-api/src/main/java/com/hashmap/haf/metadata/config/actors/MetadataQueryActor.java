@@ -33,6 +33,7 @@ public class QueryActor extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(ExecuteQueryMsg.class, this::processMessage)
+                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 }
