@@ -31,14 +31,13 @@ public class MetadataQueryActor extends AbstractActor {
 
     private  void processMessage(Object message) throws Exception {
         if (message instanceof ExecuteQueryMsg) {
-            log.info("MetadataQueryActor : MetadataConfig : {}", metadataConfig.toString());
-            log.info("MetadataQueryActor : Query : {}", query);
+            log.debug("MetadataQueryActor : MetadataConfig : {}", metadataConfig.toString());
+            log.debug("MetadataQueryActor : Query : {}", query);
             executeQuery(query);
         } else if (message instanceof QueryMessage) {
             if (((QueryMessage)message).getMessageType() == MessageType.UPDATE) {
                 query = ((QueryMessage) message).getQuery();
             } else if (((QueryMessage) message).getMessageType() == MessageType.DELETE) {
-                log.info("QUery Delete : ");
                 scheduler.tell(new CancelJob(query), ActorRef.noSender());
                 context().stop(self());
             }
@@ -52,10 +51,8 @@ public class MetadataQueryActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        log.info("In Prestart....");
         scheduler = context().actorFor(ManagerActorService.getSchedulerPath());
         if (scheduler != null) {
-            log.info("Not NUll Scheduler");
             scheduler.tell(new CreateJob(query, metadataConfig.getTriggerType(), metadataConfig.getTriggerSchedule(), self(), new ExecuteQueryMsg()), ActorRef.noSender());
         }
     }
@@ -63,7 +60,6 @@ public class MetadataQueryActor extends AbstractActor {
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        log.info("Calling Post Stop");
         scheduler.tell(new CancelJob(query), ActorRef.noSender());
     }
 
