@@ -1,8 +1,8 @@
 package com.hashmap.haf.metadata.config.service;
 
-import com.hashmap.haf.metadata.config.actors.ManagerActorService;
 import com.hashmap.haf.metadata.config.actors.message.MessageType;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.dao.MetadataQueryDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
