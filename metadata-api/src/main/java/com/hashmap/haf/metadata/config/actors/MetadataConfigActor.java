@@ -66,7 +66,7 @@ public class MetadataConfigActor extends AbstractActor {
     }
 
     private void createMetadataQueryActor(QueryMessage message, MetadataConfig metadataConfig) {
-        ActorRef metadataQueryActor = getContext().actorOf(MetadataQueryActor.props(metadataConfig, message.getQuery()/*, schedulerExtension*/), Integer.toString(message.getQuery().hashCode()));
+        ActorRef metadataQueryActor = getContext().actorOf(MetadataQueryActor.props(metadataConfig, message.getQuery()), Integer.toString(message.getQuery().hashCode()));
         getContext().watch(metadataQueryActor);
         metadataQueryIdToActor.put(message.getQuery().hashCode(),metadataQueryActor);
         actorToMetadataQueryId.put(metadataQueryActor,message.getQuery().hashCode());
@@ -96,6 +96,7 @@ public class MetadataConfigActor extends AbstractActor {
                 .match(QueryMessage.class, this::processQueryMsg)
                 .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
+                .match(Terminated.class, this::onTerminated)
                 .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
