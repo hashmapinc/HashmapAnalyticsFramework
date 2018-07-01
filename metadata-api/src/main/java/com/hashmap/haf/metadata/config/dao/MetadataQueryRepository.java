@@ -11,4 +11,6 @@ import java.util.List;
 public interface MetadataQueryRepository extends JpaRepository<MetadataQueryEntity, String> {
 
     List<MetadataQueryEntity> findByMetadataConfigId(@Param("metadataConfigId") String metadataConfigId);
+
+    int removeByMetadataConfigId(@Param("metadataConfigId") String metadataConfigId);
 }

@@ -4,6 +4,7 @@ import com.hashmap.haf.metadata.config.entity.MetadataQueryEntity;
 import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import com.hashmap.haf.metadata.core.common.dao.DaoUtil;
 import com.hashmap.haf.metadata.core.util.UUIDConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class MetadataQueryDaoImpl implements MetadataQueryDao {
 
     @Autowired
@@ -42,6 +44,13 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
     public List<MetadataQuery> findAll() {
         List<MetadataQueryEntity> metadataQueryEntities = metadataQueryRepository.findAll();
         return DaoUtil.convertDataList(metadataQueryEntities);
+    }
+
+    @Override
+    @Transactional
+    public int removeByMetadataConfigId(UUID metadataId) {
+        String key = metadataId.toString();
+        return metadataQueryRepository.removeByMetadataConfigId(key);
     }
 
     @Override

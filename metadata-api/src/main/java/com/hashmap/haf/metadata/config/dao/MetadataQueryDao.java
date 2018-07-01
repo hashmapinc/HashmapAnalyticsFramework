@@ -18,4 +18,6 @@ public interface MetadataQueryDao {
 
     boolean removeById(UUID id);
 
+    int removeByMetadataConfigId(UUID metadataId);
+
 }

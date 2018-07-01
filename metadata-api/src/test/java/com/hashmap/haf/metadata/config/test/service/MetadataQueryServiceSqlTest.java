@@ -112,4 +112,16 @@ public class MetadataQueryServiceSqlTest {
         Assert.assertEquals("TestQueryStatementUpdated", updated.getQueryStmt());
         tearDown(saveMetadataQuery.getId());
     }
+
+    @Test
+    public void deleteMetadataQueryByMetadataConfigId() {
+        MetadataQuery saveMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
+        Assert.assertNotNull(saveMetadataQuery);
+
+        MetadataQueryId metadataQueryId = saveMetadataQuery.getId();
+        int deleteCount = metadataQueryService.deleteMetadataQueryByMetadataConfigId(metadataConfigId);
+        Assert.assertEquals(1, deleteCount);
+        MetadataQuery found = metadataQueryService.findMetadataQueryById(metadataQueryId);
+        Assert.assertNull(found);
+    }
 }

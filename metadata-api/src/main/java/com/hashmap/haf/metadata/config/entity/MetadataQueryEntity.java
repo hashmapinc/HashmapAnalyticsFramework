@@ -27,8 +27,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
     @Column(name = ModelConstants.METADATA_QUERY)
     private String queryStmt;
 
-//    @OneToOne(cascade = CascadeType.REMOVE)
-    @Column(name = "metadata_id")
+    @Column(name = ModelConstants.METADATA_QUERY_CONFIG_ID)
     private String metadataConfigId;
 
     @Enumerated(EnumType.STRING)
