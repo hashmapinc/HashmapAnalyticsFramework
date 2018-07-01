@@ -19,4 +19,6 @@ public interface MetadataQueryService {
 
     MetadataQuery updateMetadataQuery(MetadataQuery metadataQuery);
 
+    int deleteMetadataQueryByMetadataConfigId(MetadataConfigId metadataConfigId);
+
 }

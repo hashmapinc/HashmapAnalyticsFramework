@@ -61,6 +61,13 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
     }
 
     @Override
+    public int deleteMetadataQueryByMetadataConfigId(MetadataConfigId metadataConfigId) {
+        log.info("Executing deleteMetadataQueryByMetadataConfigId [{}]", metadataConfigId);
+        Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
+        return metadataQueryDao.removeByMetadataConfigId(metadataConfigId.getId());
+    }
+
+    @Override
     public MetadataQuery updateMetadataQuery(MetadataQuery metadataQuery) {
         if (metadataQuery == null) {
             throw new DataValidationException("Can't update non-existent metadata-query");
