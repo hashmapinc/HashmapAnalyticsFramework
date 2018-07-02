@@ -19,4 +19,6 @@ public interface MetadataConfigService  {
 
     MetadataConfig updateMetadataConfig(MetadataConfig metadataConfig);
 
+    MetadataConfig runIngestion(MetadataConfigId metadataConfigId);
+
 }

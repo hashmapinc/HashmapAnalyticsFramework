@@ -37,11 +37,11 @@ public class ShardingMetadataConfig extends AbstractActor {
         );
     }
 
-    static public Props props() {
+    static Props props() {
         return Props.create(ShardingMetadataConfig.class);
     }
 
-    static ShardRegion.MessageExtractor messageExtractor = new ShardRegion.MessageExtractor() {
+    private static ShardRegion.MessageExtractor messageExtractor = new ShardRegion.MessageExtractor() {
         @Override
         public String shardId(Object message) {
             return String.valueOf(((AbstractMessage)message).getMetadataConfig().getId().hashCode() % numberOfShards);

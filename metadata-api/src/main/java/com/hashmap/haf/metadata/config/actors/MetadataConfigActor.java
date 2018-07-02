@@ -6,6 +6,7 @@ import com.hashmap.haf.metadata.config.actors.message.*;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
+import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
@@ -21,8 +22,8 @@ import scala.concurrent.duration.Duration;
 public class MetadataConfigActor extends AbstractActor {
 
     private MetadataConfig metadataConfig;
-    final Map<MetadataQueryId, ActorRef> metadataQueryIdToActor = new HashMap<>();
-    final Map<ActorRef, MetadataQueryId> actorToMetadataQueryId = new HashMap<>();
+    private final Map<MetadataQueryId, ActorRef> metadataQueryIdToActor = new HashMap<>();
+    private final Map<ActorRef, MetadataQueryId> actorToMetadataQueryId = new HashMap<>();
 
     static public Props props() {
         return Props.create(MetadataConfigActor.class).withDispatcher(getMetadataDispatcher());
@@ -78,8 +79,14 @@ public class MetadataConfigActor extends AbstractActor {
     private void processMessage(Object message) {
         if (message instanceof TestConnectionMsg) {
             //TODO : Will be implemented after query support
+            metadataConfig = ((TestConnectionMsg)message).getMetadataConfig();
         } else if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
+            metadataConfig  = ((RunIngestionMsg)message).getMetadataConfig();
+            for (Map.Entry<MetadataQueryId, ActorRef> entry : metadataQueryIdToActor.entrySet()) {
+                ActorRef queryActor = entry.getValue();
+                queryActor.tell(new ExecuteQueryMsg(), ActorRef.noSender());
+            }
         }
     }
 
