@@ -1,14 +1,11 @@
 package com.hashmapinc.haf.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.UUID;
 
 public class UserCredentials {
 
     private UUID id;
     private UUID userId;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String activationToken;
     private String resetToken;

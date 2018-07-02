@@ -2,6 +2,7 @@ package com.hashmapinc.haf;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.hashmapinc.haf.models.User;
+import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class AuthenticationTest {
 
     @Test
     public void shouldHaveAllTheClaimsInToken() throws Exception {
-        String accessToken = obtainAccessToken("demo", "demo");
+        String accessToken = obtainAccessToken("demo", "password");
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("token", accessToken);
 
@@ -114,7 +115,6 @@ public class AuthenticationTest {
     private void createUser() {
         User user = new User(UUIDs.timeBased());
         user.setUserName("demo");
-        user.setPassword("demo");
         user.setFirstName("FirstName");
         user.setLastName("LastName");
         user.setCustomerId(UUIDs.timeBased().toString());
@@ -127,6 +127,13 @@ public class AuthenticationTest {
         User saved = userService.save(user);
         if (saved == null)
             throw new RuntimeException("User creation failed");
-        user.setPassword("demo");
+        else{
+            UserCredentials credentials = userService.findCredentialsByUserId(saved.getId());
+            credentials.setPassword("password");
+            UserCredentials savedCred = userService.saveUserCredentials(credentials);
+            if(savedCred == null){
+                throw new RuntimeException("User creation failed");
+            }
+        }
     }
 }
