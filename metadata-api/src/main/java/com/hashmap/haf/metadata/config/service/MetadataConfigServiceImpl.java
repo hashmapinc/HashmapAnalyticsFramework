@@ -94,9 +94,4 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
             managerActorService.process(new MetadataMessage(metadataConfig, MessageType.DELETE));
         }
     }
-
-    @Override
-    public void createQueryMsg(String query , MetadataConfig metadataConfig) {
-        managerActorService.process(new QueryMessage(query, metadataConfig, MessageType.CREATE));
-    }
 }
