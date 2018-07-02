@@ -240,7 +240,7 @@ public class UserController {
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
-    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<?> delete(@PathVariable UUID userId){
