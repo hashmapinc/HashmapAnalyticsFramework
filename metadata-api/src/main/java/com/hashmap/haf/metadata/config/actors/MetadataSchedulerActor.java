@@ -29,11 +29,11 @@ public class MetadataSchedulerActor extends AbstractLoggingActor {
         self().path();
         if (message instanceof CreateJob) {
             CreateJob createJob = (CreateJob)message;
-            if (createJob.getTriggerType() == TriggerType.CRON) {
-                schedulerExtension.rescheduleJob("queryScheduler" + createJob.getQuery().hashCode(), createJob.getActor(), createJob.getMessge(), description, createJob.getTriggerSchedule(), cronCalender, timeZone);
+            if (createJob.getMetadataQuery().getTriggerType() == TriggerType.CRON) {
+                schedulerExtension.rescheduleJob(createJob.getMetadataQuery().getId().toString(), createJob.getActor(), createJob.getMessge(), description, createJob.getMetadataQuery().getTriggerSchedule(), cronCalender, timeZone);
             }
         } else if (message instanceof CancelJob) {
-            schedulerExtension.cancelJob("queryScheduler" + ((CancelJob) message).getQuery().hashCode());
+            schedulerExtension.cancelJob(((CancelJob) message).getMetadataQueryId().toString());
         }
     }
 

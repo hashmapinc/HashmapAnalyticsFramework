@@ -2,6 +2,7 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
 import akka.japi.pf.DeciderBuilder;
+import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
@@ -37,7 +38,7 @@ public class ManagerActor extends AbstractLoggingActor {
         return strategy;
     }
 
-    private void processMetadataConfigMsg(MetadataMessage message) {
+    private void processMessage(AbstractMessage message) {
         String ownerId = message.getMetadataConfig().getOwnerId();
 
         ActorRef ownerActor = ownerIdToActor.get(ownerId);
@@ -47,27 +48,6 @@ public class ManagerActor extends AbstractLoggingActor {
         } else {
             log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
             createMetaDataConfigOwnerActor(message, ownerId);
-        }
-    }
-
-    private void processQueryMsg(QueryMessage message){
-        String ownerId = message.getMetadataConfig().getOwnerId();
-        ActorRef ownerActor = ownerIdToActor.get(ownerId);
-        if (ownerActor != null) {
-            log.debug("Found metadata config owner group actors for OwnerId : {}", ownerId);
-            ownerActor.tell(message, ActorRef.noSender());
-        } else {
-            log.debug("Creating metadata config owner group actors for OwnerId : {}", ownerId);
-            createMetaDataConfigOwnerActor(message, ownerId);
-        }
-    }
-
-    private void processMessage(Object message) {
-        //TODO: Needs to be implemented for runIngestion and testConnection
-        if (message instanceof TestConnectionMsg) {
-            //TODO : Will be implemented after query support
-        } else if (message instanceof RunIngestionMsg) {
-            //TODO : Will be implemented after query support
         }
     }
 
@@ -90,8 +70,8 @@ public class ManagerActor extends AbstractLoggingActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(MetadataMessage.class, this::processMetadataConfigMsg)
-                .match(QueryMessage.class, this::processQueryMsg)
+                .match(MetadataMessage.class, this::processMessage)
+                .match(QueryMessage.class, this::processMessage)
                 .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)

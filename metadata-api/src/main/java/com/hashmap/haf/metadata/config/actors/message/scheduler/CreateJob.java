@@ -1,19 +1,13 @@
 package com.hashmap.haf.metadata.config.actors.message.scheduler;
 
 import akka.actor.ActorRef;
-import com.hashmap.haf.metadata.core.trigger.TriggerType;
+import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import lombok.Getter;
 
 public final class CreateJob {
 
     @Getter
-    private final String query;
-
-    @Getter
-    private final TriggerType triggerType;
-
-    @Getter
-    private final String triggerSchedule;
+    MetadataQuery metadataQuery;
 
     @Getter
     private final ActorRef actor;
@@ -21,10 +15,8 @@ public final class CreateJob {
     @Getter
     private final Object messge;
 
-    public CreateJob(String query, TriggerType triggerType, String triggerSchedule, ActorRef actor, Object messge) {
-        this.query = query;
-        this.triggerType = triggerType;
-        this.triggerSchedule = triggerSchedule;
+    public CreateJob(MetadataQuery metadataQuery, ActorRef actor, Object messge) {
+        this.metadataQuery = metadataQuery;
         this.actor = actor;
         this.messge = messge;
     }

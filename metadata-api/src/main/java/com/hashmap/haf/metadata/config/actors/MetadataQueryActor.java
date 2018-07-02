@@ -10,42 +10,43 @@ import com.hashmap.haf.metadata.config.actors.message.scheduler.CancelJob;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MetadataQueryActor extends AbstractActor {
 
     private final MetadataConfig metadataConfig;
-    private String query;
+    private MetadataQuery metadataQuery;
     private ActorRef scheduler;
 
-    private MetadataQueryActor(MetadataConfig metadataConfig, String query) {
+    private MetadataQueryActor(MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
         this.metadataConfig = metadataConfig;
-        this.query = query;
+        this.metadataQuery = metadataQuery;
     }
 
-    static public Props props(MetadataConfig metadataConfig, String query) {
-        return Props.create(MetadataQueryActor.class, () -> new MetadataQueryActor(metadataConfig, query))
+    static public Props props(MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
+        return Props.create(MetadataQueryActor.class, () -> new MetadataQueryActor(metadataConfig, metadataQuery))
                     .withDispatcher(getQueryDispatcher());
     }
 
     private  void processMessage(Object message) throws Exception {
         if (message instanceof ExecuteQueryMsg) {
-            log.debug("MetadataQueryActor : MetadataConfig : {}", metadataConfig.toString());
-            log.debug("MetadataQueryActor : Query : {}", query);
-            executeQuery(query);
+            log.info("Processing ExecuteQueryMsg");
+            executeQuery();
         } else if (message instanceof QueryMessage) {
             if (((QueryMessage)message).getMessageType() == MessageType.UPDATE) {
-                query = ((QueryMessage) message).getQuery();
+                metadataQuery = ((QueryMessage) message).getMetadataQuery();
             } else if (((QueryMessage) message).getMessageType() == MessageType.DELETE) {
-                scheduler.tell(new CancelJob(query), ActorRef.noSender());
+                scheduler.tell(new CancelJob(metadataQuery.getId()), ActorRef.noSender());
                 context().stop(self());
             }
         }
     }
 
-    private void executeQuery(String query) {
+    private void executeQuery() {
         //TODO:it will be called by scheduler and this will perform ingestion
+        log.info("ExecuteQuery : MetaQuery{}", metadataQuery);
     }
 
     @Override
@@ -53,14 +54,14 @@ public class MetadataQueryActor extends AbstractActor {
         super.preStart();
         scheduler = context().actorFor(ManagerActorService.getSchedulerPath());
         if (scheduler != null) {
-            scheduler.tell(new CreateJob(query, metadataConfig.getTriggerType(), metadataConfig.getTriggerSchedule(), self(), new ExecuteQueryMsg()), ActorRef.noSender());
+            scheduler.tell(new CreateJob(metadataQuery, self(), new ExecuteQueryMsg()), ActorRef.noSender());
         }
     }
 
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        scheduler.tell(new CancelJob(query), ActorRef.noSender());
+        scheduler.tell(new CancelJob(metadataQuery.getId()), ActorRef.noSender());
     }
 
     @Override

@@ -1,13 +1,14 @@
 package com.hashmap.haf.metadata.config.actors.message.scheduler;
 
+import com.hashmap.haf.metadata.config.model.MetadataQueryId;
 import lombok.Getter;
 
 public final class CancelJob {
 
     @Getter
-    private final String query;
+    private final MetadataQueryId metadataQueryId;
 
-    public CancelJob(String query) {
-        this.query = query;
+    public CancelJob(MetadataQueryId metadataQueryId) {
+        this.metadataQueryId = metadataQueryId;
     }
 }
