@@ -2,6 +2,7 @@ package com.hashmapinc.haf.providers;
 
 
 import com.hashmapinc.haf.models.SecurityUser;
+import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,9 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             throw new DisabledException("User is not active");
         }
 
-        if (!encoder.matches(password, userInfo.getPassword())) {
+        UserCredentials credentials = userDetailsService.findCredentialsByUserId(userInfo.getId());
+
+        if (credentials != null && !encoder.matches(password, credentials.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
         }
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
