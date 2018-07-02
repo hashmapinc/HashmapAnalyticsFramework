@@ -40,7 +40,7 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
         log.trace("Executing saveMetadataQuery [{}]", metadataQuery);
         MetadataQuery savedMetadataQuery = metadataQueryDao.save(metadataQuery);
         MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(savedMetadataQuery.getMetadataConfigId());
-        managerActorService.process(new QueryMessage(savedMetadataQuery.getQueryStmt(),metadataConfig,MessageType.CREATE));
+        managerActorService.process(new QueryMessage(savedMetadataQuery, metadataConfig, MessageType.CREATE));
         return savedMetadataQuery;
     }
 
@@ -80,7 +80,7 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
             savedMetadataQuery.get().update(metadataQuery);
             MetadataQuery updatedMetadataQuery = metadataQueryDao.save(savedMetadataQuery.get());
             MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
-            managerActorService.process(new QueryMessage(updatedMetadataQuery.getQueryStmt(),metadataConfig, MessageType.UPDATE));
+            managerActorService.process(new QueryMessage(updatedMetadataQuery, metadataConfig, MessageType.UPDATE));
             return updatedMetadataQuery;
         } else {
             throw new DataValidationException("Can't update for non-existent metadataQuery!");
@@ -101,7 +101,7 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
         if (metadataQuery != null) {
             metadataQueryDao.removeById(metadataQueryId.getId());
             MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
-            managerActorService.process(new QueryMessage(metadataQuery.getQueryStmt(),metadataConfig, MessageType.DELETE));
+            managerActorService.process(new QueryMessage(metadataQuery, metadataConfig, MessageType.DELETE));
         }
     }
 
