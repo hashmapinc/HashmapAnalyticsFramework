@@ -25,7 +25,7 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
         this.ownerId = ownerId;
     }
 
-    static public Props props(String ownerId) {
+    static Props props(String ownerId) {
         return Props.create(MetadataConfigOwnerActor.class, () -> new MetadataConfigOwnerActor(ownerId)).withDispatcher(getOwnerDispatcher());
     }
 

@@ -85,15 +85,19 @@ public class MetadataConfigController {
         metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
 
-//    @PreAuthorize("#oauth2.hasScope('server')")
-//    @RequestMapping(value = "/metaconfig/{id}/query", method = RequestMethod.POST)
-//    @ResponseStatus(value = HttpStatus.OK)
-//    public void createQuery(@PathVariable String id, @RequestBody String query) {
-//        MetadataConfigId  metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
-//        MetadataConfig foundMetadataConfig = metadataConfigService.findMetadataConfigById(metadataConfigId);
-//        metadataConfigService.createQueryMsg(query, foundMetadataConfig);
-//    }
-
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @RequestMapping(value = "/metaconfig/{id}/ingest", method = RequestMethod.GET)
+    public ResponseEntity metadataConfigRunIngestion(@PathVariable String id) {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString(id));
+        try {
+            MetadataConfig metadataConfig = checkNotNull(metadataConfigService.runIngestion(metadataConfigId));
+            return  ResponseEntity.status(HttpStatus.OK)
+                    .body(metadataConfig);
+        } catch (MetadataException exp) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(exp.getMessage());
+        }
+    }
 
     private <T> T checkNotNull(T reference) throws MetadataException {
         if (reference == null) {

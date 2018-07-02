@@ -37,7 +37,7 @@ public class ShardingMetadataConfig extends AbstractActor {
         );
     }
 
-    static public Props props() {
+    static Props props() {
         return Props.create(ShardingMetadataConfig.class);
     }
 
