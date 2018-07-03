@@ -68,7 +68,7 @@ public class MetadataQueryActor extends AbstractActor {
         return receiveBuilder()
                 .match(ExecuteQueryMsg.class, this::processMessage)
                 .match(QueryMessage.class, this::processMessage)
-                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
+                .matchAny(o -> log.warn("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 

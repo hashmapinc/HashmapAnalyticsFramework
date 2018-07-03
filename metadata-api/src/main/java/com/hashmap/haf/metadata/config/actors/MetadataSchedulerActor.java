@@ -42,7 +42,7 @@ public class MetadataSchedulerActor extends AbstractLoggingActor {
         return receiveBuilder()
                 .match(CreateJob.class, this::processMessage)
                 .match(CancelJob.class, this::processMessage)
-                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
+                .matchAny(o -> log.warn("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 

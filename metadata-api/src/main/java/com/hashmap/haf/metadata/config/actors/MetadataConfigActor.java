@@ -97,7 +97,7 @@ public class MetadataConfigActor extends AbstractActor {
                 .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)
-                .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
+                .matchAny(o -> log.warn("received unknown message [{}]", o.getClass().getName()))
                 .build();
     }
 
