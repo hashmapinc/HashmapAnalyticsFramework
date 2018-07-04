@@ -7,6 +7,8 @@ import com.hashmap.haf.metadata.core.common.data.id.UUIDBased;
 import com.hashmap.haf.metadata.core.data.resource.jdbc.model.JdbcResource;
 import com.hashmap.haf.metadata.core.data.resource.rest.model.RestResource;
 
+import java.util.Map;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -23,7 +25,9 @@ public abstract class DataResource<I extends UUIDBased> extends BaseData<I> {
         super(id);
     }
 
-    public abstract void push();
+    public abstract void push(Map payload);
 
-    public abstract void pull();
+    public abstract Map pull(String query);
+
+    public abstract boolean testConnection();
 }
