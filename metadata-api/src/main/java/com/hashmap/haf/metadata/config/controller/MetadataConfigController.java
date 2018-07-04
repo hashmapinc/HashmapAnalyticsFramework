@@ -22,6 +22,10 @@ public class MetadataConfigController {
     @Autowired
     private MetadataConfigService metadataConfigService;
 
+    private final String CONNECTED = "{\"status\": \"CONNECTED\" }";
+    private final String NOT_CONNECTED = "{\"status\": \"NOT CONNECTED\" }";
+
+
     @PreAuthorize("#oauth2.hasScope('server')")
     @RequestMapping(value = "/metaconfig", method = RequestMethod.POST)
     public ResponseEntity saveMetadataConfig(@RequestBody MetadataConfig metadataConfig) {
@@ -105,10 +109,10 @@ public class MetadataConfigController {
         boolean connection = metadataConfigService.testConnection(metadataConfigId);
         if (connection) {
             return  ResponseEntity.status(HttpStatus.OK)
-                    .body("{\"connection\": true }");
+                    .body(CONNECTED);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"connection\": false }");
+                    .body(NOT_CONNECTED);
         }
 
     }
