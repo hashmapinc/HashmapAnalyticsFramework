@@ -21,4 +21,6 @@ public interface MetadataConfigService  {
 
     MetadataConfig runIngestion(MetadataConfigId metadataConfigId);
 
+    boolean testConnection(MetadataConfigId metadataConfigId);
+
 }

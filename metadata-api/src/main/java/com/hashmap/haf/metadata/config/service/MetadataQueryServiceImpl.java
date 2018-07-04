@@ -38,8 +38,11 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
             throw new DataValidationException("Metadata-Query Object cannot be null");
         }
         log.trace("Executing saveMetadataQuery [{}]", metadataQuery);
+        MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
+        if (metadataConfig == null) {
+            throw new DataValidationException("Metadata-Config Object with ID: " + metadataQuery.getMetadataConfigId() + " not found");
+        }
         MetadataQuery savedMetadataQuery = metadataQueryDao.save(metadataQuery);
-        MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(savedMetadataQuery.getMetadataConfigId());
         managerActorService.process(new QueryMessage(savedMetadataQuery, metadataConfig, MessageType.CREATE));
         return savedMetadataQuery;
     }
@@ -62,7 +65,7 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
 
     @Override
     public int deleteMetadataQueryByMetadataConfigId(MetadataConfigId metadataConfigId) {
-        log.info("Executing deleteMetadataQueryByMetadataConfigId [{}]", metadataConfigId);
+        log.trace("Executing deleteMetadataQueryByMetadataConfigId [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
         return metadataQueryDao.removeByMetadataConfigId(metadataConfigId.getId());
     }
@@ -74,12 +77,15 @@ public class MetadataQueryServiceImpl  implements  MetadataQueryService{
         }
         log.trace("Executing updateMetadataQuery [{}]", metadataQuery);
         Validator.validateId(metadataQuery.getId(), INCORRECT_METADATAQUERY_ID+ metadataQuery.getId());
-        Optional<MetadataQuery> savedMetadataQuery = metadataQueryDao.findById(metadataQuery.getId().getId());
+        MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
+        if (metadataConfig == null) {
+            throw new DataValidationException("Metadata-Config Object with ID: " + metadataQuery.getMetadataConfigId() + " not found");
+        }
 
+        Optional<MetadataQuery> savedMetadataQuery = metadataQueryDao.findById(metadataQuery.getId().getId());
         if (savedMetadataQuery.isPresent()){
             savedMetadataQuery.get().update(metadataQuery);
             MetadataQuery updatedMetadataQuery = metadataQueryDao.save(savedMetadataQuery.get());
-            MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
             managerActorService.process(new QueryMessage(updatedMetadataQuery, metadataConfig, MessageType.UPDATE));
             return updatedMetadataQuery;
         } else {
