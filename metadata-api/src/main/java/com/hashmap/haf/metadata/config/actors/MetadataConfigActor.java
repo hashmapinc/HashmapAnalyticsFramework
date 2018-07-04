@@ -36,27 +36,27 @@ public class MetadataConfigActor extends AbstractActor {
     private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
             DeciderBuilder
                     .match(CommunicationsException.class, e -> {
-                        log.info("CommunicationsException {}", e.getMessage());
+                        log.warn("CommunicationsException {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.restart();
                     })
                     .match(MySQLSyntaxErrorException.class, e -> {
-                        log.info("MySQLSyntaxErrorException {}", e.getMessage());
+                        log.warn("MySQLSyntaxErrorException {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.stop();
                     })
                     .match(SQLException.class, e -> {
-                        log.info("SQLException {}", e.getMessage());
+                        log.warn("SQLException {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.restart();
                     })
                     .match(MalformedURLException.class, e -> {
-                        log.info("MalformedURLException {}", e.getMessage());
+                        log.warn("MalformedURLException {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.stop();
                     })
                     .match(IOException.class, e -> {
-                        log.info("IOException {}", e.getMessage());
+                        log.warn("IOException {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.restart();
                     })
                     .match(Exception.class, e -> {
-                        log.info("Exception {}", e.getMessage());
+                        log.warn("Exception {}", e.getMessage());
                         return akka.actor.SupervisorStrategy.restart();
                     })
                     .matchAny(o -> akka.actor.SupervisorStrategy.escalate())
