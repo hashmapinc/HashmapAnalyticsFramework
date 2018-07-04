@@ -5,7 +5,6 @@ import akka.japi.pf.DeciderBuilder;
 import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import lombok.extern.slf4j.Slf4j;
 import scala.concurrent.duration.Duration;
@@ -72,7 +71,6 @@ public class ManagerActor extends AbstractLoggingActor {
         return receiveBuilder()
                 .match(MetadataMessage.class, this::processMessage)
                 .match(QueryMessage.class, this::processMessage)
-                .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)
                 .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))

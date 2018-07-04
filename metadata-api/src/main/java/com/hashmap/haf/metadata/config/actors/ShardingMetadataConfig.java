@@ -11,7 +11,6 @@ import akka.japi.Option;
 import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,7 +62,6 @@ public class ShardingMetadataConfig extends AbstractActor {
         return receiveBuilder()
                 .match(MetadataMessage.class, msg -> metadataConfig.tell(msg, ActorRef.noSender()))
                 .match(QueryMessage.class, msg -> metadataConfig.tell(msg, ActorRef.noSender()))
-                .match(TestConnectionMsg.class, msg -> metadataConfig.tell(msg, ActorRef.noSender()))
                 .match(RunIngestionMsg.class, msg -> metadataConfig.tell(msg, ActorRef.noSender()))
                 .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
                 .build();

@@ -5,15 +5,19 @@ import akka.japi.pf.DeciderBuilder;
 import com.hashmap.haf.metadata.config.actors.message.*;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.metadata.TestConnectionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.MetadataQueryId;
+import com.mysql.jdbc.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import scala.concurrent.duration.Duration;
@@ -30,10 +34,31 @@ public class MetadataConfigActor extends AbstractActor {
     }
 
     private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
-            DeciderBuilder.match(Exception.class, e -> {
-                log.info("Exception {}", e.getMessage());
-                return akka.actor.SupervisorStrategy.restart();
-            })
+            DeciderBuilder
+                    .match(CommunicationsException.class, e -> {
+                        log.info("CommunicationsException {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.restart();
+                    })
+                    .match(MySQLSyntaxErrorException.class, e -> {
+                        log.info("MySQLSyntaxErrorException {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.stop();
+                    })
+                    .match(SQLException.class, e -> {
+                        log.info("SQLException {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.restart();
+                    })
+                    .match(MalformedURLException.class, e -> {
+                        log.info("MalformedURLException {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.stop();
+                    })
+                    .match(IOException.class, e -> {
+                        log.info("IOException {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.restart();
+                    })
+                    .match(Exception.class, e -> {
+                        log.info("Exception {}", e.getMessage());
+                        return akka.actor.SupervisorStrategy.restart();
+                    })
                     .matchAny(o -> akka.actor.SupervisorStrategy.escalate())
                     .build());
 
@@ -77,10 +102,7 @@ public class MetadataConfigActor extends AbstractActor {
     }
 
     private void processMessage(Object message) {
-        if (message instanceof TestConnectionMsg) {
-            //TODO : Will be implemented after query support
-            metadataConfig = ((TestConnectionMsg)message).getMetadataConfig();
-        } else if (message instanceof RunIngestionMsg) {
+        if (message instanceof RunIngestionMsg) {
             //TODO : Will be implemented after query support
             metadataConfig  = ((RunIngestionMsg)message).getMetadataConfig();
             for (Map.Entry<MetadataQueryId, ActorRef> entry : metadataQueryIdToActor.entrySet()) {
@@ -103,7 +125,6 @@ public class MetadataConfigActor extends AbstractActor {
         return receiveBuilder()
                 .match(MetadataMessage.class, this::processMetadataConfigMsg)
                 .match(QueryMessage.class, this::processQueryMsg)
-                .match(TestConnectionMsg.class, this::processMessage)
                 .match(RunIngestionMsg.class, this::processMessage)
                 .match(Terminated.class, this::onTerminated)
                 .matchAny(o -> log.info("received unknown message [{}]", o.getClass().getName()))
