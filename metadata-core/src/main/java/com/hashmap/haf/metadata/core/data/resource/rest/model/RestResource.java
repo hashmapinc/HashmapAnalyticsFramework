@@ -1,7 +1,20 @@
 package com.hashmap.haf.metadata.core.data.resource.rest.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.metadata.core.data.resource.DataResource;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+
+@Slf4j
 public class RestResource extends DataResource<RestResourceId> {
 
     private String url;
@@ -47,13 +60,40 @@ public class RestResource extends DataResource<RestResourceId> {
     }
 
     @Override
-    public void push() {
+    public void push(Map payload) {
+        try {
+            URL url = new URL(this.url);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+            writer.write(new ObjectMapper().writeValueAsString(payload));
+            writer.close();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            br.close();
+            connection.disconnect();
+
+        } catch (MalformedURLException e) {
+            log.info("Malformed URL exception : [{}]", e.getMessage());
+        } catch (IOException e) {
+            log.info("IOException : [{}]", e.getMessage());
+        }
     }
 
     @Override
-    public void pull() {
+    public Map pull(String query) {
+        //TODO : Will be implemented when we have REST as a Metadata Source
+        return Collections.emptyMap();
+    }
 
+    @Override
+    public boolean testConnection() {
+        return false;
     }
 
     @Override
