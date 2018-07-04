@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ManagerActor extends AbstractLoggingActor {
 
-    final Map<String, ActorRef> ownerIdToActor = new HashMap<>();
-    final Map<ActorRef, String> actorToOwnerId = new HashMap<>();
+    private final Map<String, ActorRef> ownerIdToActor = new HashMap<>();
+    private final Map<ActorRef, String> actorToOwnerId = new HashMap<>();
 
     public static Props props() {
         return Props.create(ManagerActor.class);
