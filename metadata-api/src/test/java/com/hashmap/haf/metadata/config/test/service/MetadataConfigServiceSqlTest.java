@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class MetadataConfigServiceSqlTest {
 
-        @Autowired
+    @Autowired
     MetadataConfigService metadataConfigService;
 
     private MetadataConfig metadataConfig;

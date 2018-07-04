@@ -71,7 +71,7 @@ public class ManagerActorService {
     }
 
     public void process(QueryMessage queryMessage) {
-        log.trace("Process Query Message msgType : {}", queryMessage.getMessageType());
+        log.trace("Process MetadataQuery Message msgType : {}", queryMessage.getMessageType());
         managerActor.tell(queryMessage, ActorRef.noSender());
     }
 }

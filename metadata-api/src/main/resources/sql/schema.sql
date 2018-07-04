@@ -21,3 +21,12 @@ CREATE TABLE IF NOT EXISTS rest (
   username varchar,
   password varchar
 );
+
+
+CREATE TABLE IF NOT EXISTS query_config (
+  id varchar(31) NOT NULL CONSTRAINT query_pkey PRIMARY KEY,
+  query varchar NOT NULL UNIQUE,
+  metadata_id varchar(31) NOT NULL,
+  trigger_schdl varchar,
+  trigger_type varchar
+);

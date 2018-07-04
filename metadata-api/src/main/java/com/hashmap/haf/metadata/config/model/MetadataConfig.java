@@ -103,7 +103,7 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
     @Override
     public String toString() {
         return "MetadataConfig{" +
-                "ownerId" + ownerId +
+                "ownerId = " + ownerId +
                 "name=" + name +
                 ", source=" + source +
                 ", sink=" + sink +

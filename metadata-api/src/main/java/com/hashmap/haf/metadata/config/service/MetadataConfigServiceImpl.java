@@ -27,6 +27,9 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     private MetadataConfigDao metadataConfigDao;
 
     @Autowired
+    private MetadataQueryService metadataQueryService;
+
+    @Autowired
     private ManagerActorService managerActorService;
 
     @Override
@@ -87,12 +90,8 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
         if (metadataConfig != null) {
             metadataConfigDao.removeById(metadataConfigId.getId());
+            metadataQueryService.deleteMetadataQueryByMetadataConfigId(metadataConfigId);
             managerActorService.process(new MetadataMessage(metadataConfig, MessageType.DELETE));
         }
-    }
-
-    @Override
-    public void createQueryMsg(String query , MetadataConfig metadataConfig) {
-        managerActorService.process(new QueryMessage(query, metadataConfig, MessageType.CREATE));
     }
 }
