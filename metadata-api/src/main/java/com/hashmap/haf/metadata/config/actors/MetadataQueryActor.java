@@ -11,7 +11,10 @@ import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataQuery;
+import com.hashmap.haf.metadata.core.data.resource.DataResource;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
 
 @Slf4j
 public class MetadataQueryActor extends AbstractActor {
@@ -32,7 +35,6 @@ public class MetadataQueryActor extends AbstractActor {
 
     private  void processMessage(Object message) throws Exception {
         if (message instanceof ExecuteQueryMsg) {
-            log.info("Processing ExecuteQueryMsg");
             executeQuery();
         } else if (message instanceof QueryMessage) {
             if (((QueryMessage)message).getMessageType() == MessageType.UPDATE) {
@@ -45,8 +47,10 @@ public class MetadataQueryActor extends AbstractActor {
     }
 
     private void executeQuery() {
-        //TODO:it will be called by scheduler and this will perform ingestion
-        log.info("ExecuteQuery : MetaQuery{}", metadataQuery);
+        DataResource source = metadataConfig.getSource();
+        DataResource sink = metadataConfig.getSink();
+        Map payloadMap = source.pull(metadataQuery.getQueryStmt());
+        sink.push(payloadMap);
     }
 
     @Override
