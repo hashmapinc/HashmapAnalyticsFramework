@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public class JdbcResourceId extends UUIDBased {
 
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 8176568480029736088L;
 
     @JsonCreator
     public JdbcResourceId(@JsonProperty("id") UUID id) {

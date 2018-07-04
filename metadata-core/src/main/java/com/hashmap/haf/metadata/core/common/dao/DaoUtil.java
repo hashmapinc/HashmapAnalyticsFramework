@@ -1,5 +1,5 @@
 
-package com.hashmap.haf.metadata.core.common.Dao;
+package com.hashmap.haf.metadata.core.common.dao;
 
 import com.hashmap.haf.metadata.core.common.data.id.UUIDBased;
 import com.hashmap.haf.metadata.core.common.entity.ToData;

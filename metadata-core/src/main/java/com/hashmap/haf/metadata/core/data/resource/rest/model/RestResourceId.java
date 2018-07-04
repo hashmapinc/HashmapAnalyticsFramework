@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public class RestResourceId extends UUIDBased {
 
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 3957087907289947369L;
 
     @JsonCreator
     public RestResourceId(@JsonProperty("id") UUID id) {

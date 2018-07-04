@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.config.entity;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.uuid.Generators;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
@@ -68,6 +69,7 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
     @Override
     public MetadataConfig toData() {
         MetadataConfig metadataConfig = new MetadataConfig(new MetadataConfigId(getId()));
+        metadataConfig.setCreatedTime(UUIDs.unixTimestamp(getId()));
         metadataConfig.setName(name);
         metadataConfig.setOwnerId(ownerId);
         metadataConfig.setSource(getDataResource(source));
@@ -91,6 +93,7 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
         if (dataResourceEntity instanceof JdbcResourceEntity) {
             JdbcResource jdbcResource = new JdbcResource();
             jdbcResource.setId(new JdbcResourceId(dataResourceEntity.getId()));
+            jdbcResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
             jdbcResource.setDbUrl(((JdbcResourceEntity) dataResourceEntity).getDbUrl());
             jdbcResource.setUsername(((JdbcResourceEntity) dataResourceEntity).getUsername());
             jdbcResource.setPassword(((JdbcResourceEntity) dataResourceEntity).getPassword());
@@ -99,6 +102,7 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
         if (dataResourceEntity instanceof RestResourceEntity) {
             RestResource restResource = new RestResource();
             restResource.setId(new RestResourceId(dataResourceEntity.getId()));
+            restResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
             restResource.setUrl(((RestResourceEntity) dataResourceEntity).getUrl());
             restResource.setUsername(((RestResourceEntity) dataResourceEntity).getUsername());
             restResource.setPassword(((RestResourceEntity) dataResourceEntity).getPassword());

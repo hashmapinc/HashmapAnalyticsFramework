@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.test.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.service.MetadataConfigService;
@@ -22,11 +23,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.UUID;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -43,6 +44,9 @@ public class MetadataConfigControllerSqlIT {
 
     @Autowired
     MetadataConfigService metadataConfigService;
+
+    @Autowired
+    MetadataConfigDao metadataConfigDao;
 
     @Autowired
     RestTemplate restTemplate;
@@ -77,11 +81,13 @@ public class MetadataConfigControllerSqlIT {
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         MetadataConfig saved = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
+
+        Assert.assertEquals(saved, metadataConfigDao.findById(saved.getUuidId()).get());
         tearDown(saved.getId());
     }
 
@@ -93,18 +99,21 @@ public class MetadataConfigControllerSqlIT {
         metadataConfig.setName("Configuration");
         String json = mapper.writeValueAsString(metadataConfig);
         MvcResult mvcResult = mockMvc.perform(
-                post("/api/metaconfig")
+                put("/api/metaconfig")
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+
         MetadataConfig updatedMetadataConfig = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(updatedMetadataConfig);
         Assert.assertEquals(savedMetadataConfig.getId(), updatedMetadataConfig.getId());
         Assert.assertNotEquals(updatedMetadataConfig.getName(), savedMetadataConfig.getName());
         Assert.assertEquals(updatedMetadataConfig.getName(), "Configuration");
+        Assert.assertEquals(updatedMetadataConfig, metadataConfigDao.findById(updatedMetadataConfig.getUuidId()).get());
+
         tearDown(savedMetadataConfig.getId());
     }
 
@@ -120,10 +129,25 @@ public class MetadataConfigControllerSqlIT {
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+
         MetadataConfig found = mapper.readValue(mvcResult.getResponse().getContentAsString(), MetadataConfig.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(metadataConfigId, found.getId());
         tearDown(found.getId());
+    }
+
+    @Test
+    public void getMetadataConfigByInvalidId() throws Exception {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString("ed11697a-745a-11e8-aef0-939173014f2b"));
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/metaconfig/" + metadataConfigId)
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        String reponse = mvcResult.getResponse().getContentAsString();
+        Assert.assertEquals("{\"error\":\"Requested item wasn't found!\"}",reponse);
     }
 
     @Test
@@ -147,6 +171,16 @@ public class MetadataConfigControllerSqlIT {
     }
 
     @Test
+    public void shouldReturnUnauthorizedResponseWhileGetMetadataConfigs() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/metaconfig")
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + "Fake_Token")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
     public void getMetadataConfigByOwnerId() throws Exception {
         String json = mapper.writeValueAsString(metadataConfig);
         String ownerId = "5af79646-6495-11e8-8e40-35361df8a23c";
@@ -165,6 +199,7 @@ public class MetadataConfigControllerSqlIT {
         tearDown(savedMetadataConfig.getId());
     }
 
+
     @Test
     public void deleteMetadataConfig() throws Exception {
         String json = mapper.writeValueAsString(metadataConfig);
@@ -176,5 +211,6 @@ public class MetadataConfigControllerSqlIT {
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
         Assert.assertNull(metadataConfigService.findMetadataConfigById(savedMetadataConfig.getId()));
+        Assert.assertNotNull(metadataConfigDao.findById(savedMetadataConfig.getUuidId()));
     }
 }

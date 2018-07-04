@@ -1,5 +1,9 @@
 package com.hashmap.haf.metadata.config.service;
 
+import com.hashmap.haf.metadata.config.actors.message.MessageType;
+import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
@@ -22,13 +26,18 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     @Autowired
     private MetadataConfigDao metadataConfigDao;
 
+    @Autowired
+    private ManagerActorService managerActorService;
+
     @Override
     public MetadataConfig saveMetadataConfig(MetadataConfig metadataConfig) {
         if (metadataConfig == null) {
             throw new DataValidationException("Metadata-Config Object cannot be null");
         }
         log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
-        return metadataConfigDao.save(metadataConfig);
+        MetadataConfig savedMetadataConfig = metadataConfigDao.save(metadataConfig);
+        managerActorService.process(new MetadataMessage(savedMetadataConfig, MessageType.CREATE));
+        return savedMetadataConfig;
     }
 
     @Override
@@ -55,10 +64,12 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         Validator.validateId(metadataConfig.getId(), INCORRECT_METADATACONFIG_ID + metadataConfig.getId());
         Optional<MetadataConfig> savedMetadataConfig = metadataConfigDao.findById(metadataConfig.getId().getId());
 
-        if(savedMetadataConfig.isPresent()){
+        if (savedMetadataConfig.isPresent()){
             savedMetadataConfig.get().update(metadataConfig);
-            return  metadataConfigDao.save(savedMetadataConfig.get());
-        }else {
+            MetadataConfig updatedMetadataConfig = metadataConfigDao.save(savedMetadataConfig.get());
+            managerActorService.process(new MetadataMessage(updatedMetadataConfig, MessageType.UPDATE));
+            return updatedMetadataConfig;
+        } else {
             throw new DataValidationException("Can't update for non-existent metaDataConfig!");
         }
     }
@@ -73,7 +84,15 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     public void deleteMetadataConfig(MetadataConfigId metadataConfigId) {
         log.trace("Executing deleteMetadataConfig [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
-        metadataConfigDao.removeById(metadataConfigId.getId());
+        MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
+        if (metadataConfig != null) {
+            metadataConfigDao.removeById(metadataConfigId.getId());
+            managerActorService.process(new MetadataMessage(metadataConfig, MessageType.DELETE));
+        }
     }
 
+    @Override
+    public void createQueryMsg(String query , MetadataConfig metadataConfig) {
+        managerActorService.process(new QueryMessage(query, metadataConfig, MessageType.CREATE));
+    }
 }

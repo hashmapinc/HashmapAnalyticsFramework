@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.core.data.resource.jdbc.entity;
 
+import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.uuid.Generators;
 import com.hashmap.haf.metadata.core.common.constants.ModelConstants;
 import com.hashmap.haf.metadata.core.data.resource.DataResourceEntity;
@@ -46,6 +47,7 @@ public class JdbcResourceEntity extends DataResourceEntity<JdbcResource> {
     @Override
     public JdbcResource toData() {
         JdbcResource jdbcResource = new JdbcResource(new JdbcResourceId(getId()));
+        jdbcResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
         jdbcResource.setDbUrl(dbUrl);
         jdbcResource.setUsername(username);
         jdbcResource.setPassword(password);

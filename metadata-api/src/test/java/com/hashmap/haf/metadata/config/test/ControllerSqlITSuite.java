@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @RunWith(ClasspathSuite.class)
 @ClasspathSuite.ClassnameFilters({
-        "com.hashmap.haf.metadata.config.test.controller.*SqlTest"
+        "com.hashmap.haf.metadata.config.test.controller.*SqlIT"
 })
 public class ControllerSqlITSuite {
 

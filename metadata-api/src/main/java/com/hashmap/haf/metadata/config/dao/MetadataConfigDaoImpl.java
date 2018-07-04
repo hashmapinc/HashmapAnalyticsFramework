@@ -1,6 +1,6 @@
 package com.hashmap.haf.metadata.config.dao;
 
-import com.hashmap.haf.metadata.core.common.Dao.DaoUtil;
+import com.hashmap.haf.metadata.core.common.dao.DaoUtil;
 import com.hashmap.haf.metadata.core.util.UUIDConverter;
 import com.hashmap.haf.metadata.config.entity.MetadataConfigEntity;
 import com.hashmap.haf.metadata.config.model.MetadataConfig;
@@ -44,7 +44,7 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
 
     @Override
     @Transactional
-    public boolean removeById(UUID id){
+    public boolean removeById(UUID id) {
         String key = UUIDConverter.fromTimeUUID(id);
         metadataConfigRepository.delete(key);
         return metadataConfigRepository.findOne(key) == null;
