@@ -6,6 +6,7 @@ import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.MetadataQueryId;
+import com.hashmap.haf.metadata.config.service.MetadataConfigService;
 import com.hashmap.haf.metadata.config.service.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -48,26 +49,31 @@ public class MetadataQueryControllerSqlIT {
     private WebApplicationContext wac;
 
     @Autowired
-    MetadataQueryService metadataQueryService;
+    private MetadataQueryService metadataQueryService;
 
     @Autowired
-    MetadataQueryDao metadataQueryDao;
+    private MetadataQueryDao metadataQueryDao;
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private MetadataConfigService metadataConfigService;
 
     private MockMvc mockMvc;
     private String adminToken;
-    private MetadataConfig metadataConfig;
+    private MetadataConfigId metadataConfigId;
     private MetadataQuery metadataQuery;
 
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(springSecurity()).build();
-        metadataConfig = new MetadataConfig();
+        metadataConfigId = new MetadataConfigId(UUID.fromString("ed11697a-745a-11e8-aef0-939173014f2b"));
+        MetadataConfig metadataConfig = new MetadataConfig(metadataConfigId);
+        metadataConfigService.saveMetadataConfig(metadataConfig);
+
         metadataQuery = new MetadataQuery();
-        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString("ed11697a-745a-11e8-aef0-939173014f2b"));
         metadataQuery.setMetadataConfigId(metadataConfigId);
         metadataQuery.setQueryStmt("TestQueryStatement");
         adminToken = obtainAccessToken();
@@ -75,6 +81,7 @@ public class MetadataQueryControllerSqlIT {
 
     private void tearDown(MetadataQueryId metadataQueryId) {
         metadataQueryService.deleteMetadataQuery(metadataQueryId);
+        metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
 
     private String obtainAccessToken() {
@@ -173,7 +180,6 @@ public class MetadataQueryControllerSqlIT {
     @Test
     public void getMetadataQueryByMetadataConfigId() throws Exception {
         String json = mapper.writeValueAsString(metadataQuery);
-        MetadataConfigId metadataConfigId =  new MetadataConfigId(UUID.fromString("5af79646-6495-11e8-8e40-35361df8a23c"));
         metadataQuery.setMetadataConfigId(metadataConfigId);
         MetadataQuery savedMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
         MvcResult mvcResult = mockMvc.perform(
@@ -183,7 +189,7 @@ public class MetadataQueryControllerSqlIT {
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
-        List<MetadataQuery> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         Assert.assertNotNull(found);
         Assert.assertEquals(1, found.size());
         tearDown(savedMetadataQuery.getId());
