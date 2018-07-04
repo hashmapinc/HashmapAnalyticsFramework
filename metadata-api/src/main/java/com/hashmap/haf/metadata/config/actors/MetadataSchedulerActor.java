@@ -16,10 +16,10 @@ import java.util.TimeZone;
 @Slf4j
 public class MetadataSchedulerActor extends AbstractLoggingActor {
 
-    QuartzSchedulerExtension schedulerExtension = new QuartzSchedulerExtension((ExtendedActorSystem) context().system());
-    Option<String> description = new Some("description");
-    Option<String> cronCalender = Option.empty();
-    TimeZone timeZone = TimeZone.getTimeZone(context().system().settings().config().getString("akka.quartz.defaultTimezone"));
+    private QuartzSchedulerExtension schedulerExtension = new QuartzSchedulerExtension((ExtendedActorSystem) context().system());
+    private Option<String> description = new Some("description");
+    private Option<String> cronCalender = Option.empty();
+    private TimeZone timeZone = TimeZone.getTimeZone(context().system().settings().config().getString("akka.quartz.defaultTimezone"));
 
     public static Props props() {
         return Props.create(MetadataSchedulerActor.class);

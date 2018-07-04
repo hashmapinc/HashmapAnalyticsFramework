@@ -22,7 +22,7 @@ public class ManagerActorService {
     public static final String OWNER_DISPATCHER = "owner-dispatcher";
     public static final String METADATA_DISPATCHER = "metadata-dispatcher";
     public static final String QUERY_DISPATCHER = "query-dispatcher";
-    public static String schedulerPath;
+    private static String schedulerPath;
 
     @Autowired
     private ActorSystemContext actorSystemContext;
