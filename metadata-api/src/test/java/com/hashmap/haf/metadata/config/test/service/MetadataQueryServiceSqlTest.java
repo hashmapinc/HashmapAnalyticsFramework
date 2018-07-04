@@ -4,6 +4,7 @@ import com.hashmap.haf.metadata.config.model.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.MetadataQueryId;
+import com.hashmap.haf.metadata.config.service.MetadataConfigService;
 import com.hashmap.haf.metadata.config.service.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -27,12 +28,18 @@ public class MetadataQueryServiceSqlTest {
     @Autowired
     private MetadataQueryService metadataQueryService;
 
+    @Autowired
+    private MetadataConfigService metadataConfigService;
+
     private MetadataQuery metadataQuery;
     private MetadataConfigId metadataConfigId;
 
     @Before
     public void before() {
         metadataConfigId = new MetadataConfigId(UUID.fromString("3f5d9a77-694c-11e8-ab22-b5af61ab8a6a"));
+        MetadataConfig metadataConfig = new MetadataConfig(metadataConfigId);
+        metadataConfigService.saveMetadataConfig(metadataConfig);
+
         metadataQuery = new MetadataQuery();
         metadataQuery.setMetadataConfigId(metadataConfigId);
         metadataQuery.setQueryStmt("TestQueryStatement");
@@ -40,6 +47,7 @@ public class MetadataQueryServiceSqlTest {
 
     private void tearDown(MetadataQueryId metadataQueryId) {
         metadataQueryService.deleteMetadataQuery(metadataQueryId);
+        metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
 
     @Test
