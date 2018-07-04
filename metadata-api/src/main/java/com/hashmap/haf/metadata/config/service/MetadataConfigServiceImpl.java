@@ -3,7 +3,6 @@ package com.hashmap.haf.metadata.config.service;
 import com.hashmap.haf.metadata.config.actors.message.MessageType;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
-import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.dao.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
@@ -105,5 +104,16 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
             managerActorService.process(new RunIngestionMsg(metadataConfig));
         }
         return metadataConfig;
+    }
+
+    @Override
+    public boolean testConnection(MetadataConfigId metadataConfigId) {
+        log.trace("Executing runIngestion [{}]", metadataConfigId);
+        Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
+        MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
+        if (metadataConfig != null) {
+            return metadataConfig.getSource().testConnection();
+        }
+        return false;
     }
 }

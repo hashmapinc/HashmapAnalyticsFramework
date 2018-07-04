@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-//TODO :  testSource, runIngestion
 @RestController
 @RequestMapping("/api")
 @Slf4j
@@ -87,7 +86,7 @@ public class MetadataConfigController {
 
     @PreAuthorize("#oauth2.hasScope('server')")
     @RequestMapping(value = "/metaconfig/{id}/ingest", method = RequestMethod.GET)
-    public ResponseEntity metadataConfigRunIngestion(@PathVariable String id) {
+    public ResponseEntity runIngestion(@PathVariable String id) {
         MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString(id));
         try {
             MetadataConfig metadataConfig = checkNotNull(metadataConfigService.runIngestion(metadataConfigId));
@@ -97,6 +96,21 @@ public class MetadataConfigController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(exp.getMessage());
         }
+    }
+
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @RequestMapping(value = "/metaconfig/{id}/connection", method = RequestMethod.GET)
+    public ResponseEntity testConnection(@PathVariable String id) {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString(id));
+        boolean connection = metadataConfigService.testConnection(metadataConfigId);
+        if (connection) {
+            return  ResponseEntity.status(HttpStatus.OK)
+                    .body("{\"connection\": true }");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"connection\": false }");
+        }
+
     }
 
     private <T> T checkNotNull(T reference) throws MetadataException {
