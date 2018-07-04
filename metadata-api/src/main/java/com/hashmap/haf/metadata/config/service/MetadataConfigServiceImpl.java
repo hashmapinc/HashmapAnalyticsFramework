@@ -112,7 +112,11 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
         if (metadataConfig != null) {
-            return metadataConfig.getSource().testConnection();
+            try {
+                return metadataConfig.getSource().testConnection();
+            } catch (Exception e) {
+                log.warn("Exception : {}", e.getMessage());
+            }
         }
         return false;
     }

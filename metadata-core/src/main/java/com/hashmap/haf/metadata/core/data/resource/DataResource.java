@@ -25,9 +25,9 @@ public abstract class DataResource<I extends UUIDBased> extends BaseData<I> {
         super(id);
     }
 
-    public abstract void push(Map payload);
+    public abstract void push(Map payload) throws Exception;
 
-    public abstract Map pull(String query);
+    public abstract Map pull(String query) throws Exception;
 
-    public abstract boolean testConnection();
+    public abstract boolean testConnection() throws Exception;
 }

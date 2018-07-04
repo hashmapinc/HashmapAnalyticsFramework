@@ -60,39 +60,32 @@ public class RestResource extends DataResource<RestResourceId> {
     }
 
     @Override
-    public void push(Map payload) {
-        try {
-            URL url = new URL(this.url);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    public void push(Map payload) throws Exception {
+        URL url = new URL(this.url);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-            writer.write(new ObjectMapper().writeValueAsString(payload));
-            writer.close();
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+        writer.write(new ObjectMapper().writeValueAsString(payload));
+        writer.close();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            br.close();
-            connection.disconnect();
-
-        } catch (MalformedURLException e) {
-            log.info("Malformed URL exception : [{}]", e.getMessage());
-        } catch (IOException e) {
-            log.info("IOException : [{}]", e.getMessage());
-        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        br.close();
+        connection.disconnect();
     }
 
     @Override
-    public Map pull(String query) {
+    public Map pull(String query) throws Exception {
         //TODO : Will be implemented when we have REST as a Metadata Source
         return Collections.emptyMap();
     }
 
     @Override
-    public boolean testConnection() {
+    public boolean testConnection() throws Exception {
         return false;
     }
 

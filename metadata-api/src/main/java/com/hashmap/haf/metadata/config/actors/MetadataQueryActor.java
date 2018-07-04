@@ -46,7 +46,7 @@ public class MetadataQueryActor extends AbstractActor {
         }
     }
 
-    private void executeQuery() {
+    private void executeQuery() throws Exception {
         DataResource source = metadataConfig.getSource();
         DataResource sink = metadataConfig.getSink();
         Map payloadMap = source.pull(metadataQuery.getQueryStmt());

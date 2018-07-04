@@ -61,7 +61,7 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     }
 
     @Override
-    public Map pull(String query) {
+    public Map pull(String query) throws Exception {
         Map<String, Object> payload = new HashMap<>();
         Connection connection = null;
         Statement statement = null;
@@ -74,14 +74,6 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
             while(rs.next()){
                 payload.put(rs.getString(1), rs.getObject(2));
             }
-        } catch (CommunicationsException e) {
-            log.info("CommunicationsException : [{}]", e.getMessage());
-        } catch (MySQLSyntaxErrorException e) {
-            log.info("MySQLSyntaxErrorException : [{}]", e.getMessage());
-        } catch (SQLException e) {
-            log.info("SQLException : [{}]", e.getMessage());
-        } catch (Exception e) {
-            log.info("Exection : [{}]", e.getMessage());
         } finally {
             try {
                 if(statement != null)
@@ -102,26 +94,16 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     }
 
     @Override
-    public boolean testConnection() {
+    public boolean testConnection() throws Exception {
         Connection connection = null;
         try {
             connection = createConnection();
-            return true;
-        } catch (CommunicationsException e) {
-            log.info("CommunicationsException : [{}]", e.getMessage());
-        } catch (MySQLSyntaxErrorException e) {
-            log.info("MySQLSyntaxErrorException : [{}]", e.getMessage());
-        } catch (SQLException e) {
-            log.info("SQLException : [{}]", e.getMessage());
-        } catch (Exception e) {
-            log.info("Exection : [{}]", e.getMessage());
+            if (connection != null) {
+                return true;
+            }
         } finally {
-            try {
-                if(connection != null)
-                    connection.close();
-            }catch(SQLException se){
-                log.info("Exection : [{}]", se.getMessage());
-                se.printStackTrace();
+            if(connection != null) {
+                connection.close();
             }
         }
         return false;
