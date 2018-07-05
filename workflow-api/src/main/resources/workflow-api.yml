@@ -36,4 +36,15 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 install:
-  data_dir: /Users/jetinder/timeseries/HashmapAnalyticsFramework/workflow-api/src/main/resources
+  data_dir: "${INSTALL_DATA_DIR:/resources}"
+
+security:
+  oauth2:
+    client:
+      clientId: workflow-service
+      clientSecret: ${WORKFLOW_SERVICE_PASSWORD:password}
+      accessTokenUri: http://localhost:9002/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      tokenInfoUri: http://localhost:9002/oauth/check_token

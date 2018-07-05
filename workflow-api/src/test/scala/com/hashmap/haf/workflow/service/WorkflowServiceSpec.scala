@@ -8,19 +8,19 @@ import com.hashmap.haf.workflow.models.Workflow
 import org.junit.{Assert, Test}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.{ContextConfiguration, TestPropertySource}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.support.AnnotationConfigContextLoader
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 
 import scala.collection.immutable
 
 @RunWith(classOf[SpringRunner])
-@ContextConfiguration(classes = Array(classOf[WorkflowServiceSpec]), loader = classOf[AnnotationConfigContextLoader])
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@Configuration
-@ComponentScan(Array("com.hashmap.haf.workflow"))
+@EnableWebMvc
+@SpringBootTest
 @TestPropertySource(locations = Array({"classpath:workflow-api-test.properties"}))
 class WorkflowServiceSpec {
 
@@ -57,8 +57,9 @@ class WorkflowServiceSpec {
     val retrievedWorkflows: immutable.Seq[Workflow[UUID, String]] = workflowService.findAll
 
     Assert.assertTrue(retrievedWorkflows.lengthCompare(2) >= 0)
-    Assert.assertEquals("Sample Workflow",retrievedWorkflows(0).getName)
-    Assert.assertEquals("Sample Workflow 1",retrievedWorkflows(1).getName)
+    val sorted = retrievedWorkflows.sortBy(_.getName)
+    Assert.assertEquals("Sample Workflow",sorted.head.getName)
+    Assert.assertEquals("Sample Workflow 1",sorted(1).getName)
   }
 
   @Test

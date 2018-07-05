@@ -1,0 +1,55 @@
+<workflow name="Sample Workflow">
+    <configurations>
+        <configuration>
+            <key>spark.driver.memory</key>
+            <value>1g</value>
+        </configuration>
+        <configuration>
+            <key>spark.driver.cores</key>
+            <value>1</value>
+        </configuration>
+    </configurations>
+    <task name = "task1" className="com.hashmap.haf.execution.controllers.SampleWorkflowTask">
+        <spark>
+            <inputCache></inputCache>
+            <outputCache>output_postgres</outputCache>
+            <args>
+                <arg key="jdbcUrl">jdbc:postgresql://192.168.1.67:5432/thingsboard</arg>
+                <arg key="jdbcDbTable">ts_kv</arg>
+                <arg key="jdbcUser">postgres</arg>
+                <arg key="jdbcPassword">postgres</arg>
+            </args>
+            <configurations>
+                <configuration>
+                    <key>sparkMaster</key>
+                    <value>local</value>
+                </configuration>
+                <configuration>
+                    <key>sparkAppName</key>
+                    <value>Spark JDBC Reader Service</value>
+                </configuration>
+            </configurations>
+            <to task="task2"/>
+        </spark>
+    </task>
+    <task name = "task2" className="com.hashmap.haf.execution.controllers.SampleWorkflowTask">
+        <spark>
+            <inputCache>output_postgres</inputCache>
+            <outputCache>output_metadata</outputCache>
+            <args>
+                <arg key="someargs">someargsvalues</arg>
+            </args>
+            <configurations>
+                <configuration>
+                    <key>sparkMaster</key>
+                    <value>local</value>
+                </configuration>
+                <configuration>
+                    <key>sparkAppName</key>
+                    <value>Spark Summarize Service</value>
+                </configuration>
+            </configurations>
+            <to task="end"/>
+        </spark>
+    </task>
+</workflow>

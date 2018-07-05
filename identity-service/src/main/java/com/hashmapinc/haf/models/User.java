@@ -2,29 +2,40 @@ package com.hashmapinc.haf.models;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class User implements UserInformation, Serializable{
     private static final long serialVersionUID = -350874482962054954L;
 
-    private String id;
+    private UUID id;
     private String userName;
     private String tenantId;
+    private String customerId;
+    private String clientId;
     private String firstName;
     private String lastName;
     private List<String> authorities;
-    private String password;
+    private List<String> permissions;
+    private Map<String, String> additionalDetails;
+
     private boolean enabled;
 
-    public User(String id){
+    public User(){}
+
+    public User(UUID id){
         this.id = id;
     }
 
     public User(User user) {
         this.id = user.getId();
         this.userName = user.getUserName();
-        this.password = user.getPassword();
         this.tenantId = user.getTenantId();
+        this.customerId = user.getCustomerId();
+        this.clientId = user.getClientId();
         this.authorities = user.getAuthorities();
+        this.permissions = user.getPermissions();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.enabled = user.isEnabled();
@@ -34,11 +45,11 @@ public class User implements UserInformation, Serializable{
         return serialVersionUID;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -78,6 +89,10 @@ public class User implements UserInformation, Serializable{
         return authorities;
     }
 
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
     @Override
     public boolean isEnabled() {
         return this.enabled;
@@ -87,45 +102,56 @@ public class User implements UserInformation, Serializable{
         this.authorities = authorities;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setPermissions(List<String> permissions) { this.permissions = permissions; }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public Map<String, String> getAdditionalDetails() {
+        return additionalDetails;
+    }
+
+    public void setAdditionalDetails(Map<String, String> additionalDetails) {
+        this.additionalDetails = additionalDetails;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-
         User user = (User) o;
-
-        if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) return false;
-        if (getUserName() != null ? !getUserName().equals(user.getUserName()) : user.getUserName() != null)
-            return false;
-        if (getTenantId() != null ? !getTenantId().equals(user.getTenantId()) : user.getTenantId() != null)
-            return false;
-        if (getFirstName() != null ? !getFirstName().equals(user.getFirstName()) : user.getFirstName() != null)
-            return false;
-        if (getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null)
-            return false;
-        return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
+        return isEnabled() == user.isEnabled() &&
+                Objects.equals(getId(), user.getId()) &&
+                Objects.equals(getUserName(), user.getUserName()) &&
+                Objects.equals(getTenantId(), user.getTenantId()) &&
+                Objects.equals(getCustomerId(), user.getCustomerId()) &&
+                Objects.equals(getClientId(), user.getClientId()) &&
+                Objects.equals(getFirstName(), user.getFirstName()) &&
+                Objects.equals(getLastName(), user.getLastName()) &&
+                Objects.equals(getAuthorities(), user.getAuthorities()) &&
+                Objects.equals(getPermissions(), user.getPermissions()) &&
+                Objects.equals(getAdditionalDetails(), user.getAdditionalDetails());
     }
 
     @Override
     public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getUserName() != null ? getUserName().hashCode() : 0);
-        result = 31 * result + (getTenantId() != null ? getTenantId().hashCode() : 0);
-        result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
-        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
-        result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getPermissions(), getAdditionalDetails(), isEnabled());
     }
 }
