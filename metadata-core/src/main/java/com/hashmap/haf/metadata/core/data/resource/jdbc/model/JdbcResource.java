@@ -99,8 +99,6 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     private String getJdbcDriver() {
         if (this.dbUrl.contains("mysql")) {
             return  "com.mysql.jdbc.Driver";
-        } else if (this.dbUrl.contains("oracle")) {
-            return "oracle.jdbc.driver.OracleDriver";
         } else if (this.dbUrl.contains("postgres")) {
             return "org.postgresql.Driver";
         }
