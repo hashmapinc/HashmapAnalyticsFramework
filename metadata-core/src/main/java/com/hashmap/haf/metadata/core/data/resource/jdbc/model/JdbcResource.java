@@ -15,7 +15,6 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     private String dbUrl;
     private String username;
     private String password;
-    final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 
     public JdbcResource() {
         super();
@@ -63,31 +62,12 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     @Override
     public Map pull(String query) throws Exception {
         Map<String, Object> payload = new HashMap<>();
-        Connection connection = null;
-        Statement statement = null;
-        try {
-            connection = createConnection();
-            statement = connection.createStatement();
 
-            ResultSet rs = statement.executeQuery(query);
-
+        try (Connection connection = createConnection();
+            Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(query);) {
             while(rs.next()){
                 payload.put(rs.getString(1), rs.getObject(2));
-            }
-        } finally {
-            try {
-                if(statement != null)
-                    statement.close();
-            } catch(SQLException se){
-                log.info("Exection : [{}]", se.getMessage());
-                se.printStackTrace();
-            }
-            try {
-                if(connection != null)
-                    connection.close();
-            }catch(SQLException se){
-                log.info("Exection : [{}]", se.getMessage());
-                se.printStackTrace();
             }
         }
         return payload;
@@ -111,9 +91,20 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
         Connection connection = null;
-        Class.forName(JDBC_DRIVER);
+        Class.forName(getJdbcDriver());
         connection = DriverManager.getConnection(this.dbUrl, this.username, this.password);
         return connection;
+    }
+
+    private String getJdbcDriver() {
+        if (this.dbUrl.contains("mysql")) {
+            return  "com.mysql.jdbc.Driver";
+        } else if (this.dbUrl.contains("oracle")) {
+            return "oracle.jdbc.driver.OracleDriver";
+        } else if (this.dbUrl.contains("postgres")) {
+            return "org.postgresql.Driver";
+        }
+        return null;
     }
 
     @Override
