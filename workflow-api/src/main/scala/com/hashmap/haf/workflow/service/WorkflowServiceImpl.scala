@@ -14,7 +14,7 @@ class WorkflowServiceImpl @Autowired()(private val workflowDao: WorkflowDao) ext
     workflowDao.saveOrUpdate(workflow)
   }
 
-  override def findById(id: UUID): Workflow[UUID, String] = {
+  override def findById(id: UUID): Option[Workflow[UUID, String]] = {
       workflowDao.findById(id)
   }
 

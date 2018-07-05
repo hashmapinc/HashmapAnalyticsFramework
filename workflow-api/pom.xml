@@ -14,6 +14,14 @@
             <artifactId>scala-library</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala_${scala.compat.version}</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
         </dependency>
@@ -86,8 +94,18 @@
             <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.hashmap.haf</groupId>
             <artifactId>functions-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.takari.junit</groupId>
+            <artifactId>takari-cpsuite</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -112,6 +130,15 @@
             <plugin>
                 <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
                 <artifactId>sbt-compiler-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Suite.java</include>
+                    </includes>
+                </configuration>
             </plugin>
             <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>

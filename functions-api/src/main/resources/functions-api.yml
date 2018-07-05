@@ -17,6 +17,8 @@ functions:
 
   #Other options are s3, ftp, ftps, https etc
 
+spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
+
 eureka:
   client:
     serviceUrl:

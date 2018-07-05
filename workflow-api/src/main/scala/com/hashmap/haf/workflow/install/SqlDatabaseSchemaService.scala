@@ -5,10 +5,12 @@ import java.nio.file.{Files, Paths}
 import java.sql.DriverManager
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 
 @Service
+@Profile(Array("install"))
 class SqlDatabaseSchemaService extends DatabaseSchemaService {
 
   private val SQL_DIR = "sql"

@@ -7,7 +7,7 @@ import com.github.dexecutor.core.task.Task
 
 import scala.xml.Elem
 
-abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: String, id: UUID) extends Serializable {
+abstract class Workflow[T <: Comparable[T], R](tasks: List[Task[T, R]], name: String, id: UUID) {
 
 	def this(tasks: List[Task[T, R]], name: String) {
 		this(tasks, name, UUID.randomUUID())

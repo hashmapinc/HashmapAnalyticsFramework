@@ -10,22 +10,32 @@ import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable
+import org.slf4j.LoggerFactory
 import scala.xml.Elem
 
 @RestController
 @RequestMapping(Array("/api"))
 class WorkflowController @Autowired()(private val workflowService: WorkflowService) {
+  private val logger = LoggerFactory.getLogger(classOf[WorkflowController])
 
   @RequestMapping(value = Array("/workflows/{workflowId}"), method = Array(RequestMethod.GET))
   @ResponseBody
   def findById(@PathVariable("workflowId") workflowId: String): String = {
-     workflowService.findById(UUIDConverter.fromString(workflowId)).toXml.toString
+    logger.trace("Executing find workflow by Id for {}", workflowId)
+
+     workflowService.findById(UUIDConverter.fromString(workflowId)) match {
+       case Some(workflow) =>  workflow.toXml.toString
+       case None => throw new IllegalArgumentException("Workflow Not found")
+     }
+
+
   }
 
   @RequestMapping(value = Array("/workflows"), method = Array(RequestMethod.GET),
     produces = Array(MediaType.APPLICATION_JSON_VALUE))
   @ResponseBody
   def findAll: util.Map[String, SavedWorkflow] = {
+    logger.trace("Executing findAll")
     workflowService.findAll.map(workflow => {
       val xml: Elem = workflow.toXml
       val id = (xml \ "@id").toString()
@@ -45,6 +55,7 @@ class WorkflowController @Autowired()(private val workflowService: WorkflowServi
     consumes = Array("text/xml"), produces = Array(MediaType.APPLICATION_JSON_VALUE))
   @ResponseBody
   def saveOrUpdate(@RequestBody workflowXml: String): SavedWorkflow = {
+    logger.trace("Executing saveOrUpdate for {}", workflowXml)
     val workflowSaved = workflowService.saveOrUpdate(workflowXml).toXml
 
     val id = (workflowSaved \ "@id").toString()
@@ -65,6 +76,7 @@ class WorkflowController @Autowired()(private val workflowService: WorkflowServi
   @RequestMapping(value = Array("/workflows/{workflowId}"), method = Array(RequestMethod.DELETE))
   @ResponseStatus(value = HttpStatus.OK)
   def delete(@PathVariable("workflowId") workflowId: String): Unit = {
+    logger.trace("Executing delete workflow for {} ", workflowId)
     workflowService.delete(UUIDConverter.fromString(workflowId))
   }
 }

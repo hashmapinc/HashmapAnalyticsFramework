@@ -1,4 +1,4 @@
-<workflow name="Sample Workflow">
+<workflow name="Sample Workflow 1">
     <configurations>
         <configuration>
             <key>spark.driver.memory</key>

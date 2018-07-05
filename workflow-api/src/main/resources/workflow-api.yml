@@ -28,6 +28,7 @@ spring:
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target: my-schema.sql
 #spring.jpa.properties.javax.persistence.schema-generation.scripts.action: create
 
+spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
 
 eureka:
   client:
@@ -35,7 +36,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 install:
-  data_dir: /Users/jetinder/timeseries/HashmapAnalyticsFramework/workflow-api/src/main/resources
+  data_dir: "${INSTALL_DATA_DIR:/resources}"
 
 security:
   oauth2:
