@@ -22,6 +22,7 @@ object SchedulerActor{
   def props(scheduler: Scheduler, system: ActorSystem, springExtension: SpringExtension): Props =
     Props(new SchedulerActor(scheduler, system, springExtension))
 
+  final case class CreateJob(workflowEvent: WorkflowEvent)
   final case class StartJob(workflowEvent: WorkflowEvent)
   final case class UpdateJob(_name: String, cronExpression: String)
   final case class SuspendJob(name: String)
@@ -46,18 +47,14 @@ class SchedulerActor @Autowired()(scheduler: Scheduler, system: ActorSystem, spr
   //val workflowEventRepository: WorkflowEventRepository = null
 
   override def receive = {
-    case StartJob(workflowEvent) =>
-      //Question : should we send a message to datastore actor instead ?
-
+    case CreateJob(workflowEvent: WorkflowEvent) =>
       scheduler.createJob(workflowEvent.id, workflowEvent.cronExpression)
-      scheduler.submitJob(workflowEvent.id, executorActor , Execute(workflowEvent.id))
+      if(workflowEvent.isRunning){
+        scheduler.submitJob(workflowEvent.id, executorActor , Execute(workflowEvent.id))
+      }
       datastoreActor ! AddEvent(workflowEvent)
-
-//      workflowEventRepository.addOrUpdate(workflowEvent).foreach(_ => {
-//        scheduler.createJob(workflowEvent.id, workflowEvent.cronExpression)
-//        scheduler.submitJob(workflowEvent.id, executorActor , Execute(workflowEvent.id))
-//      })
-
+    case StartJob(workflowEvent) =>
+      scheduler.submitJob(workflowEvent.id, executorActor , Execute(workflowEvent.id))
     case SuspendJob(id) =>
       scheduler.suspendJob(id)
       implicit val timeout: Timeout = Timeout(20 seconds)
@@ -65,9 +62,6 @@ class SchedulerActor @Autowired()(scheduler: Scheduler, system: ActorSystem, spr
         .mapTo[WorkflowEvent]
         .map(we => datastoreActor ! AddEvent(we))
 
-    //      workflowEventRepository.get(id)
-//        .map(we => workflowEventRepository.addOrUpdate(we.copy(isRunning = false)))
-//        .foreach(_ => scheduler.suspendJob(id))
     case RestartJob(id) => scheduler.resumeJob(id)
     case RemoveJob(id) => //workflowEventRepository.remove(id).foreach(_ => scheduler.cancelJob(id))
       scheduler.cancelJob(id)

@@ -9,12 +9,15 @@
   </div>
 </md-toolbar>
   <md-dialog-content layout-margin>
+    <md-switch ng-model="vm.isScheduled" aria-label="">
+      Scheduler: {{ vm.isScheduled ? "On" : "Off" }}
+    </md-switch>
     <md-input-container style="margin-top: 15px;">
       <label>Cron Expression</label>
-      <input ng-model="vm.workflow.cron" value="* * * * * *" required/>
+      <input ng-model="vm.workflow.cron" value="* * * * * *" ng-disabled="!vm.isScheduled"/>
     </md-input-container>
     <md-input-container>
-      <md-checkbox ng-model="vm.workflow.start" aria-label="Checkbox 1">
+      <md-checkbox ng-model="vm.workflow.start" aria-label="Checkbox 1" ng-disabled="!vm.isScheduled">
         Start Immediately
       </md-checkbox>
     </md-input-container>
@@ -28,6 +31,6 @@
       Clear
     </md-button>
     <span flex></span>
-    <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.upload(vm.workflow)">Upload</md-button>
+    <md-button class="md-raise" style="background-color:rgb(167,193,222)" ng-click="vm.upload(vm.workflow, vm.isScheduled)">Upload</md-button>
   </md-dialog-actions>
 </md-dialog>

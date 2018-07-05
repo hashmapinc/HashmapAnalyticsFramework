@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS metadata_config;
+DROP TABLE IF EXISTS jdbc;
+DROP TABLE IF EXISTS rest;
+DROP TABLE IF EXISTS query_config;

@@ -33,6 +33,13 @@
         <akka.version>2.4.20</akka.version>
         <livy.version>0.3.0</livy.version>
         <docker.repository>hashmapinc</docker.repository>
+        <java.uuid.generator.version>3.1.4</java.uuid.generator.version>
+        <takari-cpsuite.version>1.2.7</takari-cpsuite.version>
+        <guava.version>18.0</guava.version>
+        <junit.version>4.12</junit.version>
+        <skipITs>true</skipITs>
+        <cassandra.version>3.3.0</cassandra.version>
+        <lombok.version>1.18.0</lombok.version>
         <dbunit.version>2.5.3</dbunit.version>
         <spring-test-dbunit.version>1.2.1</spring-test-dbunit.version>
     </properties>
@@ -44,7 +51,6 @@
         <module>functions-core</module>
         <module>api-discovery</module>
         <module>api-gateway</module>
-        <module>auth-service</module>
         <module>functions-api</module>
         <module>workflow-core</module>
         <module>workflow-api</module>
@@ -52,6 +58,8 @@
         <module>functions</module>
         <module>scheduler</module>
         <module>identity-service</module>
+        <module>metadata-api</module>
+        <module>metadata-core</module>
         <!--<module>ui</module>-->
     </modules>
 
@@ -118,6 +126,14 @@
             <layout>default</layout>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -230,11 +246,6 @@
                 <version>${play2.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.1.4</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sksamuel.avro4s</groupId>
                 <artifactId>avro4s-core_${scala.compat.version}</artifactId>
                 <version>1.8.0</version>
@@ -243,6 +254,21 @@
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-core</artifactId>
                 <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${java.uuid.generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.takari.junit</groupId>
+                <artifactId>takari-cpsuite</artifactId>
+                <version>${takari-cpsuite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ignite</groupId>
@@ -300,6 +326,16 @@
             <dependency>
                 <groupId>com.hashmap.haf</groupId>
                 <artifactId>workflow-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hashmap.haf</groupId>
+                <artifactId>metadata-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -397,6 +433,27 @@
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>commons-compiler</artifactId>
                 <version>2.7.8</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-core</artifactId>
+                <version>${cassandra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-mapping</artifactId>
+                <version>${cassandra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-extras</artifactId>
+                <version>${cassandra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>

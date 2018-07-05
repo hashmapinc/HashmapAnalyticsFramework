@@ -13,6 +13,7 @@ export default function WorkflowController($q, $mdToast, $mdDialog, workflowapis
   vm.upload = upload;
   vm.closeIconSvg = closeIconSvg;
   vm.cancelDialog = cancelDialog;
+  vm.isScheduled = false;
 
   vm.workflow = {
       name: '',
@@ -25,8 +26,8 @@ export default function WorkflowController($q, $mdToast, $mdDialog, workflowapis
         $mdDialog.cancel();
   }
 
-  function upload(workflow) {
-      workflowapiservice.saveAndScheduleWorkflow(workflow).then(function(data) {
+  function upload(workflow, isScheduled) {
+      workflowapiservice.saveAndScheduleWorkflow(workflow, isScheduled).then(function(data) {
         $mdDialog.cancel();
         $mdToast.show(
           $mdToast.simple()

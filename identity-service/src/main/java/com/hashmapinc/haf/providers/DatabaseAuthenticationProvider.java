@@ -2,6 +2,7 @@ package com.hashmapinc.haf.providers;
 
 
 import com.hashmapinc.haf.models.SecurityUser;
+import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,10 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Map;
+
 @Component
-@ConditionalOnProperty(value = "security.client", havingValue = "oauth2-local")
+@ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
 public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider{
 
     private final DatabaseUserDetailsService userDetailsService;
@@ -43,16 +46,22 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if(authentication instanceof UsernamePasswordAuthenticationToken) {
             String username = (String) authentication.getPrincipal();
             String password = (String) authentication.getCredentials();
-            return authenticateByUsernameAndPassword(username, password);
+            String clientId = null;
+            if(authentication.getDetails() instanceof Map) {
+                Map<String, String> details = (Map<String, String>) authentication.getDetails();
+                clientId = details.get("client_id");
+            }
+            return authenticateByUsernameAndPassword(username, password, clientId);
         }else{
-            String username = (String)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            SecurityUser user = (SecurityUser)((UsernamePasswordAuthenticationToken)authentication.getPrincipal()).getPrincipal();
+            String username = user.getUser().getUserName();
             PreAuthenticatedAuthenticationToken auth  = (PreAuthenticatedAuthenticationToken)authentication;
-            return reAuthenticateWithUsername(username, auth);
+            return reAuthenticateWithUsername(username, user.getUser().getClientId(), auth);
         }
     }
 
-    protected Authentication authenticateByUsernameAndPassword(String username, String password) {
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+    protected Authentication authenticateByUsernameAndPassword(String username, String password, String clientId) {
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username, clientId);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -61,7 +70,9 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             throw new DisabledException("User is not active");
         }
 
-        if (!encoder.matches(password, userInfo.getPassword())) {
+        UserCredentials credentials = userDetailsService.findCredentialsByUserId(userInfo.getId());
+
+        if (credentials != null && !encoder.matches(password, credentials.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
         }
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
@@ -69,11 +80,11 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
 
         SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
 
-        return new UsernamePasswordAuthenticationToken(username, password, securityUser.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(securityUser, password, securityUser.getAuthorities());
     }
 
-    protected Authentication reAuthenticateWithUsername(String username, PreAuthenticatedAuthenticationToken auth){
-        UserInformation userInfo = userDetailsService.loadUserByUsername(username);
+    protected Authentication reAuthenticateWithUsername(String username, String clientId, PreAuthenticatedAuthenticationToken auth){
+        UserInformation userInfo = userDetailsService.loadUserByUsername(username, clientId);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
@@ -85,7 +96,9 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         if (userInfo.getAuthorities() == null || userInfo.getAuthorities().isEmpty())
             throw new InsufficientAuthenticationException("User has no authority assigned");
 
-        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(userInfo.getUserName(), auth.getCredentials(), auth.getAuthorities());
+        SecurityUser securityUser = new SecurityUser(userInfo, userInfo.isEnabled());
+
+        PreAuthenticatedAuthenticationToken result = new PreAuthenticatedAuthenticationToken(securityUser, auth.getCredentials(), securityUser.getAuthorities());
         result.setDetails(auth.getDetails());
 
         return result;

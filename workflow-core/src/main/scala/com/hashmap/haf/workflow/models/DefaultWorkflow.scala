@@ -17,6 +17,8 @@ case class DefaultWorkflow(
 														id: UUID = UUID.randomUUID())
 	extends Workflow[UUID, String](tasks, name){
 
+	private val serialVersionUID = 4094695900150649481L
+
 	override def getId: UUID = id
 
 	def buildTaskGraph(executor: Dexecutor[UUID, String]): Unit = {

@@ -5,8 +5,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.{SpringApplication, SpringBootConfiguration}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.netflix.feign.EnableFeignClients
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
 
 @EnableDiscoveryClient
 @SpringBootConfiguration
@@ -14,6 +17,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @EnableJpaRepositories(Array("com.hashmap.haf.repository"))
 @EntityScan(Array("com.hashmap.haf.entities"))
 @ComponentScan(Array("com.hashmap.haf"))
+@EnableOAuth2Client
+@EnableFeignClients
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class FunctionApiApplication
 
 object FunctionApiApplication extends App{

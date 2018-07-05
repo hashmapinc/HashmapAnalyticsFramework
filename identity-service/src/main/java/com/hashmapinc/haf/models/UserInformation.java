@@ -1,22 +1,27 @@
 package com.hashmapinc.haf.models;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserInformation {
 
     List<String> getAuthorities();
 
-    boolean isEnabled();
+    List<String> getPermissions();
 
-    String getPassword();
+    boolean isEnabled();
 
     String getUserName();
 
-    String getId();
+    UUID getId();
 
     String getFirstName();
 
     String getLastName();
 
     String getTenantId();
+
+    String getCustomerId();
+
+    String getClientId();
 }
