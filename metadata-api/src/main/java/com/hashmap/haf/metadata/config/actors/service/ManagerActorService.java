@@ -4,6 +4,7 @@ import akka.actor.*;
 import com.hashmap.haf.metadata.config.actors.ManagerActor;
 import com.hashmap.haf.metadata.config.actors.MetadataSchedulerActor;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
+import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +74,10 @@ public class ManagerActorService {
     public void process(QueryMessage queryMessage) {
         log.trace("Process MetadataQuery Message msgType : {}", queryMessage.getMessageType());
         managerActor.tell(queryMessage, ActorRef.noSender());
+    }
+
+    public void process(RunIngestionMsg runIngestionMsg) {
+        log.trace("Process RunIngestion Message");
+        managerActor.tell(runIngestionMsg, ActorRef.noSender());
     }
 }

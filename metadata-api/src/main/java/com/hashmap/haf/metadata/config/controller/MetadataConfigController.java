@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-//TODO :  testSource, runIngestion
 @RestController
 @RequestMapping("/api")
 @Slf4j
@@ -22,6 +21,10 @@ public class MetadataConfigController {
 
     @Autowired
     private MetadataConfigService metadataConfigService;
+
+    private final String CONNECTED = "{\"status\": \"CONNECTED\" }";
+    private final String NOT_CONNECTED = "{\"status\": \"NOT CONNECTED\" }";
+
 
     @PreAuthorize("#oauth2.hasScope('server')")
     @RequestMapping(value = "/metaconfig", method = RequestMethod.POST)
@@ -85,15 +88,34 @@ public class MetadataConfigController {
         metadataConfigService.deleteMetadataConfig(metadataConfigId);
     }
 
-//    @PreAuthorize("#oauth2.hasScope('server')")
-//    @RequestMapping(value = "/metaconfig/{id}/query", method = RequestMethod.POST)
-//    @ResponseStatus(value = HttpStatus.OK)
-//    public void createQuery(@PathVariable String id, @RequestBody String query) {
-//        MetadataConfigId  metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
-//        MetadataConfig foundMetadataConfig = metadataConfigService.findMetadataConfigById(metadataConfigId);
-//        metadataConfigService.createQueryMsg(query, foundMetadataConfig);
-//    }
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @RequestMapping(value = "/metaconfig/{id}/ingest", method = RequestMethod.GET)
+    public ResponseEntity runIngestion(@PathVariable String id) {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString(id));
+        try {
+            MetadataConfig metadataConfig = checkNotNull(metadataConfigService.runIngestion(metadataConfigId));
+            return  ResponseEntity.status(HttpStatus.OK)
+                    .body(metadataConfig);
+        } catch (MetadataException exp) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(exp.getMessage());
+        }
+    }
 
+    @PreAuthorize("#oauth2.hasScope('server')")
+    @RequestMapping(value = "/metaconfig/{id}/connection", method = RequestMethod.GET)
+    public ResponseEntity testConnection(@PathVariable String id) {
+        MetadataConfigId metadataConfigId = new MetadataConfigId(UUID.fromString(id));
+        boolean connection = metadataConfigService.testConnection(metadataConfigId);
+        if (connection) {
+            return  ResponseEntity.status(HttpStatus.OK)
+                    .body(CONNECTED);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(NOT_CONNECTED);
+        }
+
+    }
 
     private <T> T checkNotNull(T reference) throws MetadataException {
         if (reference == null) {
