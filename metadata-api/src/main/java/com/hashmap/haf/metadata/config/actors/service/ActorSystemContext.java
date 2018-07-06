@@ -1,6 +1,6 @@
 package com.hashmap.haf.metadata.config.actors.service;
 
-import com.hashmap.haf.metadata.config.service.MetadataConfigService;
+import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import lombok.Getter;

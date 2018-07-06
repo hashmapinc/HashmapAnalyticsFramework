@@ -1,6 +1,6 @@
 package com.hashmap.haf.metadata.config.actors.message.scheduler;
 
-import com.hashmap.haf.metadata.config.model.MetadataQueryId;
+import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
 import lombok.Getter;
 
 public final class CancelJob {

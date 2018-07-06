@@ -19,8 +19,7 @@ import java.util.Arrays;
 @EnableOAuth2Client
 @PropertySource("classpath:metadata-api.yaml")
 @ComponentScan
-@EntityScan(basePackages = {"com.hashmap.haf.metadata.config",
-        "com.hashmap.haf.metadata.core"})
+@EntityScan(basePackages = {"com.hashmap.haf.metadata.config"})
 public class MetadataConfigApplication {
 
     private static String SPRING_CONFIG_NAME_KEY = "--spring.config.name";

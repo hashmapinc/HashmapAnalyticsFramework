@@ -7,7 +7,7 @@ import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
-import com.hashmap.haf.metadata.config.model.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
