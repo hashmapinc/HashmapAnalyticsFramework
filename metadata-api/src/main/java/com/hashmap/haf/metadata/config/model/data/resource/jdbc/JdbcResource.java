@@ -2,7 +2,12 @@ package com.hashmap.haf.metadata.config.model.data.resource.jdbc;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +18,7 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     private String dbUrl;
     private String username;
     private String password;
+    private DataSource dataSource;
 
     public JdbcResource() {
         super();
@@ -61,37 +67,43 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     public Map pull(String query) throws Exception {
         Map<String, Object> payload = new HashMap<>();
 
-        try (Connection connection = createConnection();
-            Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery(query);) {
-            while(rs.next()){
-                payload.put(rs.getString(1), rs.getObject(2));
-            }
+        if (dataSource == null) {
+            dataSource = getDataSource();
         }
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        payload = jdbcTemplate.query(query, new ResultSetExtractor<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                Map<String, Object> data = new HashMap<>();
+                while (rs.next()) {
+                    data.put(rs.getString(1), rs.getObject(2));
+                }
+                return data;
+            }
+        });
+
         return payload;
     }
 
     @Override
     public boolean testConnection() throws Exception {
         Connection connection = null;
-        try {
-            connection = createConnection();
-            if (connection != null) {
-                return true;
-            }
-        } finally {
-            if(connection != null) {
-                connection.close();
-            }
+        if (dataSource == null) {
+            dataSource = getDataSource();
         }
-        return false;
+        connection = dataSource.getConnection();
+        return connection != null;
     }
 
-    private Connection createConnection() throws ClassNotFoundException, SQLException {
-        Connection connection = null;
-        Class.forName(getJdbcDriver());
-        connection = DriverManager.getConnection(this.dbUrl, this.username, this.password);
-        return connection;
+    private DataSource getDataSource() {
+        return DataSourceBuilder
+                .create()
+                .url(this.dbUrl)
+                .username(this.username)
+                .password(this.password)
+                .driverClassName(getJdbcDriver())
+                .build();
     }
 
     private String getJdbcDriver() {
