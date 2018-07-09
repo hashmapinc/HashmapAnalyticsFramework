@@ -9,9 +9,9 @@ import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CancelJob;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
-import com.hashmap.haf.metadata.config.model.MetadataConfig;
-import com.hashmap.haf.metadata.config.model.MetadataQuery;
-import com.hashmap.haf.metadata.core.data.resource.DataResource;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
+import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

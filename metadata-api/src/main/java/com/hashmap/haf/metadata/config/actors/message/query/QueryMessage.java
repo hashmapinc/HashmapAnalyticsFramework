@@ -2,8 +2,8 @@ package com.hashmap.haf.metadata.config.actors.message.query;
 
 import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.MessageType;
-import com.hashmap.haf.metadata.config.model.MetadataConfig;
-import com.hashmap.haf.metadata.config.model.MetadataQuery;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import lombok.Getter;
 
 public final class QueryMessage extends AbstractMessage {

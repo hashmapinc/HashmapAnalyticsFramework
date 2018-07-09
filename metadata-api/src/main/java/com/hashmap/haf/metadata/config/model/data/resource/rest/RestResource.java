@@ -1,0 +1,98 @@
+package com.hashmap.haf.metadata.config.model.data.resource.rest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+
+@Slf4j
+public class RestResource extends DataResource<RestResourceId> {
+
+    private String url;
+    private String username;
+    private String password;
+
+    public RestResource() {
+        super();
+    }
+
+    public RestResource(RestResourceId id) {
+        super(id);
+    }
+
+    public RestResource(RestResource restResource) {
+        this.url = restResource.url;
+        this.username = restResource.username;
+        this.password = restResource.password;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public void push(Map payload) throws Exception {
+        URL url = new URL(this.url);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+        writer.write(new ObjectMapper().writeValueAsString(payload));
+        writer.close();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        br.close();
+        connection.disconnect();
+    }
+
+    @Override
+    public Map pull(String query) throws Exception {
+        //TODO : Will be implemented when we have REST as a Metadata Source
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public boolean testConnection() throws Exception {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "RestResource{" +
+                "dbUrl=" + url +
+                ", username=" + username +
+                ", password=" + password +
+                '}';
+    }
+}

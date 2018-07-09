@@ -5,7 +5,7 @@ import akka.actor.ExtendedActorSystem;
 import akka.actor.Props;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CancelJob;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
-import com.hashmap.haf.metadata.core.trigger.TriggerType;
+import com.hashmap.haf.metadata.config.trigger.TriggerType;
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension;
 import lombok.extern.slf4j.Slf4j;
 import scala.Option;

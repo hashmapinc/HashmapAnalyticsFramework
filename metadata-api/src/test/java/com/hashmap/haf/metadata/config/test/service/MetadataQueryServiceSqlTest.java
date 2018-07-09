@@ -1,11 +1,11 @@
 package com.hashmap.haf.metadata.config.test.service;
 
-import com.hashmap.haf.metadata.config.model.MetadataConfig;
-import com.hashmap.haf.metadata.config.model.MetadataConfigId;
-import com.hashmap.haf.metadata.config.model.MetadataQuery;
-import com.hashmap.haf.metadata.config.model.MetadataQueryId;
-import com.hashmap.haf.metadata.config.service.MetadataConfigService;
-import com.hashmap.haf.metadata.config.service.MetadataQueryService;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
+import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
+import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;

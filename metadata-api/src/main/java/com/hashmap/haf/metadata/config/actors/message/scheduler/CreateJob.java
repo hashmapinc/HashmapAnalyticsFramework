@@ -1,7 +1,7 @@
 package com.hashmap.haf.metadata.config.actors.message.scheduler;
 
 import akka.actor.ActorRef;
-import com.hashmap.haf.metadata.config.model.MetadataQuery;
+import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import lombok.Getter;
 
 public final class CreateJob {
