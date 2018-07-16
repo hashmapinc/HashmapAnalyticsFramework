@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.hashmapinc.haf.constants.JWTClaimsConstants.*;
+
 @Component
 @ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
 public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConverter{
@@ -29,23 +31,23 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
 
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
-        Map<String, Object> response = new LinkedHashMap();
+        Map<String, Object> response = new LinkedHashMap<>();
         SecurityUser user = (SecurityUser) authentication.getPrincipal();
         User userInfo = (User)user.getUser();
-        response.put("user_name", userInfo.getUserName());
-        response.put("id", userInfo.getId());
-        response.put("firstName", userInfo.getFirstName());
-        response.put("lastName", userInfo.getLastName());
-        response.put("tenant_id", userInfo.getTenantId());
-        response.put("customer_id", userInfo.getCustomerId());
-        response.put("client_id", userInfo.getClientId());
-        response.put("enabled", user.isEnabled());
+        response.put(USER_NAME, userInfo.getUserName());
+        response.put(ID, userInfo.getId());
+        response.put(FIRST_NAME, userInfo.getFirstName());
+        response.put(LAST_NAME, userInfo.getLastName());
+        response.put(TENANT_ID, userInfo.getTenantId());
+        response.put(CUSTOMER_ID, userInfo.getCustomerId());
+        response.put(CLIENT_ID, userInfo.getClientId());
+        response.put(ENABLED, user.isEnabled());
         response.putAll(userInfo.getAdditionalDetails());
         if(authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-            response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
+            response.put(AUTHORITIES, AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
         }
         if(user.getUser().getPermissions() != null && !user.getUser().getPermissions().isEmpty()) {
-            response.put("permissions", new HashSet(user.getUser().getPermissions()));
+            response.put(PERMISSIONS, new HashSet<>(user.getUser().getPermissions()));
         }
 
         return response;
@@ -53,10 +55,9 @@ public class DatabaseUserDetailsTokenConverter implements UserAuthenticationConv
 
     @Override
     public Authentication extractAuthentication(Map<String, ?> map) {
-        if(map.containsKey("user_name")) {
-            Object principal = map.get("user_name");
-            //TODO: Make sure to get the User using tenant_id as well
-            UserInformation user = userDetailsService.loadUserByUsername((String) principal, (String) map.get("client_id"));
+        if(map.containsKey(USER_NAME)) {
+            Object principal = map.get(USER_NAME);
+            UserInformation user = userDetailsService.loadUserByUsername((String) principal, (String) map.get(CLIENT_ID));
 
             if(user != null) {
                 SecurityUser securityUser = new SecurityUser(user, user.isEnabled());

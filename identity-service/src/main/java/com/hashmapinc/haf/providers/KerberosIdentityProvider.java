@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.kerberos.authentication.KerberosClient;
 import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosClient;
 import org.springframework.stereotype.Component;
@@ -29,12 +28,10 @@ public class KerberosIdentityProvider extends CustomAuthenticationProvider{
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Object principal = authentication.getPrincipal();
+    public Authentication authenticate(Authentication authentication){
         UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
         String validatedUsername = kerberosClient.login(auth.getName(), auth.getCredentials().toString());
         UserInformation userDetails = this.userDetailsService.loadUserByUsername(validatedUsername, "clientId");
-        //SecurityUser securityUser = mapper.map(userDetails, userPrincipal);
         return new UsernamePasswordAuthenticationToken(userDetails, null, null);
     }
 

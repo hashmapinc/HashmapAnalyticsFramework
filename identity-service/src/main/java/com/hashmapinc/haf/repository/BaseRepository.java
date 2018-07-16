@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @NoRepositoryBean
-public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface BaseRepository<T, I extends Serializable> extends JpaRepository<T, I> {
 
     List<T> findPaginated(PaginatedRequest request, PageRequest page);
 }

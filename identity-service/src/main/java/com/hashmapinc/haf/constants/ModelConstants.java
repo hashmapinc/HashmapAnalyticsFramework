@@ -17,7 +17,7 @@ public class ModelConstants {
     public static final String CLIENT_ID_PROPERTY = "client_id";
     public static final String USER_FIRST_NAME_PROPERTY = "first_name";
     public static final String USER_LAST_NAME_PROPERTY = "last_name";
-    public static final String USER_PASSWORD_PROPERTY = "password";
+    public static final String USER_SECRET_PROPERTY = "password";
     public static final String USER_AUTHORITIES_COLUMN = "authorities_id";
     public static final String USER_PERMISSIONS_COLUMN = "permission";
     public static final String USER_DETAILS_KEY_COLUMN = "key_name";
@@ -30,7 +30,7 @@ public class ModelConstants {
     public static final String USER_ADDITIONAL_DETAILS_TABLE = "haf_user_details";
 
     public static final String USER_CREDENTIALS_TABLE = "haf_user_credentials";
-    public static final String USER_CREDENTIALS_PASSWORD_PROPERTY = "password";
+    public static final String USER_CREDENTIALS_SECRET_PROPERTY = "password";
     public static final String USER_CREDENTIALS_USER_ID_PROPERTY = "user_id";
     public static final String USER_CREDENTIALS_ACT_TOKEN_PROPERTY = "activation_token";
     public static final String USER_CREDENTIALS_RESET_TOKEN_PROPERTY = "reset_token";

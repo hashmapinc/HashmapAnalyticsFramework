@@ -2,17 +2,14 @@ package com.hashmapinc.haf.services;
 
 import com.hashmapinc.haf.dao.UserCredentialsDao;
 import com.hashmapinc.haf.dao.UsersDao;
-import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.page.PaginatedRequest;
 import com.hashmapinc.haf.page.TextPageData;
-import com.hashmapinc.haf.page.TextPageLink;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -29,7 +26,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Autowired private UserCredentialsDao userCredentialsDao;
 
     @Override
-    public UserInformation loadUserByUsername(String s, String clientId) throws UsernameNotFoundException {
+    public UserInformation loadUserByUsername(String s, String clientId){
         return usersDao.findByUserName(s, clientId);
     }
 

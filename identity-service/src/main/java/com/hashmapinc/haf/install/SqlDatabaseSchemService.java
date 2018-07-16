@@ -1,5 +1,6 @@
 package com.hashmapinc.haf.install;
 
+import com.hashmapinc.haf.exceptions.SchemaCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.nio.charset.Charset;
@@ -8,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 
 @Service
 public class SqlDatabaseSchemService implements DatabaseSchemaService{
@@ -27,14 +29,17 @@ public class SqlDatabaseSchemService implements DatabaseSchemaService{
     private String dbPassword;
 
     @Override
-    public void createDatabaseSchema() throws Exception {
-
-        //log.info("Installing SQL DataBase schema...");
+    @SuppressWarnings("squid:S2077")
+    public void createDatabaseSchema(){
 
         Path schemaFile = Paths.get(this.dataDir, SQL_DIR, SCHEMA_SQL);
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword)) {
             String sql = new String(Files.readAllBytes(schemaFile), Charset.forName("UTF-8"));
-            conn.createStatement().execute(sql);
+            try(Statement statement = conn.createStatement()) {
+                statement.execute(sql);
+            }
+        }catch (Exception ex){
+            throw new SchemaCreationException("Error while applying database schema", ex);
         }
 
     }

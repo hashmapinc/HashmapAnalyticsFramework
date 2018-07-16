@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter;
-import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -65,7 +64,6 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        //TODO: Inject a client details service which uses DB to identify clients information
         clients.withClientDetails(new PropertiesClientUserDetailsService(config));
     }
 
@@ -109,7 +107,7 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Primary
     public TokenGranter tokenGranter(ClientDetailsService clientDetails, DefaultTokenServices tokenServices,
                                      AuthorizationCodeServices authorizationCodeServices,OAuth2RequestFactory requestFactory) {
-        TokenGranter tokenGranter = new TokenGranter() {
+        return new TokenGranter() {
             private CompositeTokenGranter delegate;
 
             @Override
@@ -120,12 +118,11 @@ public class Oauth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
                 return delegate.grant(grantType, tokenRequest);
             }
         };
-        return tokenGranter;
     }
 
     private List<TokenGranter> getDefaultTokenGranters(ClientDetailsService clientDetails, DefaultTokenServices tokenServices,
                                                        AuthorizationCodeServices authorizationCodeServices,OAuth2RequestFactory requestFactory) {
-        List<TokenGranter> tokenGranters = new ArrayList<TokenGranter>();
+        List<TokenGranter> tokenGranters = new ArrayList<>();
         tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetails,
                 requestFactory));
         tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetails, requestFactory));

@@ -1,10 +1,13 @@
 package com.hashmapinc.haf.utils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class UUIDConverter {
+
+    private UUIDConverter(){}
 
     public static UUID fromString(String src) {
         return UUID.fromString(src.substring(7, 15) + "-" + src.substring(3, 7) + "-1"
@@ -22,7 +25,7 @@ public class UUIDConverter {
 
     public static List<String> fromTimeUUIDs(List<UUID> uuids) {
         if (uuids == null) {
-            return null;
+            return Collections.emptyList();
         }
         return uuids.stream().map(UUIDConverter::fromTimeUUID).collect(Collectors.toList());
     }

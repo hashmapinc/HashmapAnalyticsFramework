@@ -1,9 +1,10 @@
 package com.hashmapinc.haf.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserInformation {
+public interface UserInformation extends Serializable {
 
     List<String> getAuthorities();
 

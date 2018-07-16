@@ -20,10 +20,10 @@ public class SecurityUser implements Serializable{
         this.enabled = enabled;
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         if (authorities == null) {
             authorities = user.getAuthorities().stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority))
+                    .map(this::createAuthority)
                     .collect(Collectors.toList());
         }
         return authorities;
@@ -39,5 +39,9 @@ public class SecurityUser implements Serializable{
 
     public UserInformation getUser() {
         return user;
+    }
+
+    private GrantedAuthority createAuthority(String authority){
+        return new SimpleGrantedAuthority(authority);
     }
 }

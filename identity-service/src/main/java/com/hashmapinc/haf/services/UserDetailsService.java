@@ -5,16 +5,14 @@ import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.page.PaginatedRequest;
 import com.hashmapinc.haf.page.TextPageData;
-import com.hashmapinc.haf.page.TextPageLink;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
 import java.util.UUID;
 
 public interface UserDetailsService {
 
-    UserInformation loadUserByUsername(String s, String clientId) throws UsernameNotFoundException;
+    UserInformation loadUserByUsername(String s, String clientId);
 
     User save(User user);
 

@@ -33,6 +33,7 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
 
+    public static final String NO_USER_CREDENTIALS_FOUND = "No User Credentials found";
     @Autowired
     UserDetailsService userService;
 
@@ -52,8 +53,7 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserById(@PathVariable UUID userId){
-        //String clientId = getCurrentClientId();
+    public ResponseEntity getUserById(@PathVariable UUID userId){
         User user = userService.findById(userId);
         if(user == null)
             return new ResponseEntity<>("No User found with id "+ userId, HttpStatus.NO_CONTENT);
@@ -62,7 +62,7 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/username/{userName}", method = RequestMethod.GET)
-    public ResponseEntity<?> findByUsername(@PathVariable String userName){
+    public ResponseEntity findByUsername(@PathVariable String userName){
         String clientId = getCurrentClientId();
         String decoded = new String(Base64.getUrlDecoder().decode(userName));
         User user = (User)userService.loadUserByUsername(decoded, clientId);
@@ -73,27 +73,17 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody CreateUserRequest userRequest, HttpServletRequest request){
+    public ResponseEntity save(@RequestBody CreateUserRequest userRequest, HttpServletRequest request){
         String clientId = getCurrentClientId();
         User user = userRequest.getUser();
         if(provider.equalsIgnoreCase("database")) {
             if((user.getId() == null || userService.findById(user.getId()) == null) && userService.loadUserByUsername(user.getUserName(), clientId) == null) {
-                if(user.getClientId() == null){
-                    user.setClientId(clientId);
-                }
-                if(!userRequest.getActivationType().equals(ActivationType.NONE)){
-                    user.setEnabled(false);
-                }else{
-                    if(userRequest.getCredentials() == null || StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
-                        return ResponseEntity.badRequest().body("Password can't be null");
-                    }
+                setClientId(clientId, user);
+                if (checkUserCredentials(userRequest, user)) {
+                    return ResponseEntity.badRequest().body("Password can't be null");
                 }
                 User savedUser = userService.save(user);
-                UserCredentials savedCredentials = userService.findCredentialsByUserId(savedUser.getId());
-                if(userRequest.getCredentials() != null && !StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
-                    savedCredentials.setPassword(userRequest.getCredentials().getPassword());
-                    userService.saveUserCredentials(savedCredentials);
-                }
+                UserCredentials savedCredentials = saveUserCredentials(userRequest, savedUser);
                 URI uri = ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{userId}")
@@ -112,20 +102,18 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/user-credentials", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody UserCredentials userCredentials, HttpServletRequest request){
+    public ResponseEntity save(@RequestBody UserCredentials userCredentials, HttpServletRequest request){
           UserCredentials savdUserCredentials = userService.saveUserCredentials(userCredentials);
           return ResponseEntity.ok(savdUserCredentials);
     }
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable UUID userId, @RequestBody User user){
+    public ResponseEntity update(@PathVariable UUID userId, @RequestBody User user){
         String clientId = getCurrentClientId();
         if(provider.equalsIgnoreCase("database")) {
             if(userId != null && userService.findById(userId) != null) {
-                if(user.getClientId() == null){
-                    user.setClientId(clientId);
-                }
+                setClientId(clientId, user);
                 user.setId(userId);
                 User savedUser = userService.save(user);
                 return ResponseEntity.ok(savedUser);
@@ -141,7 +129,7 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getAllUsers(){
+    public ResponseEntity getAllUsers(){
         Collection<User> users = userService.findAllByClientId(getCurrentClientId());
         if(users == null || users.isEmpty())
             return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
@@ -150,7 +138,7 @@ public class UserController {
 
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/{userId}/activation-token", method = RequestMethod.GET)
-    public ResponseEntity<?> getActivationToken(@PathVariable UUID userId){
+    public ResponseEntity getActivationToken(@PathVariable UUID userId){
         UserCredentials credentials = userService.findCredentialsByUserId(userId);
         if(credentials == null)
             return new ResponseEntity<>("No Token found", HttpStatus.NO_CONTENT);
@@ -161,7 +149,7 @@ public class UserController {
     @RequestMapping(value = "/activate", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> activateUserCredentials(@RequestBody ActivateUserRequest activateUserRequest,
+    public ResponseEntity activateUserCredentials(@RequestBody ActivateUserRequest activateUserRequest,
                                                                HttpServletRequest request){
         UserCredentials credentials = userService.activateUserCredentials(activateUserRequest);
         if(credentials == null)
@@ -174,10 +162,10 @@ public class UserController {
     @RequestMapping(value = "/reset/{resetToken}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> findUserCredentialsByResetToken(@PathVariable String resetToken){
+    public ResponseEntity findUserCredentialsByResetToken(@PathVariable String resetToken){
         UserCredentials credentials = userService.findUserCredentialsByResetToken(resetToken);
         if(credentials == null)
-            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_USER_CREDENTIALS_FOUND, HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(credentials);
     }
 
@@ -185,10 +173,10 @@ public class UserController {
     @RequestMapping(value = "/activate/{activationToken}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> findUserCredentialsByActivationToken(@PathVariable String activationToken){
+    public ResponseEntity findUserCredentialsByActivationToken(@PathVariable String activationToken){
         UserCredentials credentials = userService.findCredentialsByActivationToken(activationToken);
         if(credentials == null)
-            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_USER_CREDENTIALS_FOUND, HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(credentials);
     }
 
@@ -196,10 +184,10 @@ public class UserController {
     @RequestMapping(value = "/{userId}/user-credentials", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> findUserCredentialsByUserId(@PathVariable UUID userId){
+    public ResponseEntity findUserCredentialsByUserId(@PathVariable UUID userId){
         UserCredentials credentials = userService.findCredentialsByUserId(userId);
         if(credentials == null)
-            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_USER_CREDENTIALS_FOUND, HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(credentials);
     }
 
@@ -208,7 +196,7 @@ public class UserController {
     @RequestMapping(value = "/resetPasswordByEmail", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> requestPasswordRequest(@RequestBody JsonNode resetPasswordByEmailRequest,
+    public ResponseEntity requestPasswordRequest(@RequestBody JsonNode resetPasswordByEmailRequest,
                                                     HttpServletRequest request){
         String email = resetPasswordByEmailRequest.get("email").asText();
         String clientId = getCurrentClientId();
@@ -220,12 +208,12 @@ public class UserController {
     @RequestMapping(value = "/{id}/user-credentials", method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> updateUserCredentialsById(@PathVariable UUID id, @RequestBody UserCredentials credentials){
+    public ResponseEntity updateUserCredentialsById(@PathVariable UUID id, @RequestBody UserCredentials credentials){
         UserCredentials credentialsByUserId = userService.findCredentialsByUserId(credentials.getUserId());
         if(credentialsByUserId != null) {
             UserCredentials updated = userService.saveUserCredentials(credentials);
             if (updated == null) {
-                return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(NO_USER_CREDENTIALS_FOUND, HttpStatus.NO_CONTENT);
             }else {
                 if(StringUtils.isEmpty(updated.getActivationToken()) && !StringUtils.isEmpty(updated.getPassword())){
                     User user = userService.findById(updated.getUserId());
@@ -235,7 +223,7 @@ public class UserController {
             }
             return ResponseEntity.ok(updated);
         }else {
-            return new ResponseEntity<>("No User Credentials found", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(NO_USER_CREDENTIALS_FOUND, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -243,7 +231,7 @@ public class UserController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> delete(@PathVariable UUID userId){
+    public ResponseEntity delete(@PathVariable UUID userId){
         UserCredentials credentials = userService.findCredentialsByUserId(userId);
         if(credentials != null)
             userService.deleteUserCredentialsById(credentials.getId());
@@ -254,7 +242,7 @@ public class UserController {
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @RequestMapping(value = "/list", params = { "limit", "tenantId" }, method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> findUsers(@RequestParam int limit,
+    public ResponseEntity findUsers(@RequestParam int limit,
                                        @RequestParam UUID tenantId,
                                        @RequestParam String authority,
                                        @RequestParam(required = false) String customerId,
@@ -279,7 +267,7 @@ public class UserController {
 
     private String getCurrentClientId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication instanceof OAuth2Authentication){
+        if(authentication instanceof OAuth2Authentication){
             OAuth2Authentication oauth = (OAuth2Authentication) authentication;
             return oauth.getOAuth2Request().getClientId();
         }
@@ -292,5 +280,29 @@ public class UserController {
             idOffsetUuid = UUID.fromString(idOffset);
         }
         return new TextPageLink(limit, textSearch, idOffsetUuid, textOffset);
+    }
+
+    private UserCredentials saveUserCredentials(@RequestBody CreateUserRequest userRequest, User savedUser) {
+        UserCredentials savedCredentials = userService.findCredentialsByUserId(savedUser.getId());
+        if(userRequest.getCredentials() != null && !StringUtils.isEmpty(userRequest.getCredentials().getPassword())){
+            savedCredentials.setPassword(userRequest.getCredentials().getPassword());
+            userService.saveUserCredentials(savedCredentials);
+        }
+        return savedCredentials;
+    }
+
+    private void setClientId(String clientId, User user) {
+        if(user.getClientId() == null){
+            user.setClientId(clientId);
+        }
+    }
+
+    private boolean checkUserCredentials(@RequestBody CreateUserRequest userRequest, User user) {
+        if(!userRequest.getActivationType().equals(ActivationType.NONE)){
+            user.setEnabled(false);
+        }else{
+            return userRequest.getCredentials() == null || StringUtils.isEmpty(userRequest.getCredentials().getPassword());
+        }
+        return false;
     }
 }

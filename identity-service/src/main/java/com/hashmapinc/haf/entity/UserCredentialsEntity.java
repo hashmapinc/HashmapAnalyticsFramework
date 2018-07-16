@@ -19,7 +19,7 @@ public class UserCredentialsEntity implements Serializable{
     @Column(name = ModelConstants.ID_PROPERTY)
     private String id;
 
-    @Column(name = ModelConstants.USER_CREDENTIALS_PASSWORD_PROPERTY)
+    @Column(name = ModelConstants.USER_CREDENTIALS_SECRET_PROPERTY)
     private String password;
 
     @Column(name = ModelConstants.USER_CREDENTIALS_USER_ID_PROPERTY, unique = true)

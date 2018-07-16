@@ -4,18 +4,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @ConfigurationProperties("oauth2")
 public class ClientConfig {
 
-    private HashMap<String, ClientDetails> clients = new HashMap<>();
+    private Map<String, ClientDetails> clients = new HashMap<>();
 
-    public HashMap<String, ClientDetails> getClients() {
+    public Map<String, ClientDetails> getClients() {
         return clients;
     }
 
-    public void setClients(HashMap<String, ClientDetails> clients) {
+    public void setClients(Map<String, ClientDetails> clients) {
         this.clients = clients;
     }
 

@@ -23,13 +23,13 @@ public class PropertiesClientUserDetailsService implements ClientDetailsService{
                 details.setScope(v.getScopes());
                 clients.put(k, details);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ClientRegistrationException("Error while reading clients from configurations", e);
             }
         });
     }
 
     @Override
-    public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
+    public ClientDetails loadClientByClientId(String clientId){
         ClientDetails details = clients.get(clientId);
         if(details == null) {
             throw new NoSuchClientException("No client with requested id: " + clientId);

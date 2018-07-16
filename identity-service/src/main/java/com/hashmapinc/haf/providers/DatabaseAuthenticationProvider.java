@@ -12,7 +12,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -20,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Map;
+
+import static com.hashmapinc.haf.constants.JWTClaimsConstants.CLIENT_ID;
 
 @Component
 @ConditionalOnProperty(value = "security.provider", havingValue = "oauth2-local")
@@ -35,7 +36,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         Assert.notNull(authentication, "No authentication data provided");
 
         if (!(authentication instanceof UsernamePasswordAuthenticationToken) &&
@@ -49,7 +50,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
             String clientId = null;
             if(authentication.getDetails() instanceof Map) {
                 Map<String, String> details = (Map<String, String>) authentication.getDetails();
-                clientId = details.get("client_id");
+                clientId = details.get(CLIENT_ID);
             }
             return authenticateByUsernameAndPassword(username, password, clientId);
         }else{
@@ -60,7 +61,7 @@ public class DatabaseAuthenticationProvider extends CustomAuthenticationProvider
         }
     }
 
-    protected Authentication authenticateByUsernameAndPassword(String username, String password, String clientId) {
+    private Authentication authenticateByUsernameAndPassword(String username, String password, String clientId) {
         UserInformation userInfo = userDetailsService.loadUserByUsername(username, clientId);
         if (userInfo == null) {
             throw new UsernameNotFoundException("User not found: " + username);

@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultBaseRepository<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID>{
+public class DefaultBaseRepository<T, I extends Serializable> extends SimpleJpaRepository<T, I> implements BaseRepository<T, I>{
 
     private EntityManager entityManager;
 

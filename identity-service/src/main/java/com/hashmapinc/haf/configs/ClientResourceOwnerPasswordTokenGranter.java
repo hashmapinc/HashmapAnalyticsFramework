@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.hashmapinc.haf.constants.JWTClaimsConstants.CLIENT_ID;
+
 public class ClientResourceOwnerPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
     public ClientResourceOwnerPasswordTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
@@ -20,9 +22,8 @@ public class ClientResourceOwnerPasswordTokenGranter extends ResourceOwnerPasswo
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
-        Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.putAll(tokenRequest.getRequestParameters());
-        requestParameters.put("client_id", client.getClientId());
+        Map<String, String> requestParameters = new HashMap<>(tokenRequest.getRequestParameters());
+        requestParameters.put(CLIENT_ID, client.getClientId());
         tokenRequest.setRequestParameters(requestParameters);
         return super.getOAuth2Authentication(client, tokenRequest);
     }
