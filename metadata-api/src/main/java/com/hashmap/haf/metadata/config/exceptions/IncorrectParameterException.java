@@ -2,7 +2,7 @@ package com.hashmap.haf.metadata.config.exceptions;
 
 public class IncorrectParameterException extends RuntimeException {
 
-//    private static final long serialVersionUID = 601995650578985289L;
+    private static final long serialVersionUID = -2694243827026730022L;
 
     public IncorrectParameterException(String message) {
         super(message);

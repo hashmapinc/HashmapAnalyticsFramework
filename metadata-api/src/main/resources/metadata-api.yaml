@@ -9,6 +9,8 @@ server:
   # Server bind port
   port: "${HTTP_BIND_PORT:9090}"
 
+spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
+
 # HSQLDB DAO Configuration
 spring:
   data:
