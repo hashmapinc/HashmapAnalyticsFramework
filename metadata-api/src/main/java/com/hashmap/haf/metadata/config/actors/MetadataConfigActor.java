@@ -103,7 +103,6 @@ public class MetadataConfigActor extends AbstractActor {
 
     private void processMessage(Object message) {
         if (message instanceof RunIngestionMsg) {
-            //TODO : Will be implemented after query support
             metadataConfig  = ((RunIngestionMsg)message).getMetadataConfig();
             for (Map.Entry<MetadataQueryId, ActorRef> entry : metadataQueryIdToActor.entrySet()) {
                 ActorRef queryActor = entry.getValue();
