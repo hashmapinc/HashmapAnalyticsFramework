@@ -20,13 +20,25 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'mvn -Dmaven.test.failure.ignore=true -DskipITs org.jacoco:jacoco-maven-plugin:prepare-agent install'
+        sh 'mvn -Dmaven.test.failure.ignore=true install'
       }
     }
     stage('Report and Archive') {
       steps {
         junit '**/target/surefire-reports/**/*.xml,**/target/failsafe-reports/**/*.xml'
         archiveArtifacts '**/target/*.jar'
+      }
+    }
+    stage('Publish Image') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withCredentials(bindings: [usernamePassword(credentialsId: 'docker_hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+          sh 'sudo docker login -u $USERNAME -p $PASSWORD'
+        }
+        sh 'mvn dockerfile:build dockerfile:push'
+        sh 'mvn dockerfile:tag@latest-version dockerfile:push@latest-version'
       }
     }
     stage('Success Message') {

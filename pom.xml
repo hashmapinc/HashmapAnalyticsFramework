@@ -558,6 +558,23 @@
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
                     <version>1.3.6</version>
+                    <executions>
+                        <execution>
+                            <id>latest-version</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>tag</goal>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <tag>latest</tag>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skip>true</skip>
+                        <repository>${docker.repository}/${project.artifactId}</repository><!--Adding dummy artifact id for parent as dockerfile:tag is validating repo before checking skip flag-->
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>it.ozimov</groupId>
