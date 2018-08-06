@@ -267,11 +267,11 @@ public class UserController {
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @PostMapping(value="/list")
     @ResponseBody
-    public ResponseEntity findUsersByIds(@RequestBody int limit,
+    public ResponseEntity findUsersByIds(@RequestParam int limit,
                                         @RequestBody List<UUID> uuids,
-                                        @RequestBody(required = false) String textSearch,
-                                        @RequestBody(required = false) String idOffset,
-                                        @RequestBody(required = false) String textOffset) {
+                                        @RequestParam(required = false) String textSearch,
+                                        @RequestParam(required = false) String idOffset,
+                                        @RequestParam(required = false) String textOffset) {
 
         return ResponseEntity.ok(userService.findByIds(uuids, createPageLink(limit, textSearch, idOffset, textOffset)));
     }
