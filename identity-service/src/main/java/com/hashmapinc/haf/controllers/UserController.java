@@ -264,6 +264,18 @@ public class UserController {
         return ResponseEntity.ok(userService.findPaginatedUsersByCriteria(builder.build()));
     }
 
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @PostMapping(value="/list")
+    @ResponseBody
+    public ResponseEntity findUsersByIds(@RequestBody int limit,
+                                        @RequestBody List<UUID> uuids,
+                                        @RequestBody(required = false) String textSearch,
+                                        @RequestBody(required = false) String idOffset,
+                                        @RequestBody(required = false) String textOffset) {
+
+        return ResponseEntity.ok(userService.findByIds(uuids, createPageLink(limit, textSearch, idOffset, textOffset)));
+    }
+
 
     private String getCurrentClientId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

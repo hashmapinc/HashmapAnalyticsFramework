@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class UsersDaoImpl implements UsersDao{
@@ -51,6 +53,13 @@ public class UsersDaoImpl implements UsersDao{
         if(user != null)
             return user.toData();
         return null;
+    }
+
+    @Override
+    public List<User> findByIdIn(List<UUID> userIds, PageRequest pageRequest) {
+        List<String> userIdsStr = userIds.stream().map(UUIDConverter::fromTimeUUID).collect(Collectors.toList());
+        List<UserEntity> userEntities = usersRepository.findByIdIn(userIdsStr, pageRequest);
+        return userEntities.stream().map(UserEntity::toData).collect(Collectors.toList());
     }
 
     @Override

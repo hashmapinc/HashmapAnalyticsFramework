@@ -17,7 +17,6 @@ public class User implements UserInformation, Serializable{
     private String firstName;
     private String lastName;
     private List<String> authorities;
-    private List<String> permissions;
     private Map<String, String> additionalDetails;
 
     private boolean enabled;
@@ -35,7 +34,6 @@ public class User implements UserInformation, Serializable{
         this.customerId = user.getCustomerId();
         this.clientId = user.getClientId();
         this.authorities = user.getAuthorities();
-        this.permissions = user.getPermissions();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.enabled = user.isEnabled();
@@ -89,10 +87,6 @@ public class User implements UserInformation, Serializable{
         return authorities;
     }
 
-    public List<String> getPermissions() {
-        return permissions;
-    }
-
     @Override
     public boolean isEnabled() {
         return this.enabled;
@@ -101,8 +95,6 @@ public class User implements UserInformation, Serializable{
     public void setAuthorities(List<String> authorities) {
         this.authorities = authorities;
     }
-
-    public void setPermissions(List<String> permissions) { this.permissions = permissions; }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -146,12 +138,11 @@ public class User implements UserInformation, Serializable{
                 Objects.equals(getFirstName(), user.getFirstName()) &&
                 Objects.equals(getLastName(), user.getLastName()) &&
                 Objects.equals(getAuthorities(), user.getAuthorities()) &&
-                Objects.equals(getPermissions(), user.getPermissions()) &&
                 Objects.equals(getAdditionalDetails(), user.getAdditionalDetails());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getPermissions(), getAdditionalDetails(), isEnabled());
+        return Objects.hash(getId(), getUserName(), getTenantId(), getCustomerId(), getClientId(), getFirstName(), getLastName(), getAuthorities(), getAdditionalDetails(), isEnabled());
     }
 }

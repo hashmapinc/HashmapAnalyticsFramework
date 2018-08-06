@@ -8,8 +8,6 @@ public interface UserInformation extends Serializable {
 
     List<String> getAuthorities();
 
-    List<String> getPermissions();
-
     boolean isEnabled();
 
     String getUserName();
