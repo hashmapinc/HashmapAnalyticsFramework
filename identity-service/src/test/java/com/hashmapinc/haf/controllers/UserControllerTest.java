@@ -76,7 +76,6 @@ public class UserControllerTest {
         admin.setUserName("demo");
         admin.setEnabled(true);
         admin.setAuthorities(Arrays.asList("admin", "user"));
-        admin.setPermissions(Arrays.asList("subject1:*"));
         admin.setClientId(clientId);
         createUser(admin);
 
@@ -85,7 +84,6 @@ public class UserControllerTest {
         user.setEnabled(true);
         user.setClientId(clientId);
         user.setAuthorities(Arrays.asList("user"));
-        user.setPermissions(Arrays.asList("subject1:resource1:READ", "subject1:resource2:READ"));
 
         createUser(user);
 
@@ -225,8 +223,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.userName").value(user.getUserName()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.permissions[0]").value(user.getPermissions().get(0)));
+                .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     @Test
