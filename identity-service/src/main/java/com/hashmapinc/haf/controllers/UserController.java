@@ -11,6 +11,7 @@ import com.hashmapinc.haf.requests.ActivateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserResponse;
 import com.hashmapinc.haf.services.UserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -267,12 +268,11 @@ public class UserController {
     @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
     @PostMapping(value="/list")
     @ResponseBody
-    public ResponseEntity findUsersByIds(@RequestBody int limit,
-                                        @RequestBody List<UUID> uuids,
-                                        @RequestBody(required = false) String textSearch,
-                                        @RequestBody(required = false) String idOffset,
-                                        @RequestBody(required = false) String textOffset) {
-
+    public ResponseEntity findUsersByIds(@RequestParam("limit") int limit,
+                                         @RequestBody List<UUID> uuids,
+                                        @RequestParam(required = false) String textSearch,
+                                        @RequestParam(required = false) String idOffset,
+                                        @RequestParam(required = false) String textOffset) {
         return ResponseEntity.ok(userService.findByIds(uuids, createPageLink(limit, textSearch, idOffset, textOffset)));
     }
 

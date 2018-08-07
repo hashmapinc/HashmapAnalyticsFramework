@@ -1,7 +1,7 @@
 package com.hashmapinc.haf.repository;
 
 import com.hashmapinc.haf.entity.UserEntity;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public interface UsersRepository extends BaseRepository<UserEntity, String> {
 
     List<UserEntity> findByAuthorities(String id);
 
-    List<UserEntity> findByIdIn(List<String> id, PageRequest pageRequest);
+    List<UserEntity> findByIdIn(List<String> id, Pageable pageable);
 }
