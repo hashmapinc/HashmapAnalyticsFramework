@@ -74,7 +74,6 @@ public class AuthenticationTest {
         Assert.assertNotNull(response.get("customer_id"));
         Assert.assertEquals(true, response.get("enabled"));
         Assert.assertEquals(Arrays.asList("admin", "user"), response.get("authorities"));
-        Assert.assertEquals(Arrays.asList("subject1:*"), response.get("permissions"));
         Assert.assertEquals(clientId, response.get("client_id"));
         Assert.assertEquals(Arrays.asList("ui", "server"), response.get("scope"));
         Assert.assertNotNull(response.get("exp"));
@@ -121,7 +120,6 @@ public class AuthenticationTest {
         user.setTenantId(UUIDs.timeBased().toString());
         user.setEnabled(true);
         user.setAuthorities(Arrays.asList("admin", "user"));
-        user.setPermissions(Arrays.asList("subject1:*"));
         user.setClientId(clientId);
 
         User saved = userService.save(user);

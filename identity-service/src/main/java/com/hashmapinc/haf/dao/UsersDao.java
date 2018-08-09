@@ -3,6 +3,7 @@ package com.hashmapinc.haf.dao;
 
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.page.PaginatedRequest;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,8 @@ public interface UsersDao {
     void deleteById(String userId);
 
     User findById(UUID userId);
+
+    List<User> findByIdIn(List<UUID> userIds, PageRequest pageRequest);
 
     Collection<User> findAllByClientId(String clientId);
 

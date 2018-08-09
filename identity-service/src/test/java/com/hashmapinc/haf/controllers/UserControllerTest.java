@@ -23,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,6 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -76,7 +78,6 @@ public class UserControllerTest {
         admin.setUserName("demo");
         admin.setEnabled(true);
         admin.setAuthorities(Arrays.asList("admin", "user"));
-        admin.setPermissions(Arrays.asList("subject1:*"));
         admin.setClientId(clientId);
         createUser(admin);
 
@@ -85,7 +86,6 @@ public class UserControllerTest {
         user.setEnabled(true);
         user.setClientId(clientId);
         user.setAuthorities(Arrays.asList("user"));
-        user.setPermissions(Arrays.asList("subject1:resource1:READ", "subject1:resource2:READ"));
 
         createUser(user);
 
@@ -225,8 +225,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.userName").value(user.getUserName()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.permissions[0]").value(user.getPermissions().get(0)));
+                .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     @Test
@@ -302,6 +301,21 @@ public class UserControllerTest {
         Assert.assertNotNull(info.get("jti"));
         Assert.assertNotNull(info.get("expires_in"));
         Assert.assertNull(info.get("refresh_token"));
+    }
+
+    @Test
+    public void shouldReturnUsersForUserIds() throws Exception {
+        List<UUID> uuids = Arrays.asList(user.getId());
+        String json = mapper.writeValueAsString(uuids);
+        mockMvc.perform(
+                post("/users/list")
+                        .header("Authorization" , "Bearer " + adminToken)
+                        .header("Content-Type" , "application/json")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("limit" , "2")
+                        .content(json)
+        ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].userName").value("redTailUser"));
     }
 
     private String obtainAccessToken(String username, String password) throws Exception {

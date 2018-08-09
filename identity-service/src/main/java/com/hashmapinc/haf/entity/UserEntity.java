@@ -46,12 +46,6 @@ public class UserEntity implements Serializable{
     @Column(name = ModelConstants.USER_LAST_NAME_PROPERTY)
     private String lastName;
 
-    @ElementCollection()
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = ModelConstants.USER_PERMISSIONS_TABLE, joinColumns = @JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
-    @Column(name = ModelConstants.USER_PERMISSIONS_COLUMN)
-    private List<String> permissions;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = ModelConstants.USER_AUTHORITIES_TABLE, joinColumns = @JoinColumn(name = ModelConstants.USER_JOIN_COLUMN))
     @Column(name = ModelConstants.USER_AUTHORITIES_COLUMN)
@@ -73,7 +67,6 @@ public class UserEntity implements Serializable{
         this.userName = user.getUserName();
         this.enabled = user.isEnabled();
         this.authorities = user.getAuthorities();
-        this.permissions = user.getPermissions();
         if (user.getTenantId() != null) {
             this.tenantId = user.getTenantId();
         }
@@ -103,7 +96,6 @@ public class UserEntity implements Serializable{
     public User toData() {
         User user = new User(UUIDConverter.fromString(getId()));
         user.setAuthorities(authorities);
-        user.setPermissions(permissions);
         if (tenantId != null) {
             user.setTenantId(tenantId);
         }

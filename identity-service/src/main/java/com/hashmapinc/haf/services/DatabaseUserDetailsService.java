@@ -7,12 +7,15 @@ import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.page.PaginatedRequest;
 import com.hashmapinc.haf.page.TextPageData;
+import com.hashmapinc.haf.page.TextPageLink;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -46,6 +49,11 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public User findById(UUID id) {
         return usersDao.findById(id);
+    }
+
+    @Override
+    public TextPageData<User> findByIds(List<UUID> ids, TextPageLink pageLink) {
+        return new TextPageData<>(usersDao.findByIdIn(ids, new PageRequest(0, pageLink.getLimit())), pageLink);
     }
 
     @Override

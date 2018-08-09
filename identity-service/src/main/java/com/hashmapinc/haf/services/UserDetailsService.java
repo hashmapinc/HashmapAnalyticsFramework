@@ -5,9 +5,11 @@ import com.hashmapinc.haf.models.UserCredentials;
 import com.hashmapinc.haf.models.UserInformation;
 import com.hashmapinc.haf.page.PaginatedRequest;
 import com.hashmapinc.haf.page.TextPageData;
+import com.hashmapinc.haf.page.TextPageLink;
 import com.hashmapinc.haf.requests.ActivateUserRequest;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface UserDetailsService {
@@ -17,6 +19,8 @@ public interface UserDetailsService {
     User save(User user);
 
     User findById(UUID id);
+
+    TextPageData<User> findByIds(List<UUID> ids, TextPageLink pageLink);
 
     Collection<User> findAllByClientId(String clientId);
 
