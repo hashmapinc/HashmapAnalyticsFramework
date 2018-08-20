@@ -9,14 +9,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
 import java.util.Arrays;
 
 @EnableAutoConfiguration
 @SpringBootApplication
 @Configuration
-@EnableOAuth2Client
 @PropertySource("classpath:metadata-api.yaml")
 @ComponentScan
 @EntityScan(basePackages = {"com.hashmap.haf.metadata.config"})

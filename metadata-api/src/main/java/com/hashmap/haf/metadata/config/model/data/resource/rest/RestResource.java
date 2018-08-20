@@ -1,19 +1,18 @@
 package com.hashmap.haf.metadata.config.model.data.resource.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
 public class RestResource extends DataResource<RestResourceId> {
+
+    @Autowired
+    RestTemplate restTemplate;
 
     private String url;
     private String username;
@@ -59,21 +58,7 @@ public class RestResource extends DataResource<RestResourceId> {
 
     @Override
     public void push(Map payload) throws Exception {
-        URL url = new URL(this.url);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-        writer.write(new ObjectMapper().writeValueAsString(payload));
-        writer.close();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        br.close();
-        connection.disconnect();
+        restTemplate.postForEntity(this.url, payload, Void.class);
     }
 
     @Override
