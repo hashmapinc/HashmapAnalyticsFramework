@@ -22,17 +22,4 @@ public class MetadataConfigAuthClient {
     public RestTemplate restTemplate() {
         return new OAuth2RestTemplate(resourceDetails());
     }
-
-    /**
-     * Add following to rest controller
-     *
-     * @Autowire RestTemplate
-     *
-     * to each controller
-     * restTemplate.getForObject("/uri", classOf[String]);
-     *
-     * uri : http://localhost:9090/api/metaconfig
-     */
-
-
 }

@@ -212,7 +212,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <configuration>
@@ -221,10 +221,10 @@
                     <tag>${project.parent.version}</tag>
                     <buildArgs>
                         <JAR_FILE>target/${project.name}.jar</JAR_FILE>
-                        <SERVER_PORT>${server.port}</SERVER_PORT> &lt;!&ndash; Will come from application.properties by using properties plugin &ndash;&gt;
+                        <SERVER_PORT>${server.port}</SERVER_PORT> <!-- Will come from application.properties by using properties plugin -->
                     </buildArgs>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
