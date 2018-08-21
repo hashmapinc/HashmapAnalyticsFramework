@@ -12,6 +12,7 @@ import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
+import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -49,8 +50,14 @@ public class MetadataQueryActor extends AbstractActor {
     private void executeQuery() throws Exception {
         DataResource source = metadataConfig.getSource();
         DataResource sink = metadataConfig.getSink();
-        Map payloadMap = source.pull(metadataQuery.getQueryStmt());
-        sink.push(payloadMap);
+        Map data = source.pull(metadataQuery.getQueryStmt());
+        final IngestMetadataRequest payload = IngestMetadataRequest.builder()
+                .configId(metadataConfig.getId())
+                .configName(metadataConfig.getName())
+                .ownerId(metadataConfig.getOwnerId())
+                .data(data)
+                .build();
+        sink.push(payload);
     }
 
     @Override

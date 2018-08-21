@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.model.data.resource.rest;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
+import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
@@ -57,7 +58,7 @@ public class RestResource extends DataResource<RestResourceId> {
     }
 
     @Override
-    public void push(Map payload) throws Exception {
+    public void push(IngestMetadataRequest payload) throws Exception {
         restTemplate.postForEntity(this.url, payload, Void.class);
     }
 

@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.model.data.resource.jdbc;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
+import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.dao.DataAccessException;
@@ -8,7 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +62,7 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     }
 
     @Override
-    public void push(Map payload) {
+    public void push(IngestMetadataRequest payload) {
         //TODO : Will be implemented later, when we have JDBC as Sink for Metadata
     }
 
