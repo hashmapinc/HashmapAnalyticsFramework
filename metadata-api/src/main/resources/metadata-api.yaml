@@ -49,7 +49,7 @@ install:
 security:
   oauth2:
     client:
-      clientId: "${TEMPUS_CLIENT_ID:metadata-service}"
+      clientId: "${METADATA_CLIENT_ID:metadata-service}"
       clientSecret: "${METADATA_CLIENT_SECRET:password}"
       accessTokenUri: "${ACCESS_TOKEN_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/token}"
       grant-type: "${METADATA_CLIENT_GRANT_TYPE:client_credentials}"

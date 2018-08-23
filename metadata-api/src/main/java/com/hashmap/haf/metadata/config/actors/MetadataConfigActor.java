@@ -2,11 +2,12 @@ package com.hashmap.haf.metadata.config.actors;
 
 import akka.actor.*;
 import akka.japi.pf.DeciderBuilder;
-import com.hashmap.haf.metadata.config.actors.message.*;
+import com.hashmap.haf.metadata.config.actors.message.MessageType;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
@@ -14,13 +15,14 @@ import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
 import com.mysql.jdbc.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import lombok.extern.slf4j.Slf4j;
+import scala.concurrent.duration.Duration;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import scala.concurrent.duration.Duration;
 
 @Slf4j
 public class MetadataConfigActor extends AbstractActor {
@@ -28,9 +30,14 @@ public class MetadataConfigActor extends AbstractActor {
     private MetadataConfig metadataConfig;
     private final Map<MetadataQueryId, ActorRef> metadataQueryIdToActor = new HashMap<>();
     private final Map<ActorRef, MetadataQueryId> actorToMetadataQueryId = new HashMap<>();
+    private final ActorSystemContext actorSystemContext;
 
-    static public Props props() {
-        return Props.create(MetadataConfigActor.class).withDispatcher(getMetadataDispatcher());
+    static public Props props(ActorSystemContext actorSystemContext) {
+        return Props.create(MetadataConfigActor.class, actorSystemContext).withDispatcher(getMetadataDispatcher());
+    }
+
+    private MetadataConfigActor(ActorSystemContext actorSystemContext){
+        this.actorSystemContext = actorSystemContext;
     }
 
     private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
@@ -94,7 +101,7 @@ public class MetadataConfigActor extends AbstractActor {
     }
 
     private void createMetadataQueryActor(QueryMessage message, MetadataConfig metadataConfig) {
-        ActorRef metadataQueryActor = getContext().actorOf(MetadataQueryActor.props(metadataConfig, message.getMetadataQuery()), message.getMetadataQuery().getId().toString());
+        ActorRef metadataQueryActor = getContext().actorOf(MetadataQueryActor.props(actorSystemContext, metadataConfig, message.getMetadataQuery()), message.getMetadataQuery().getId().toString());
         getContext().watch(metadataQueryActor);
         metadataQueryIdToActor.put(message.getMetadataQuery().getId(), metadataQueryActor);
         actorToMetadataQueryId.put(metadataQueryActor, message.getMetadataQuery().getId());

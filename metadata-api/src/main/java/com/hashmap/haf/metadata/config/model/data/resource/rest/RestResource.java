@@ -2,8 +2,11 @@ package com.hashmap.haf.metadata.config.model.data.resource.rest;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -12,12 +15,13 @@ import java.util.Map;
 @Slf4j
 public class RestResource extends DataResource<RestResourceId> {
 
-    @Autowired
-    RestTemplate restTemplate;
-
     private String url;
     private String username;
     private String password;
+
+    @Transient
+    @Setter
+    private RestTemplate restTemplate;
 
     public RestResource() {
         super();
@@ -59,7 +63,8 @@ public class RestResource extends DataResource<RestResourceId> {
 
     @Override
     public void push(IngestMetadataRequest payload) throws Exception {
-        restTemplate.postForEntity(this.url, payload, Void.class);
+        log.trace("Executing RestResource.push for payload [{}]", payload);
+        restTemplate.postForEntity(this.url, payload, Object.class);
     }
 
     @Override

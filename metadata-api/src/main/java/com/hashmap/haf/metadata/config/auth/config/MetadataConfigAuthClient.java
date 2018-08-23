@@ -1,5 +1,6 @@
 package com.hashmap.haf.metadata.config.auth.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ public class MetadataConfigAuthClient {
     }
 
     @Bean
+    @Qualifier("oauth2RestTemplate")
     public RestTemplate restTemplate() {
         return new OAuth2RestTemplate(resourceDetails());
     }

@@ -8,8 +8,10 @@ import com.hashmap.haf.metadata.config.actors.message.query.ExecuteQueryMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CancelJob;
 import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
+import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.data.resource.rest.RestResource;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
@@ -23,14 +25,16 @@ public class MetadataQueryActor extends AbstractActor {
     private final MetadataConfig metadataConfig;
     private MetadataQuery metadataQuery;
     private ActorRef scheduler;
+    private final ActorSystemContext actorSystemContext;
 
-    private MetadataQueryActor(MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
+    private MetadataQueryActor(ActorSystemContext actorSystemContext, MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
+        this.actorSystemContext = actorSystemContext;
         this.metadataConfig = metadataConfig;
         this.metadataQuery = metadataQuery;
     }
 
-    static public Props props(MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
-        return Props.create(MetadataQueryActor.class, () -> new MetadataQueryActor(metadataConfig, metadataQuery))
+    static public Props props(ActorSystemContext actorSystemContext, MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
+        return Props.create(MetadataQueryActor.class, () -> new MetadataQueryActor(actorSystemContext, metadataConfig, metadataQuery))
                     .withDispatcher(getQueryDispatcher());
     }
 
@@ -50,6 +54,11 @@ public class MetadataQueryActor extends AbstractActor {
     private void executeQuery() throws Exception {
         DataResource source = metadataConfig.getSource();
         DataResource sink = metadataConfig.getSink();
+
+        if(sink instanceof RestResource){
+            ((RestResource) sink).setRestTemplate(actorSystemContext.getOauth2RestTemplate());
+        }
+
         Map data = source.pull(metadataQuery.getQueryStmt());
         final IngestMetadataRequest payload = IngestMetadataRequest.builder()
                 .configId(metadataConfig.getId())
