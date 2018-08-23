@@ -11,6 +11,7 @@ import com.hashmapinc.haf.requests.ActivateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.requests.CreateUserResponse;
 import com.hashmapinc.haf.services.UserDetailsService;
+import com.hashmapinc.haf.utils.UUIDConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -236,7 +237,7 @@ public class UserController {
         UserCredentials credentials = userService.findCredentialsByUserId(userId);
         if(credentials != null)
             userService.deleteUserCredentialsById(credentials.getId());
-        userService.deleteById(userId.toString());
+        userService.deleteById(UUIDConverter.fromTimeUUID(userId));
         return ResponseEntity.ok("User with id "+ userId + " deleted successfully");
     }
 

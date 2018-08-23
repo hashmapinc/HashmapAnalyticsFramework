@@ -35,7 +35,10 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
 
     @Override
     public UserCredentials findByUserId(UUID userId) {
-        return userCredentialsRepository.findByUserId(UUIDConverter.fromTimeUUID(userId)).toData();
+        UserCredentialsEntity userCredentialsEntity = userCredentialsRepository.findByUserId(UUIDConverter.fromTimeUUID(userId));
+        if (userCredentialsEntity != null)
+            return userCredentialsEntity.toData();
+        return null;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class UserCredentialsDaoImpl implements UserCredentialsDao{
 
     @Override
     public void delete(UUID id) {
-        userCredentialsRepository.delete(id.toString());
+        userCredentialsRepository.delete(UUIDConverter.fromTimeUUID(id));
     }
 
 
