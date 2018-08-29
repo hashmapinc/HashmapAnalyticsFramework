@@ -1,13 +1,10 @@
 package com.hashmapinc.haf.controllers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hashmapinc.haf.entity.UserCredentialsEntity;
 import com.hashmapinc.haf.models.ActivationType;
 import com.hashmapinc.haf.models.User;
 import com.hashmapinc.haf.models.UserCredentials;
-import com.hashmapinc.haf.repository.UserCredentialsRepository;
 import com.hashmapinc.haf.requests.CreateUserRequest;
 import com.hashmapinc.haf.services.DatabaseUserDetailsService;
 import org.junit.Assert;
@@ -23,7 +20,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -37,6 +33,7 @@ import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -90,6 +87,14 @@ public class UserControllerTest {
         createUser(user);
 
         adminToken = obtainAccessToken("demo", "password");
+    }
+
+    @Test
+    public void deleteUser() throws Exception {
+        mockMvc.perform(
+                delete("/users/" + user.getId())
+                        .header("Authorization" , "Bearer " + adminToken)
+        ).andExpect(status().isOk());
     }
 
     @Test
