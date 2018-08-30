@@ -1,14 +1,14 @@
 package com.hashmap.haf.metadata.config.model.data.resource.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
+import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.Transient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -18,6 +18,10 @@ public class RestResource extends DataResource<RestResourceId> {
     private String url;
     private String username;
     private String password;
+
+    @Transient
+    @Setter
+    private RestTemplate restTemplate;
 
     public RestResource() {
         super();
@@ -58,22 +62,9 @@ public class RestResource extends DataResource<RestResourceId> {
     }
 
     @Override
-    public void push(Map payload) throws Exception {
-        URL url = new URL(this.url);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-        writer.write(new ObjectMapper().writeValueAsString(payload));
-        writer.close();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        br.close();
-        connection.disconnect();
+    public void push(IngestMetadataRequest payload) throws Exception {
+        log.trace("Executing RestResource.push for payload [{}]", payload);
+        restTemplate.postForEntity(this.url, payload, Object.class);
     }
 
     @Override

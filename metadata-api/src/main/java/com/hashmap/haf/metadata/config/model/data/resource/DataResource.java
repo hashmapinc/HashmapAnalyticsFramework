@@ -6,6 +6,7 @@ import com.hashmap.haf.metadata.config.model.BaseData;
 import com.hashmap.haf.metadata.config.model.UUIDBased;
 import com.hashmap.haf.metadata.config.model.data.resource.jdbc.JdbcResource;
 import com.hashmap.haf.metadata.config.model.data.resource.rest.RestResource;
+import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
 
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public abstract class DataResource<I extends UUIDBased> extends BaseData<I> {
         super(id);
     }
 
-    public abstract void push(Map payload) throws Exception;
+    public abstract void push(IngestMetadataRequest payload) throws Exception;
 
     public abstract Map pull(String query) throws Exception;
 

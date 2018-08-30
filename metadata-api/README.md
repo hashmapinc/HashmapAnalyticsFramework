@@ -7,7 +7,7 @@ Metadata Service provide REST API's.
 ### Run Metadata Service
 1. Run service by MetadataConfigApplication class
 2. Configuration file is metadata-api.yml in resource directory
-3. Default port is 9090
+3. Default port is 9003
 4. Default database is HSQL. To configure Postgres keep the tempus running with postgres docker container.
 5. Also replace the Host and Port of postgres url in metadata-api.yml file.
 6. Database schema is in schema.sql file in resource/sql directory.
@@ -15,7 +15,7 @@ Metadata Service provide REST API's.
 ###Currently Supported API's : 
 1. Creating new Metadata Config (POST): 
 ```text
-http://localhost:9090/api/metaconfig
+http://localhost:9003/api/metaconfig
 ```
 Sample Data
 ```text
@@ -40,19 +40,19 @@ Sample Data
 ```
 2.  Get Metadata Config By Id (GET) :
 ```text
-http://localhost:9090/api/metaconfig/{ID}
+http://localhost:9003/api/metaconfig/{ID}
 ```
 3. Delete Metadata Config By Id (DELETE) :
 ```text
-http://localhost:9090/api/metaconfig/{ID}
+http://localhost:9003/api/metaconfig/{ID}
 ```
 4. Get Metadata Config By ownerId (GET) :
   ```text
-  http://localhost:9090/api/metaconfig/owner/{ID}
+  http://localhost:9003/api/metaconfig/owner/{ID}
   ```
 5. Get All Metadata Config  (GET) :
     ```text
-    http://localhost:9090/api/metaconfig
+    http://localhost:9003/api/metaconfig
     ```
 
 6. TODO are written on top of different classes, which is regarding different api's and adding some more functionality.

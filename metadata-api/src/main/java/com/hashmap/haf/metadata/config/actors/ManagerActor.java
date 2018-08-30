@@ -6,6 +6,7 @@ import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import lombok.extern.slf4j.Slf4j;
 import scala.concurrent.duration.Duration;
 
@@ -18,9 +19,14 @@ public class ManagerActor extends AbstractLoggingActor {
 
     private final Map<String, ActorRef> ownerIdToActor = new HashMap<>();
     private final Map<ActorRef, String> actorToOwnerId = new HashMap<>();
+    private final ActorSystemContext actorSystemContext;
 
-    public static Props props() {
-        return Props.create(ManagerActor.class);
+    private ManagerActor(ActorSystemContext actorSystemContext){
+        this.actorSystemContext = actorSystemContext;
+    }
+
+    public static Props props(ActorSystemContext actorSystemContext) {
+        return Props.create(ManagerActor.class, actorSystemContext);
     }
 
     private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
@@ -51,7 +57,7 @@ public class ManagerActor extends AbstractLoggingActor {
     }
 
     private void createMetaDataConfigOwnerActor(Object message ,String ownerId) {
-        ActorRef ownerActor = getContext().actorOf(MetadataConfigOwnerActor.props(ownerId), ownerId);
+        ActorRef ownerActor = getContext().actorOf(MetadataConfigOwnerActor.props(actorSystemContext, ownerId), ownerId);
         getContext().watch(ownerActor);
         ownerIdToActor.put(ownerId, ownerActor);
         actorToOwnerId.put(ownerActor, ownerId);

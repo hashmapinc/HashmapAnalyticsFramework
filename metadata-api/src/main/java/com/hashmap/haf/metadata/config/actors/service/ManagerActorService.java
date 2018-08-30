@@ -46,7 +46,7 @@ public class ManagerActorService {
         schedulerPath = schedulerActor.path().toString();
 
         log.info("Creating Metadata Manager Actor");
-        managerActor = system.actorOf(ManagerActor.props(), "MetadataConfigManagerActor");
+        managerActor = system.actorOf(ManagerActor.props(actorSystemContext), "MetadataConfigManagerActor");
 
     }
 

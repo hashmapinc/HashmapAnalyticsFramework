@@ -6,7 +6,9 @@ import com.typesafe.config.ConfigFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class ActorSystemContext {
@@ -17,6 +19,11 @@ public class ActorSystemContext {
 
     @Autowired
     @Getter private MetadataConfigService metadataConfigService;
+
+    @Autowired
+    @Qualifier("oauth2RestTemplate")
+    @Getter
+    private RestTemplate oauth2RestTemplate;
 
     @Getter private final Config config;
 

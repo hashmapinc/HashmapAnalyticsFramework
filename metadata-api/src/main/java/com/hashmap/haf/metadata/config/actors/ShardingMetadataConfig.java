@@ -12,6 +12,7 @@ import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -22,7 +23,10 @@ public class ShardingMetadataConfig extends AbstractActor {
 
     private static int numberOfShards;
 
-    private ShardingMetadataConfig() {
+    private final ActorSystemContext actorSystemContext;
+
+    private ShardingMetadataConfig(ActorSystemContext actorSystemContext) {
+        this.actorSystemContext =actorSystemContext;
         ActorSystem system = context().system();
         Option<String> roleOption = Option.none();
         ClusterShardingSettings settings = ClusterShardingSettings.create(system);
@@ -30,14 +34,14 @@ public class ShardingMetadataConfig extends AbstractActor {
 
         metadataConfig = ClusterSharding.get(system).start(
                 "MetadataConfigActor",
-                Props.create(MetadataConfigActor.class),
+                Props.create(MetadataConfigActor.class, actorSystemContext),
                 settings,
                 messageExtractor
         );
     }
 
-    static Props props() {
-        return Props.create(ShardingMetadataConfig.class);
+    static Props props(ActorSystemContext actorSystemContext) {
+        return Props.create(ShardingMetadataConfig.class, actorSystemContext);
     }
 
     private static ShardRegion.MessageExtractor messageExtractor = new ShardRegion.MessageExtractor() {

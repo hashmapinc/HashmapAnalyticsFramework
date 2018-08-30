@@ -7,7 +7,7 @@ server:
   # Server bind address
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
   # Server bind port
-  port: "${HTTP_BIND_PORT:9090}"
+  port: "${HTTP_BIND_PORT:9003}"
 
 spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
 
@@ -46,15 +46,13 @@ spring:
 install:
   data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
 
-
 security:
   oauth2:
     client:
-      clientId: metadata-service
-      clientSecret: ${METADATA_SERVICE_PASSWORD:password}
-      accessTokenUri: http://localhost:9002/uaa/oauth/token
-      grant-type: client_credentials
-      scope: server
+      clientId: "${METADATA_CLIENT_ID:metadata-service}"
+      clientSecret: "${METADATA_CLIENT_SECRET:password}"
+      accessTokenUri: "${ACCESS_TOKEN_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/token}"
+      grant-type: "${METADATA_CLIENT_GRANT_TYPE:client_credentials}"
+      scope: ["server"]
     resource:
-      tokenInfoUri: http://localhost:9002/uaa/oauth/check_token
-
+      tokenInfoUri: "${TOKEN_INFO_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/check_token}"

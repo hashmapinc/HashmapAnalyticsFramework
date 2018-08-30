@@ -6,6 +6,7 @@ import com.hashmap.haf.metadata.config.actors.message.AbstractMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.MetadataMessage;
 import com.hashmap.haf.metadata.config.actors.message.metadata.RunIngestionMsg;
 import com.hashmap.haf.metadata.config.actors.message.query.QueryMessage;
+import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +18,17 @@ import scala.concurrent.duration.Duration;
 public class MetadataConfigOwnerActor extends AbstractLoggingActor {
 
     private final String ownerId;
+    private final ActorSystemContext actorSystemContext;
 
     private ActorRef shardingMetadataConfig = null;
 
-    private MetadataConfigOwnerActor(String ownerId) {
+    private MetadataConfigOwnerActor(ActorSystemContext actorSystemContext, String ownerId) {
+        this.actorSystemContext = actorSystemContext;
         this.ownerId = ownerId;
     }
 
-    static Props props(String ownerId) {
-        return Props.create(MetadataConfigOwnerActor.class, () -> new MetadataConfigOwnerActor(ownerId)).withDispatcher(getOwnerDispatcher());
+    static Props props(ActorSystemContext actorSystemContext, String ownerId) {
+        return Props.create(MetadataConfigOwnerActor.class, () -> new MetadataConfigOwnerActor(actorSystemContext, ownerId)).withDispatcher(getOwnerDispatcher());
     }
 
     private SupervisorStrategy strategy = new OneForOneStrategy(3, Duration.create(3, TimeUnit.SECONDS),
@@ -48,7 +51,7 @@ public class MetadataConfigOwnerActor extends AbstractLoggingActor {
 
         if (this.ownerId.equals(ownerId)) {
             if (shardingMetadataConfig == null) {
-                shardingMetadataConfig = getContext().actorOf(ShardingMetadataConfig.props());
+                shardingMetadataConfig = getContext().actorOf(ShardingMetadataConfig.props(actorSystemContext));
             }
             shardingMetadataConfig.tell(message, ActorRef.noSender());
         } else {

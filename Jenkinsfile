@@ -14,7 +14,7 @@ pipeline {
               mvn clean
               mvn validate
            '''
-        slackSend(message: 'HAF build Started for Branch: '+env.BRANCH_NAME+' for: '+env.CHANGE_AUTHOR+' on: '+env.BUILD_TAG, color: 'Green', channel: 'Tempus', botUser: true)
+        slackSend(message: 'HAF build Started for Branch: '+env.BRANCH_NAME+' for: '+env.CHANGE_AUTHOR+' on: '+env.BUILD_TAG, color: 'Green', channel: 'tempusbuild', botUser: true)
       }
     }
     stage('Build') {
@@ -42,7 +42,7 @@ pipeline {
     }
     stage('Success Message') {
       steps {
-        slackSend(message: 'HAF build Completed for Branch: '+env.BRANCH_NAME+' for: '+env.CHANGE_AUTHOR+' on: '+env.BUILD_TAG, channel: 'Tempus', color: 'Green')
+        slackSend(message: 'HAF build Completed for Branch: '+env.BRANCH_NAME+' for: '+env.CHANGE_AUTHOR+' on: '+env.BUILD_TAG, channel: 'tempusbuild', color: 'Green')
       }
     }
   }
