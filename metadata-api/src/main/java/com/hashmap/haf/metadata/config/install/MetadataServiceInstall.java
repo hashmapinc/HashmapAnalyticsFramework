@@ -3,20 +3,13 @@ package com.hashmap.haf.metadata.config.install;
 import com.hashmap.haf.metadata.config.exceptions.MetadataInstallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Slf4j
 @Service
 @Profile("install")
 public class MetadataServiceInstall {
-
-    @Value("${install.data_dir}")
-    private String dataDir;
 
     @Autowired
     private DatabaseSchemaService databaseSchemaService;
@@ -25,16 +18,8 @@ public class MetadataServiceInstall {
         try {
             log.info("Starting Metadata Ingestion Service Installation...");
 
-            if (this.dataDir == null) {
-                throw new RuntimeException("'install.data_dir' property should specified!");
-            }
-            if (!Files.isDirectory(Paths.get(this.dataDir))) {
-                throw new RuntimeException("'install.data_dir' property value is not a valid directory!");
-            }
-
-            log.info("Installing DataBase schema...");
-
             databaseSchemaService.createDatabaseSchema();
+
             log.info("Server Started...");
         } catch (Exception e) {
             log.error("Unexpected error during Metadata Ingestion Service installation!", e);

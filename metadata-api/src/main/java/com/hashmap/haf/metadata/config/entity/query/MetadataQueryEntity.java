@@ -2,18 +2,18 @@ package com.hashmap.haf.metadata.config.entity.query;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.uuid.Generators;
+import com.hashmap.haf.metadata.config.constants.ModelConstants;
+import com.hashmap.haf.metadata.config.entity.BaseSqlEntity;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
-import com.hashmap.haf.metadata.config.constants.ModelConstants;
-import com.hashmap.haf.metadata.config.entity.BaseSqlEntity;
 import com.hashmap.haf.metadata.config.trigger.TriggerType;
+import com.hashmap.haf.metadata.config.utils.UUIDConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 
 @Data
@@ -49,7 +49,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         }
 
         if (metadataQuery.getMetadataConfigId() != null) {
-            this.metadataConfigId = metadataQuery.getMetadataConfigId().getId().toString();
+            this.metadataConfigId = UUIDConverter.fromTimeUUID(metadataQuery.getMetadataConfigId().getId());
         }
         this.queryStmt = metadataQuery.getQueryStmt();
         this.triggerType = metadataQuery.getTriggerType();
@@ -61,7 +61,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         MetadataQuery metadataQuery = new MetadataQuery(new MetadataQueryId(getId()));
         metadataQuery.setCreatedTime(UUIDs.unixTimestamp(getId()));
         if (metadataConfigId != null) {
-            metadataQuery.setMetadataConfigId(new MetadataConfigId(UUID.fromString(this.metadataConfigId)));
+            metadataQuery.setMetadataConfigId(new MetadataConfigId(UUIDConverter.fromString(this.metadataConfigId)));
         }
         metadataQuery.setQueryStmt(this.queryStmt);
         metadataQuery.setTriggerType(this.triggerType);

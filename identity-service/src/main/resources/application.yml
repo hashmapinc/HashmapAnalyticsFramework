@@ -12,9 +12,6 @@ eureka:
 
 security.provider: oauth2-local #could be oauth2-server, ldap, openid, kerberos etc.
 
-install:
-  data_dir: /Users/jayeshkapadnis/Projects/hashmap/HashmapAnalyticsFramework/identity-service/src/main/resources
-
 # JWT Token parameters
 security.jwt:
   tokenExpirationTime: "${JWT_TOKEN_EXPIRATION_TIME:900}" # Number of seconds (15 mins)
@@ -75,11 +72,8 @@ spring:
       repositories:
         enabled: "true"
   jpa:
-    generate-ddl: true
     hibernate:
-      ddl-auto: "update"
-      #show_sql: true
-      #format_sql: true
+      ddl-auto: "none"
     database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"

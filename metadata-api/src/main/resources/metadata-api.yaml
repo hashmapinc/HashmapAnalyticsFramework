@@ -19,7 +19,7 @@ spring:
         enabled: "true"
   jpa:
     hibernate:
-      ddl-auto: "create"
+      ddl-auto: "none"
     database-platform: "${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.HSQLDialect}"
   datasource:
     driverClassName: "${SPRING_DRIVER_CLASS_NAME:org.hsqldb.jdbc.JDBCDriver}"
@@ -42,9 +42,6 @@ spring:
 #    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tempus}"
 #    username: "${SPRING_DATASOURCE_USERNAME:postgres}"
 #    password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
-
-install:
-  data_dir: "${METADATA_INSTALL_DATA_DIR:/home/pc/git/HashmapAnalyticsFramework/metadata-api/src/main/resources}"
 
 security:
   oauth2:
