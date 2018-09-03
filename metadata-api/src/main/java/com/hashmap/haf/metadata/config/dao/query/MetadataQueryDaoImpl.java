@@ -1,8 +1,8 @@
 package com.hashmap.haf.metadata.config.dao.query;
 
+import com.hashmap.haf.metadata.config.dao.DaoUtil;
 import com.hashmap.haf.metadata.config.entity.query.MetadataQueryEntity;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
-import com.hashmap.haf.metadata.config.dao.DaoUtil;
 import com.hashmap.haf.metadata.config.utils.UUIDConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
 
     @Override
     public List<MetadataQuery> findByMetadataConfigId(UUID metadataId) {
-        String key = metadataId.toString();
+        String key = UUIDConverter.fromTimeUUID(metadataId);
         List<MetadataQueryEntity> metadataConfigEntities = metadataQueryRepository.findByMetadataConfigId(key);
         return DaoUtil.convertDataList(metadataConfigEntities);
     }
@@ -49,7 +49,7 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
     @Override
     @Transactional
     public int removeByMetadataConfigId(UUID metadataId) {
-        String key = metadataId.toString();
+        String key = UUIDConverter.fromTimeUUID(metadataId);
         return metadataQueryRepository.removeByMetadataConfigId(key);
     }
 
@@ -60,5 +60,4 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
         metadataQueryRepository.delete(key);
         return metadataQueryRepository.findOne(key) == null;
     }
-
 }

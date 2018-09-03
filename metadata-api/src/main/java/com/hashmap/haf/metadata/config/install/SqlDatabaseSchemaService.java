@@ -1,14 +1,15 @@
 package com.hashmap.haf.metadata.config.install;
 
+import com.hashmap.haf.metadata.config.exceptions.MetadataInstallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -21,9 +22,6 @@ public class SqlDatabaseSchemaService implements DatabaseSchemaService {
     private static final String SQL_DIR = "sql";
     private static final String SCHEMA_SQL = "schema.sql";
 
-    @Value("${install.data_dir}")
-    private String dataDir;
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
 
@@ -34,16 +32,17 @@ public class SqlDatabaseSchemaService implements DatabaseSchemaService {
     private String dbPassword;
 
     @Override
-    public void createDatabaseSchema() throws Exception {
+    public void createDatabaseSchema() {
         log.info("Installing SQL DataBase schema...");
 
-        Path schemaFile = Paths.get(this.dataDir, SQL_DIR, SCHEMA_SQL);
-
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-             Statement stmt = conn.createStatement()) {
-            String sql = new String(Files.readAllBytes(schemaFile), Charset.forName("UTF-8"));
-
-            stmt.execute(sql);
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword)) {
+            InputStream inputStream = new ClassPathResource(String.format("%s/%s", SQL_DIR, SCHEMA_SQL)).getInputStream();
+            String sql = new String(FileCopyUtils.copyToByteArray(inputStream), Charset.forName("UTF-8"));
+            try (Statement statement = conn.createStatement()) {
+                statement.execute(sql);
+            }
+        } catch (Exception ex) {
+            throw new MetadataInstallException("Error while applying database schema", ex);
         }
     }
 }
