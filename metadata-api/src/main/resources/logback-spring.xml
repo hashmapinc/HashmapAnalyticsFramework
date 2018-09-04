@@ -4,7 +4,7 @@
     <springProperty scope="context" name="DEFAULT_LOG_FILE" source="spring.logging.file"/>
     <!--<springProperty scope="context" name="springAppName" source="spring.application.name"/>
     <property name="LOG_PATH" value="${logDir}"/>-->
-    <property name="LOG_FILE" value="${DEFAULT_LOG_FILE:-${LOG_FILE:-metadata-service/target}}/metadata-service"/>​
+    <property name="LOG_FILE" value="${DEFAULT_LOG_FILE:-${LOG_FILE:-target}}/metadata-api"/>​
 
     <property name="CONSOLE_LOG_PATTERN"
               value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
