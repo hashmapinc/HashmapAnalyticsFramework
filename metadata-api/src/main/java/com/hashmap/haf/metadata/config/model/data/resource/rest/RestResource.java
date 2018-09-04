@@ -2,22 +2,20 @@ package com.hashmap.haf.metadata.config.model.data.resource.rest;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Transient;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 public class RestResource extends DataResource<RestResourceId> {
 
     private String url;
-    private String username;
-    private String password;
 
     @Transient
     @Setter
@@ -33,8 +31,6 @@ public class RestResource extends DataResource<RestResourceId> {
 
     public RestResource(RestResource restResource) {
         this.url = restResource.url;
-        this.username = restResource.username;
-        this.password = restResource.password;
     }
 
     public String getUrl() {
@@ -43,22 +39,6 @@ public class RestResource extends DataResource<RestResourceId> {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override
@@ -82,8 +62,6 @@ public class RestResource extends DataResource<RestResourceId> {
     public String toString() {
         return "RestResource{" +
                 "dbUrl=" + url +
-                ", username=" + username +
-                ", password=" + password +
                 '}';
     }
 }

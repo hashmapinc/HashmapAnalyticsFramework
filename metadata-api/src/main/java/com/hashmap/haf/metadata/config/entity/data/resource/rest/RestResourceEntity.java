@@ -24,12 +24,6 @@ public class RestResourceEntity extends DataResourceEntity<RestResource> {
     @Column(name = ModelConstants.REST_URL)
     private String url;
 
-    @Column(name = ModelConstants.REST_USERNAME)
-    private String username;
-
-    @Column(name = ModelConstants.REST_PASSWORD)
-    private String password;
-
     public RestResourceEntity() {
         super();
     }
@@ -40,10 +34,7 @@ public class RestResourceEntity extends DataResourceEntity<RestResource> {
         } else {
             this.setId(Generators.timeBasedGenerator().generate());
         }
-
         this.url = restResource.getUrl();
-        this.username = restResource.getUsername();
-        this.password = restResource.getPassword();
     }
 
     @Override
@@ -51,8 +42,6 @@ public class RestResourceEntity extends DataResourceEntity<RestResource> {
         RestResource restResource = new RestResource(new RestResourceId(getId()));
         restResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
         restResource.setUrl(url);
-        restResource.setUsername(username);
-        restResource.setPassword(password);
         return restResource;
     }
 }

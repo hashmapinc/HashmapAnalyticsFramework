@@ -2,19 +2,18 @@ package com.hashmap.haf.metadata.config.entity.config;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.uuid.Generators;
-import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
-import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.constants.ModelConstants;
 import com.hashmap.haf.metadata.config.entity.BaseSqlEntity;
-import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.entity.data.resource.DataResourceEntity;
 import com.hashmap.haf.metadata.config.entity.data.resource.jdbc.JdbcResourceEntity;
+import com.hashmap.haf.metadata.config.entity.data.resource.rest.RestResourceEntity;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.model.data.resource.jdbc.JdbcResource;
 import com.hashmap.haf.metadata.config.model.data.resource.jdbc.JdbcResourceId;
-import com.hashmap.haf.metadata.config.entity.data.resource.rest.RestResourceEntity;
 import com.hashmap.haf.metadata.config.model.data.resource.rest.RestResource;
 import com.hashmap.haf.metadata.config.model.data.resource.rest.RestResourceId;
-import com.hashmap.haf.metadata.config.trigger.TriggerType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +39,6 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
     @OneToOne(cascade = CascadeType.ALL)
     private DataResourceEntity sink;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = ModelConstants.METADATA_CONFIG_TRIGGER_TYPE)
-    private TriggerType triggerType;
-
-    @Column(name = ModelConstants.METADATA_CONFIG_TRIGGER_SCHEDULE)
-    private String triggerSchedule;
-
     public MetadataConfigEntity() {
         super();
     }
@@ -62,8 +54,6 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
         this.ownerId = metadataConfig.getOwnerId();
         this.source = getDataResourceEntity(metadataConfig.getSource());
         this.sink = getDataResourceEntity(metadataConfig.getSink());
-        this.triggerType = metadataConfig.getTriggerType();
-        this.triggerSchedule = metadataConfig.getTriggerSchedule();
     }
 
     @Override
@@ -74,8 +64,6 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
         metadataConfig.setOwnerId(ownerId);
         metadataConfig.setSource(getDataResource(source));
         metadataConfig.setSink(getDataResource(sink));
-        metadataConfig.setTriggerType(triggerType);
-        metadataConfig.setTriggerSchedule(triggerSchedule);
         return metadataConfig;
     }
 
@@ -104,8 +92,6 @@ public class MetadataConfigEntity extends BaseSqlEntity<MetadataConfig> {
             restResource.setId(new RestResourceId(dataResourceEntity.getId()));
             restResource.setCreatedTime(UUIDs.unixTimestamp(getId()));
             restResource.setUrl(((RestResourceEntity) dataResourceEntity).getUrl());
-            restResource.setUsername(((RestResourceEntity) dataResourceEntity).getUsername());
-            restResource.setPassword(((RestResourceEntity) dataResourceEntity).getPassword());
             return restResource;
         }
         return null;

@@ -2,9 +2,10 @@ package com.hashmap.haf.metadata.config.model.data.resource.jdbc;
 
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.dao.DataAccessException;
+import org.springframework.data.annotation.Transient;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -16,11 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 public class JdbcResource extends DataResource<JdbcResourceId> {
 
     private String dbUrl;
     private String username;
     private String password;
+
+    @Transient
     private DataSource dataSource;
 
     public JdbcResource() {
@@ -68,7 +72,7 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
 
     @Override
     public Map pull(String query) throws Exception {
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> payload;
 
         if (dataSource == null) {
             dataSource = getDataSource();
@@ -77,7 +81,7 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         payload = jdbcTemplate.query(query, new ResultSetExtractor<Map<String, Object>>() {
             @Override
-            public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
+            public Map<String, Object> extractData(ResultSet rs) throws SQLException {
                 Map<String, Object> data = new HashMap<>();
                 while (rs.next()) {
                     data.put(rs.getString(1), rs.getObject(2));
@@ -96,7 +100,9 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
             dataSource = getDataSource();
         }
         connection = dataSource.getConnection();
-        return connection != null;
+        boolean connected = connection != null;
+        connection.close();
+        return connected;
     }
 
     private DataSource getDataSource() {

@@ -2,7 +2,6 @@ package com.hashmap.haf.metadata.config.model.config;
 
 import com.hashmap.haf.metadata.config.model.BaseData;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
-import com.hashmap.haf.metadata.config.trigger.TriggerType;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
@@ -11,8 +10,6 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
     private String name;
     private DataResource source;
     private DataResource sink;
-    private TriggerType triggerType;
-    private String triggerSchedule;
 
     public MetadataConfig() {
         super();
@@ -28,8 +25,6 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
         this.name = metadataConfig.name;
         this.source = metadataConfig.source;
         this.sink = metadataConfig.sink;
-        this.triggerType = metadataConfig.triggerType;
-        this.triggerSchedule = metadataConfig.triggerSchedule;
     }
 
     public String getOwnerId() {
@@ -64,22 +59,6 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
         this.sink = sink;
     }
 
-    public TriggerType getTriggerType() {
-        return triggerType;
-    }
-
-    public void setTriggerType(TriggerType triggerType) {
-        this.triggerType = triggerType;
-    }
-
-    public String getTriggerSchedule() {
-        return triggerSchedule;
-    }
-
-    public void setTriggerSchedule(String triggerSchedule) {
-        this.triggerSchedule = triggerSchedule;
-    }
-
     public void update(MetadataConfig metadataConfig) {
         this.setOwnerId(metadataConfig.getOwnerId());
         this.setName(metadataConfig.getName());
@@ -95,9 +74,6 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
             updatedSource.setId(this.source.getId());
         }
         this.setSource(updatedSource);
-
-        this.setTriggerType(metadataConfig.getTriggerType());
-        this.setTriggerSchedule(metadataConfig.getTriggerSchedule());
     }
 
     @Override
@@ -107,8 +83,6 @@ public class MetadataConfig extends BaseData<MetadataConfigId> {
                 "name=" + name +
                 ", source=" + source +
                 ", sink=" + sink +
-                ", triggerType=" + triggerType +
-                ", triggerSchedule=" + triggerSchedule +
                 '}';
     }
 }
