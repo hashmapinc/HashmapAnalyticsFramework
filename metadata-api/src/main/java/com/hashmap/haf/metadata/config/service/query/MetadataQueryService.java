@@ -22,4 +22,5 @@ public interface MetadataQueryService {
 
     int deleteMetadataQueryByMetadataConfigId(MetadataConfigId metadataConfigId);
 
+    List<MetadataQuery> scheduleAllQueries();
 }

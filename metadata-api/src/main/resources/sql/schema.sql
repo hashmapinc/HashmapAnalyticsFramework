@@ -28,5 +28,6 @@ CREATE TABLE IF NOT EXISTS query_config (
   query varchar NOT NULL UNIQUE,
   metadata_id varchar(31) NOT NULL,
   trigger_schdl varchar,
-  trigger_type varchar
+  trigger_type varchar,
+  CONSTRAINT query_config_foreign_key foreign key (metadata_id) references metadata_config
 );

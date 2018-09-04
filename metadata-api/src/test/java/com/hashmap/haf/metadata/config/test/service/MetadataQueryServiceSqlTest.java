@@ -132,4 +132,12 @@ public class MetadataQueryServiceSqlTest {
         MetadataQuery found = metadataQueryService.findMetadataQueryById(metadataQueryId);
         Assert.assertNull(found);
     }
+
+    @Test
+    public void rescheduleAllMetadataQuery() {
+        MetadataQuery saveMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
+        List<MetadataQuery> found = metadataQueryService.scheduleAllQueries();
+        Assert.assertEquals(1, found.size());
+        tearDown(saveMetadataQuery.getId());
+    }
 }
