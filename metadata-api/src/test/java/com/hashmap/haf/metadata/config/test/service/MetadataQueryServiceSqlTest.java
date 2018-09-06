@@ -4,6 +4,7 @@ import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
@@ -87,26 +88,17 @@ public class MetadataQueryServiceSqlTest {
         MetadataQuery savedMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
         Assert.assertNotNull(savedMetadataQuery);
 
-        List<MetadataQuery> found = metadataQueryService.findAllMetadataQueryByMetadataId(metadataConfigId);
-        Assert.assertEquals(1, found.size());
+        List<MetadataQuery> firstPageResults = metadataQueryService.findAllMetadataQueryByMetadataId(metadataConfigId, new TextPageLink(1)).getData();
+        Assert.assertEquals(1, firstPageResults.size());
+        Assert.assertEquals("TestQueryStatement", firstPageResults.get(0).getQueryStmt());
+
+        metadataQuery.setQueryStmt("new query");
+        metadataQueryService.saveMetadataQuery(metadataQuery);
+        List<MetadataQuery> secondPageResults = metadataQueryService.findAllMetadataQueryByMetadataId(metadataConfigId, new TextPageLink(1, firstPageResults.get(0).getUuidId())).getData();
+
+        Assert.assertEquals(1, secondPageResults.size());
+        Assert.assertNotEquals(firstPageResults.get(0), secondPageResults.get(0));
         tearDown(savedMetadataQuery.getId());
-    }
-
-    @Test
-    public void findAllMetadataQuery() {
-        MetadataQuery saveMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
-        Assert.assertNotNull(saveMetadataQuery);
-
-        MetadataQuery metadataQuery1 = new MetadataQuery();
-        metadataQuery1.setMetadataConfigId(metadataConfigId);
-        metadataQuery1.setQueryStmt("TestQueryStatement1");
-        MetadataQuery saveMetadataQuery1 = metadataQueryService.saveMetadataQuery(metadataQuery1);
-        Assert.assertNotNull(saveMetadataQuery1);
-
-        List<MetadataQuery> found = metadataQueryService.findAllMetadataQuery();
-        Assert.assertEquals(2, found.size());
-        tearDown(saveMetadataQuery.getId());
-        tearDown(saveMetadataQuery1.getId());
     }
 
     @Test

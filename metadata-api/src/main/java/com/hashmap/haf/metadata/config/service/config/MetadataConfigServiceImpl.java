@@ -8,13 +8,14 @@ import com.hashmap.haf.metadata.config.dao.config.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import com.hashmap.haf.metadata.config.utils.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,10 +54,10 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     }
 
     @Override
-    public List<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId) {
+    public TextPageData<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId, TextPageLink pageLink) {
         log.trace("Executing findAllMetadataConfigByOwnerId [{}]", ownerId);
         Validator.validateString(ownerId, INCORRECT_OWNER_ID + ownerId);
-        return metadataConfigDao.findByOwnerId(ownerId);
+        return new TextPageData<>(metadataConfigDao.findByOwnerId(ownerId, pageLink), pageLink);
     }
 
     @Override
@@ -76,12 +77,6 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         } else {
             throw new DataValidationException("Can't update for non-existent metaDataConfig!");
         }
-    }
-
-    @Override
-    public List<MetadataConfig> findAllMetadataConfig() {
-        log.trace("Executing findAllMetadataConfig [{}]");
-        return metadataConfigDao.findAll();
     }
 
     @Override

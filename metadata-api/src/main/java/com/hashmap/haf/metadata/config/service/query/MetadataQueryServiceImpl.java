@@ -9,6 +9,8 @@ import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import com.hashmap.haf.metadata.config.utils.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -54,10 +56,10 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
 
 
     @Override
-    public List<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId) {
+    public TextPageData<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId, TextPageLink pageLink) {
         log.trace("Executing findAllMetadataQueryByMetadataId [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
-        return metadataQueryDao.findByMetadataConfigId(metadataConfigId.getId());
+        return new TextPageData<>(metadataQueryDao.findByMetadataConfigId(metadataConfigId.getId(), pageLink), pageLink);
     }
 
     @Override
@@ -88,12 +90,6 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
         } else {
             throw new DataValidationException("Can't update for non-existent metadataQuery!");
         }
-    }
-
-    @Override
-    public List<MetadataQuery> findAllMetadataQuery() {
-        log.trace("Executing findAllMetadataQuery [{}]");
-        return metadataQueryDao.findAll();
     }
 
     @Override

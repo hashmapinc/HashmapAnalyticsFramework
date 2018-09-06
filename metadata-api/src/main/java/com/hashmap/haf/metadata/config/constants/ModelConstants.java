@@ -1,5 +1,10 @@
 package com.hashmap.haf.metadata.config.constants;
 
+import com.datastax.driver.core.utils.UUIDs;
+import com.hashmap.haf.metadata.config.utils.UUIDConverter;
+
+import java.util.UUID;
+
 public class ModelConstants {
 
     private ModelConstants() {
@@ -8,6 +13,9 @@ public class ModelConstants {
     /**
      * Generic constants.
      */
+    public static final UUID NULL_UUID = UUIDs.startOf(0);
+    public static final String NULL_UUID_STR = UUIDConverter.fromTimeUUID(NULL_UUID);
+
     public static final String ID_PROPERTY = "id";
 
     /**

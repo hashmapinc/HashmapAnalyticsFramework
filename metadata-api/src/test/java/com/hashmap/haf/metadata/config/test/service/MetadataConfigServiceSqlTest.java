@@ -2,6 +2,7 @@ package com.hashmap.haf.metadata.config.test.service;
 
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -72,27 +73,23 @@ public class MetadataConfigServiceSqlTest {
     public void findAllMetadataConfigByOwnerId() {
         String ownerId = "3f5d9a77-694c-11e8-ab22-b5af61ab8a6a";
         metadataConfig.setOwnerId(ownerId);
+        String testMetaConf = "Test Meta Conf";
+        metadataConfig.setName(testMetaConf);
         MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
         Assert.assertNotNull(savedMetadataConfig);
 
-        List<MetadataConfig> found = metadataConfigService.findAllMetadataConfigByOwnerId(ownerId);
-        Assert.assertEquals(1, found.size());
+        List<MetadataConfig> firstPageResults = metadataConfigService.findAllMetadataConfigByOwnerId(ownerId, new TextPageLink(1)).getData();
+        Assert.assertEquals(1, firstPageResults.size());
+        Assert.assertEquals(testMetaConf, firstPageResults.get(0).getName());
+
+        metadataConfig.setName(testMetaConf + "_1");
+        metadataConfigService.saveMetadataConfig(metadataConfig);
+
+        List<MetadataConfig> secondPageResults = metadataConfigService.findAllMetadataConfigByOwnerId(ownerId, new TextPageLink(1, firstPageResults.get(0).getUuidId())).getData();
+        Assert.assertEquals(1, secondPageResults.size());
+        Assert.assertNotEquals(firstPageResults.get(0), secondPageResults.get(0));
+
         tearDown(savedMetadataConfig.getId());
-    }
-
-    @Test
-    public void findAllMetadataConfig() {
-        MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
-        Assert.assertNotNull(savedMetadataConfig);
-
-        MetadataConfig metadataConfig1 = new MetadataConfig();
-        MetadataConfig savedMetadataConfig1 = metadataConfigService.saveMetadataConfig(metadataConfig1);
-        Assert.assertNotNull(savedMetadataConfig1);
-
-        List<MetadataConfig> found = metadataConfigService.findAllMetadataConfig();
-        Assert.assertEquals(2, found.size());
-        tearDown(savedMetadataConfig.getId());
-        tearDown(savedMetadataConfig1.getId());
     }
 
     @Test

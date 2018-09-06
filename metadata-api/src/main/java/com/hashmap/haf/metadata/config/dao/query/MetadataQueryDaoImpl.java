@@ -1,11 +1,14 @@
 package com.hashmap.haf.metadata.config.dao.query;
 
+import com.hashmap.haf.metadata.config.constants.ModelConstants;
 import com.hashmap.haf.metadata.config.dao.DaoUtil;
 import com.hashmap.haf.metadata.config.entity.query.MetadataQueryEntity;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.utils.UUIDConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +37,13 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
     }
 
     @Override
-    public List<MetadataQuery> findByMetadataConfigId(UUID metadataId) {
-        String key = UUIDConverter.fromTimeUUID(metadataId);
-        List<MetadataQueryEntity> metadataConfigEntities = metadataQueryRepository.findByMetadataConfigId(key);
-        return DaoUtil.convertDataList(metadataConfigEntities);
+    public List<MetadataQuery> findByMetadataConfigId(UUID metadataId, TextPageLink pageLink) {
+        List<MetadataQueryEntity> metadataQueryEntities = metadataQueryRepository.findByMetadataConfigId(
+                UUIDConverter.fromTimeUUID(metadataId),
+                pageLink.getIdOffset() == null ? ModelConstants.NULL_UUID_STR : UUIDConverter.fromTimeUUID(pageLink.getIdOffset()),
+                new PageRequest(0, pageLink.getLimit())
+        );
+        return DaoUtil.convertDataList(metadataQueryEntities);
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.hashmap.haf.metadata.config.controller.config;
 
+import com.hashmap.haf.metadata.config.controller.BaseController;
 import com.hashmap.haf.metadata.config.exceptions.MetadataException;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +14,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
 @Slf4j
-public class MetadataConfigController {
+public class MetadataConfigController extends BaseController {
 
     @Autowired
     private MetadataConfigService metadataConfigService;
 
-    private final String CONNECTED = "{\"status\": \"CONNECTED\" }";
-    private final String NOT_CONNECTED = "{\"status\": \"NOT CONNECTED\" }";
+    private static final String CONNECTED = "{\"status\": \"CONNECTED\" }";
+    private static final String NOT_CONNECTED = "{\"status\": \"NOT CONNECTED\" }";
 
 
     @PreAuthorize("#oauth2.hasScope('server')")
@@ -55,23 +57,13 @@ public class MetadataConfigController {
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")
-    @RequestMapping(value = "/metaconfig", method = RequestMethod.GET)
-    public ResponseEntity getMetadataConfigs() {
+    @RequestMapping(value = "/metaconfig/owner/{ownerId}", params = {"limit"}, method = RequestMethod.GET)
+    public ResponseEntity getMetadataConfigsByOwnerId(@PathVariable String ownerId,
+                                                      @RequestParam int limit,
+                                                      @RequestParam(required = false) String idOffset ) {
         try {
-            List<MetadataConfig> metadataConfigs = checkNotNull(metadataConfigService.findAllMetadataConfig());
-            return ResponseEntity.status(HttpStatus.OK)
-            .body(metadataConfigs);
-        }catch (MetadataException exp){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(exp.getMessage());
-        }
-    }
-
-    @PreAuthorize("#oauth2.hasScope('server')")
-    @RequestMapping(value = "/metaconfig/owner/{ownerId}", method = RequestMethod.GET)
-    public ResponseEntity getMetadataConfigsByOwnerId(@PathVariable String ownerId) {
-        try {
-            List<MetadataConfig> metadataConfigs = checkNotNull(metadataConfigService.findAllMetadataConfigByOwnerId(ownerId));
+            TextPageLink pageLink = createPageLink(limit, null, idOffset, null);
+            TextPageData<MetadataConfig> metadataConfigs = checkNotNull(metadataConfigService.findAllMetadataConfigByOwnerId(ownerId, pageLink));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(metadataConfigs);
         }catch (MetadataException exp) {
