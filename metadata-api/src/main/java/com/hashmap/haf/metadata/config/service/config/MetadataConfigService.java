@@ -2,8 +2,8 @@ package com.hashmap.haf.metadata.config.service.config;
 
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
-
-import java.util.List;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 
 public interface MetadataConfigService  {
 
@@ -13,9 +13,7 @@ public interface MetadataConfigService  {
 
     void deleteMetadataConfig(MetadataConfigId metadataConfigId);
 
-    List<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId);
-
-    List<MetadataConfig> findAllMetadataConfig();
+    TextPageData<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId, TextPageLink pageLink);
 
     MetadataConfig updateMetadataConfig(MetadataConfig metadataConfig);
 

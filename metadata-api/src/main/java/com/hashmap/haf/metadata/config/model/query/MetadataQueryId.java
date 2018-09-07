@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class MetadataQueryId extends UUIDBased {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7886135931067116998L;
 
     @JsonCreator
     public MetadataQueryId(@JsonProperty("id") UUID id) {

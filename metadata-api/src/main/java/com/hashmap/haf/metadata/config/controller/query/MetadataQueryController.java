@@ -1,9 +1,12 @@
 package com.hashmap.haf.metadata.config.controller.query;
 
+import com.hashmap.haf.metadata.config.controller.BaseController;
 import com.hashmap.haf.metadata.config.exceptions.MetadataException;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
 @Slf4j
-public class MetadataQueryController {
+public class MetadataQueryController extends BaseController {
 
     @Autowired
     private MetadataQueryService metadataQueryService;
@@ -53,11 +55,14 @@ public class MetadataQueryController {
 
 
     @PreAuthorize("#oauth2.hasScope('server')")
-    @RequestMapping(value = "/metaquery/metaconfig/{id}", method = RequestMethod.GET)
-    public ResponseEntity getAllMetadataQueryByMetadataId(@PathVariable String id) {
+    @RequestMapping(value = "/metaquery/metaconfig/{id}", params = {"limit"}, method = RequestMethod.GET)
+    public ResponseEntity getAllMetadataQueryByMetadataId(@PathVariable String id,
+                                                          @RequestParam int limit,
+                                                          @RequestParam(required = false) String idOffset) {
         try {
             MetadataConfigId metadataConfigId =  new MetadataConfigId(UUID.fromString(id));
-            List<MetadataQuery> metadataQueries = checkNotNull(metadataQueryService.findAllMetadataQueryByMetadataId(metadataConfigId));
+            TextPageLink pageLink = createPageLink(limit, null, idOffset, null);
+            TextPageData<MetadataQuery> metadataQueries = checkNotNull(metadataQueryService.findAllMetadataQueryByMetadataId(metadataConfigId, pageLink));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(metadataQueries);
         }catch (MetadataException exp) {
@@ -74,7 +79,7 @@ public class MetadataQueryController {
         metadataQueryService.deleteMetadataQuery(metadataQueryId);
     }
 
-    private <T> T checkNotNull(T reference) throws MetadataException {
+    private <T> T checkNotNull(T reference) {
         if (reference == null) {
             throw new MetadataException("{\"error\":\"Requested item wasn't found!\"}");
         }

@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.dao.config;
 
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,7 @@ public interface MetadataConfigDao {
 
     Optional<MetadataConfig> findById(UUID id);
 
-    List<MetadataConfig> findByOwnerId(String ownerId);
-
-    List<MetadataConfig> findAll();
+    List<MetadataConfig> findByOwnerId(String ownerId, TextPageLink textPageLink);
 
     boolean removeById(UUID id);
 }

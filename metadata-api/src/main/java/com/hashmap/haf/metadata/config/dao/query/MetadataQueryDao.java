@@ -1,6 +1,7 @@
 package com.hashmap.haf.metadata.config.dao.query;
 
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +15,9 @@ public interface MetadataQueryDao {
 
     List<MetadataQuery> findAll();
 
-    List<MetadataQuery> findByMetadataConfigId(UUID metadataId);
+    List<MetadataQuery> findByMetadataConfigId(UUID metadataId, TextPageLink pageLink);
 
     boolean removeById(UUID id);
 
     int removeByMetadataConfigId(UUID metadataId);
-
 }

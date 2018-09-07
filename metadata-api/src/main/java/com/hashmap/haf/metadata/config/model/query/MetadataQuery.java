@@ -1,12 +1,15 @@
 package com.hashmap.haf.metadata.config.model.query;
 
-import com.hashmap.haf.metadata.config.model.BaseData;
+import com.hashmap.haf.metadata.config.model.SearchTextBased;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.trigger.TriggerType;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class MetadataQuery extends BaseData<MetadataQueryId> {
+public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
+
+    private static final long serialVersionUID = 3828979402280029033L;
+
     private MetadataConfigId metadataConfigId;
     private String queryStmt;
     private TriggerType triggerType;
@@ -29,6 +32,11 @@ public class MetadataQuery extends BaseData<MetadataQueryId> {
 
     public MetadataConfigId getMetadataConfigId() {
         return metadataConfigId;
+    }
+
+    @Override
+    public String getSearchText() {
+        return getQueryStmt();
     }
 
     public void setMetadataConfigId(MetadataConfigId metadataConfigId) {

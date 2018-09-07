@@ -1,11 +1,13 @@
 package com.hashmap.haf.metadata.config.test.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.metadata.config.dao.query.MetadataQueryDao;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import lombok.extern.slf4j.Slf4j;
@@ -128,7 +130,7 @@ public class MetadataQueryControllerSqlIT {
         Assert.assertNotNull(updatedMetadataQuery);
         Assert.assertEquals(savedMetadataQuery.getId(), updatedMetadataQuery.getId());
         Assert.assertNotEquals(updatedMetadataQuery.getQueryStmt(), savedMetadataQuery.getQueryStmt());
-        Assert.assertEquals(updatedMetadataQuery.getQueryStmt(), "DELETE FROM table_name");
+        Assert.assertEquals("DELETE FROM table_name", updatedMetadataQuery.getQueryStmt());
         Assert.assertEquals(updatedMetadataQuery, metadataQueryDao.findById(updatedMetadataQuery.getUuidId()).get());
 
         tearDown(savedMetadataQuery.getId());
@@ -183,13 +185,13 @@ public class MetadataQueryControllerSqlIT {
         metadataQuery.setMetadataConfigId(metadataConfigId);
         MetadataQuery savedMetadataQuery = metadataQueryService.saveMetadataQuery(metadataQuery);
         MvcResult mvcResult = mockMvc.perform(
-                get("/api/metaquery/metaconfig/" + metadataConfigId.getId().toString())
+                get("/api/metaquery/metaconfig/" + metadataConfigId.getId().toString() + "?limit=1")
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
-        List found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List<MetadataQuery> found = ((TextPageData)mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<TextPageData<MetadataQuery>>(){})).getData();
         Assert.assertNotNull(found);
         Assert.assertEquals(1, found.size());
         tearDown(savedMetadataQuery.getId());

@@ -1,9 +1,11 @@
 package com.hashmap.haf.metadata.config.test.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hashmap.haf.metadata.config.dao.config.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.*;
@@ -111,7 +113,7 @@ public class MetadataConfigControllerSqlIT {
         Assert.assertNotNull(updatedMetadataConfig);
         Assert.assertEquals(savedMetadataConfig.getId(), updatedMetadataConfig.getId());
         Assert.assertNotEquals(updatedMetadataConfig.getName(), savedMetadataConfig.getName());
-        Assert.assertEquals(updatedMetadataConfig.getName(), "Configuration");
+        Assert.assertEquals("Configuration", updatedMetadataConfig.getName());
         Assert.assertEquals(updatedMetadataConfig, metadataConfigDao.findById(updatedMetadataConfig.getUuidId()).get());
 
         tearDown(savedMetadataConfig.getId());
@@ -151,26 +153,6 @@ public class MetadataConfigControllerSqlIT {
     }
 
     @Test
-    public void getMetadataConfigs() throws Exception {
-        String json = mapper.writeValueAsString(metadataConfig);
-        MetadataConfig metadataConfig1 = new MetadataConfig();
-        MetadataConfig savedMetadataConfig1 = metadataConfigService.saveMetadataConfig(metadataConfig);
-        MetadataConfig savedMetadataConfig2 = metadataConfigService.saveMetadataConfig(metadataConfig1);
-        MvcResult mvcResult = mockMvc.perform(
-                get("/api/metaconfig")
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer " + adminToken)
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
-        List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
-        Assert.assertNotNull(found);
-        Assert.assertEquals(2, found.size());
-        tearDown(savedMetadataConfig1.getId());
-        tearDown(savedMetadataConfig2.getId());
-    }
-
-    @Test
     public void shouldReturnUnauthorizedResponseWhileGetMetadataConfigs() throws Exception {
         MvcResult mvcResult = mockMvc.perform(
                 get("/api/metaconfig")
@@ -187,13 +169,13 @@ public class MetadataConfigControllerSqlIT {
         metadataConfig.setOwnerId(ownerId);
         MetadataConfig savedMetadataConfig = metadataConfigService.saveMetadataConfig(metadataConfig);
         MvcResult mvcResult = mockMvc.perform(
-                get("/api/metaconfig/owner/" + ownerId)
+                get("/api/metaconfig/owner/" + ownerId + "?limit=1")
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + adminToken)
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
-        List<MetadataConfig> found = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List<MetadataConfig> found = ((TextPageData)mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<TextPageData<MetadataConfig>>(){})).getData();
         Assert.assertNotNull(found);
         Assert.assertEquals(1, found.size());
         tearDown(savedMetadataConfig.getId());

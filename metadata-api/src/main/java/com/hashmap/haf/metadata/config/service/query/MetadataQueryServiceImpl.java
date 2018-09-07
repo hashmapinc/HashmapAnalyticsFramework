@@ -9,8 +9,9 @@ import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.query.MetadataQueryId;
+import com.hashmap.haf.metadata.config.page.TextPageData;
+import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.config.MetadataConfigService;
-import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
 import com.hashmap.haf.metadata.config.utils.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,13 +42,8 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
             throw new DataValidationException("Metadata-Query Object cannot be null");
         }
         log.trace("Executing saveMetadataQuery [{}]", metadataQuery);
-        MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(metadataQuery.getMetadataConfigId());
-        if (metadataConfig == null) {
-            throw new DataValidationException("Metadata-Config Object with ID: " + metadataQuery.getMetadataConfigId() + " not found");
-        }
         MetadataQuery savedMetadataQuery = metadataQueryDao.save(metadataQuery);
-        managerActorService.process(new QueryMessage(savedMetadataQuery, metadataConfig, MessageType.CREATE));
-        return savedMetadataQuery;
+        return scheduleQuery(savedMetadataQuery);
     }
 
     @Override
@@ -59,10 +56,10 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
 
 
     @Override
-    public List<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId) {
+    public TextPageData<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId, TextPageLink pageLink) {
         log.trace("Executing findAllMetadataQueryByMetadataId [{}]", metadataConfigId);
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
-        return metadataQueryDao.findByMetadataConfigId(metadataConfigId.getId());
+        return new TextPageData<>(metadataQueryDao.findByMetadataConfigId(metadataConfigId.getId(), pageLink), pageLink);
     }
 
     @Override
@@ -96,12 +93,6 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
     }
 
     @Override
-    public List<MetadataQuery> findAllMetadataQuery() {
-        log.trace("Executing findAllMetadataQuery [{}]");
-        return metadataQueryDao.findAll();
-    }
-
-    @Override
     public void deleteMetadataQuery(MetadataQueryId metadataQueryId) {
         log.trace("Executing deleteMetadataQuery [{}]", metadataQueryId);
         Validator.validateId(metadataQueryId, INCORRECT_METADATAQUERY_ID + metadataQueryId);
@@ -113,4 +104,15 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
         }
     }
 
+    @Override
+    public List<MetadataQuery> scheduleAllQueries() {
+        return metadataQueryDao.findAll().stream().map(this::scheduleQuery).collect(Collectors.toList());
+    }
+
+    private MetadataQuery scheduleQuery(MetadataQuery query) {
+        MetadataConfig metadataConfig = metadataConfigService.findMetadataConfigById(query.getMetadataConfigId());
+        log.info("Scheduling metadata query [{}]", query);
+        managerActorService.process(new QueryMessage(query, metadataConfig, MessageType.CREATE));
+        return query;
+    }
 }
