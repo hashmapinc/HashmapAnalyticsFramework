@@ -8,7 +8,6 @@ import com.hashmap.haf.metadata.config.dao.config.MetadataConfigDao;
 import com.hashmap.haf.metadata.config.exceptions.DataValidationException;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfigId;
-import com.hashmap.haf.metadata.config.model.data.resource.jdbc.JdbcResource;
 import com.hashmap.haf.metadata.config.page.TextPageData;
 import com.hashmap.haf.metadata.config.page.TextPageLink;
 import com.hashmap.haf.metadata.config.service.query.MetadataQueryService;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -43,9 +41,7 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         }
         log.trace("Executing saveMetadataConfig [{}]", metadataConfig);
         MetadataConfig savedMetadataConfig = metadataConfigDao.save(metadataConfig);
-        decodePassword(savedMetadataConfig);
         managerActorService.process(new MetadataMessage(savedMetadataConfig, MessageType.CREATE));
-        encodePassword(savedMetadataConfig);
         return savedMetadataConfig;
     }
 
@@ -76,9 +72,7 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         if (savedMetadataConfig.isPresent()){
             savedMetadataConfig.get().update(metadataConfig);
             MetadataConfig updatedMetadataConfig = metadataConfigDao.save(savedMetadataConfig.get());
-            decodePassword(updatedMetadataConfig);
             managerActorService.process(new MetadataMessage(updatedMetadataConfig, MessageType.UPDATE));
-            encodePassword(updatedMetadataConfig);
             return updatedMetadataConfig;
         } else {
             throw new DataValidationException("Can't update for non-existent metaDataConfig!");
@@ -103,9 +97,7 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
         if (metadataConfig != null) {
-            decodePassword(metadataConfig);
             managerActorService.process(new RunIngestionMsg(metadataConfig));
-            encodePassword(metadataConfig);
         }
         return metadataConfig;
     }
@@ -123,19 +115,5 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
             }
         }
         return false;
-    }
-
-    private void encodePassword(MetadataConfig metadataConfig) {
-        if (metadataConfig.getSource() instanceof JdbcResource) {
-            String password = ((JdbcResource) metadataConfig.getSource()).getPassword();
-            ((JdbcResource) metadataConfig.getSource()).setPassword(Base64.getEncoder().encodeToString(password.getBytes()));
-        }
-    }
-
-    private void decodePassword(MetadataConfig metadataConfig) {
-        if (metadataConfig.getSource() instanceof JdbcResource) {
-            String password = ((JdbcResource) metadataConfig.getSource()).getPassword();
-            ((JdbcResource) metadataConfig.getSource()).setPassword(new String(Base64.getDecoder().decode(password)));
-        }
     }
 }
