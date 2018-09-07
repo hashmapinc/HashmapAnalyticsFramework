@@ -11,12 +11,14 @@ import com.hashmap.haf.metadata.config.actors.message.scheduler.CreateJob;
 import com.hashmap.haf.metadata.config.actors.service.ActorSystemContext;
 import com.hashmap.haf.metadata.config.actors.service.ManagerActorService;
 import com.hashmap.haf.metadata.config.model.config.MetadataConfig;
+import com.hashmap.haf.metadata.config.model.data.resource.jdbc.JdbcResource;
 import com.hashmap.haf.metadata.config.model.data.resource.rest.RestResource;
 import com.hashmap.haf.metadata.config.model.query.MetadataQuery;
 import com.hashmap.haf.metadata.config.model.data.resource.DataResource;
 import com.hashmap.haf.metadata.config.requests.IngestMetadataRequest;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Base64;
 import java.util.Map;
 
 @Slf4j
@@ -31,6 +33,7 @@ public class MetadataQueryActor extends AbstractActor {
         this.actorSystemContext = actorSystemContext;
         this.metadataConfig = metadataConfig;
         this.metadataQuery = metadataQuery;
+        decodePassword();
     }
 
     static public Props props(ActorSystemContext actorSystemContext, MetadataConfig metadataConfig, MetadataQuery metadataQuery) {
@@ -95,5 +98,12 @@ public class MetadataQueryActor extends AbstractActor {
 
     private static String getQueryDispatcher() {
         return ManagerActorService.QUERY_DISPATCHER;
+    }
+
+    private void decodePassword() {
+        if (metadataConfig.getSource() instanceof JdbcResource) {
+            String password = ((JdbcResource) metadataConfig.getSource()).getPassword();
+            ((JdbcResource) metadataConfig.getSource()).setPassword(new String(Base64.getDecoder().decode(password)));
+        }
     }
 }
