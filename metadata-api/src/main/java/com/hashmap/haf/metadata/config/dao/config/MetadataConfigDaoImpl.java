@@ -31,8 +31,8 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
     @Override
     @Transactional
     public MetadataConfig save(MetadataConfig metadataConfig) {
-        MetadataConfig encryptMetadata = cleanUpForDb(metadataConfig);
-        MetadataConfigEntity metadataConfigEntity = new MetadataConfigEntity(encryptMetadata);
+        MetadataConfig cleanedMetadata = cleanUpForDb(metadataConfig);
+        MetadataConfigEntity metadataConfigEntity = new MetadataConfigEntity(cleanedMetadata);
         MetadataConfigEntity savedMetadataConfigEntity = metadataConfigRepository.save(metadataConfigEntity);
         MetadataConfig metadata = DaoUtil.getData(savedMetadataConfigEntity);
         return cleanUpFromDb(metadata);
