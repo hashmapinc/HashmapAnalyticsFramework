@@ -41,5 +41,5 @@ security:
       tokenInfoUri: http://localhost:9002/uaa/oauth/check_token
 
 password:
-  jdbc-encrypt-salt: "${JDBC_ENCRYPT_SALT:HAFMetadataServiceSalt}"
+  encrypt-salt: "${ENCRYPTION_SALT:HAFMetadataServiceSalt}"
 
