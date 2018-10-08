@@ -85,8 +85,8 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
         Validator.validateId(metadataConfigId, INCORRECT_METADATACONFIG_ID + metadataConfigId);
         MetadataConfig metadataConfig = findMetadataConfigById(metadataConfigId);
         if (metadataConfig != null) {
-            metadataConfigDao.removeById(metadataConfigId.getId());
             metadataQueryService.deleteMetadataQueryByMetadataConfigId(metadataConfigId);
+            metadataConfigDao.removeById(metadataConfigId.getId());
             managerActorService.process(new MetadataMessage(metadataConfig, MessageType.DELETE));
         }
     }
