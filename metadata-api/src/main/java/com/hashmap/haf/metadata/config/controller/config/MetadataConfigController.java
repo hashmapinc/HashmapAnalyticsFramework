@@ -103,7 +103,7 @@ public class MetadataConfigController extends BaseController {
             return  ResponseEntity.status(HttpStatus.OK)
                     .body(CONNECTED);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(NOT_CONNECTED);
         }
 
