@@ -78,12 +78,22 @@
             <appender-ref ref="SAVE-TO-FILE"/>
         </logger>
     </springProfile>
-
     <springProfile name="prod">
         <root level="info">
             <appender-ref ref="SAVE-TO-FILE"/>
         </root>
         <logger name="com.hashmap.haf.metadata.config" additivity="false" level="error">
+            <appender-ref ref="SAVE-TO-FILE"/>
+        </logger>
+    </springProfile>
+    <springProfile name="install">
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+        </root>
+        <root level="info">
+            <appender-ref ref="SAVE-TO-FILE"/>
+        </root>
+        <logger name="com.hashmap.haf.metadata.config" additivity="false" level="info">
             <appender-ref ref="SAVE-TO-FILE"/>
         </logger>
     </springProfile>
