@@ -1,7 +1,7 @@
 spring.application:
     name: metadata-service
 
-spring.profiles.active: install
+spring.profiles.active: ${SPRING_PROFILE:install}
 
 server:
   # Server bind address
