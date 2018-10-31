@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,11 +107,12 @@ public class JdbcResource extends DataResource<JdbcResourceId> {
     }
 
     private DataSource getDataSource() {
+        String decodedPassword = new String(Base64.getDecoder().decode(this.password));
         return DataSourceBuilder
                 .create()
                 .url(this.dbUrl)
                 .username(this.username)
-                .password(this.password)
+                .password(decodedPassword)
                 .driverClassName(getJdbcDriver())
                 .build();
     }
