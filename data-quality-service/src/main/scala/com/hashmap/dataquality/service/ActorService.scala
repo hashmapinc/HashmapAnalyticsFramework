@@ -1,8 +1,10 @@
 package com.hashmap.dataquality.service
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.hashmap.dataquality.actor.{ActorSystemContext, MasterActor}
+import com.hashmap.dataquality.message.KafkaInboundMsg
 import javax.annotation.PostConstruct
+import lombok.Data
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,6 +19,10 @@ class ActorService {
   @Autowired
   private var actorContext: ActorSystemContext = _
 
+  // Getter
+  def getActorContext = actorContext
+
+
   @PostConstruct
   def init() = {
     val actorSystem = ActorSystem.create(ACTOR_SYSTEM_NAME, actorContext.config)
@@ -26,6 +32,10 @@ class ActorService {
     actorContext.actorApp = appActor
 
     print("Intialized!!!")
+  }
+
+  def process(msg: KafkaInboundMsg): Unit = {
+    actorContext.actorApp.tell(msg, ActorRef.noSender)
   }
 
 }
