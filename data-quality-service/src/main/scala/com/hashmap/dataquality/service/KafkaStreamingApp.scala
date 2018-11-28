@@ -4,12 +4,9 @@ import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hashmap.dataquality.qualitycheck.QualityCheck
 import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.streams.kstream.{TimeWindows, Windowed}
-import org.apache.kafka.streams.scala.ImplicitConversions._
-import org.apache.kafka.streams.scala.Serdes._
 import org.apache.kafka.streams.scala.StreamsBuilder
-import org.apache.kafka.streams.scala.kstream.{KStream, KTable}
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -21,7 +18,7 @@ class KafkaStreamingApp {
   case class TelemetryData(deviceId: String, tagList: Map[String, String])
 
   @Autowired
-  private var actorService: ActorService = _;
+  private var qualityChecks: List[QualityCheck] = _
 
   def run(): Unit = {
     val config = new Properties()
