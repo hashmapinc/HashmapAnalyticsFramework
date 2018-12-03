@@ -13,6 +13,8 @@ public interface MetadataConfigDao {
 
     Optional<MetadataConfig> findById(UUID id);
 
+    Optional<MetadataConfig> findByNameAndOwnerId(String name, String ownerId);
+
     List<MetadataConfig> findByOwnerId(String ownerId, TextPageLink textPageLink);
 
     boolean removeById(UUID id);

@@ -54,6 +54,14 @@ public class MetadataConfigServiceImpl implements MetadataConfigService {
     }
 
     @Override
+    public MetadataConfig findMetadataConfigByNameAndOwnerId(String name , String ownerId) {
+        log.trace("Executing findMetadataConfigByNameAndOwnerId [{}], [{}]", name, ownerId);
+        Validator.validateString(ownerId, INCORRECT_OWNER_ID + ownerId);
+        Optional<MetadataConfig> metadataConfig = metadataConfigDao.findByNameAndOwnerId(name, ownerId);
+        return metadataConfig.orElse(null);
+    }
+
+    @Override
     public TextPageData<MetadataConfig> findAllMetadataConfigByOwnerId(String ownerId, TextPageLink pageLink) {
         log.trace("Executing findAllMetadataConfigByOwnerId [{}]", ownerId);
         Validator.validateString(ownerId, INCORRECT_OWNER_ID + ownerId);

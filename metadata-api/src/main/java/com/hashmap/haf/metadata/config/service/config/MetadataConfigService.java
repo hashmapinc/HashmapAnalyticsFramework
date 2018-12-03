@@ -9,6 +9,8 @@ public interface MetadataConfigService  {
 
     MetadataConfig findMetadataConfigById(MetadataConfigId metadataConfigId);
 
+    MetadataConfig findMetadataConfigByNameAndOwnerId(String name, String ownerId);
+
     MetadataConfig saveMetadataConfig(MetadataConfig metadataConfig);
 
     void deleteMetadataConfig(MetadataConfigId metadataConfigId);
