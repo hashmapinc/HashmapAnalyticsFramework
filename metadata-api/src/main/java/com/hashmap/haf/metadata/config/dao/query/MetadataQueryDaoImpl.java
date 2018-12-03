@@ -47,6 +47,11 @@ public class MetadataQueryDaoImpl implements MetadataQueryDao {
     }
 
     @Override
+    public Optional<MetadataQuery> findByQueryStmtAndMetadataConfigId(String queryStmt , UUID metadataId) {
+        return Optional.ofNullable(DaoUtil.getData(metadataQueryRepository.findByQueryStmtAndMetadataConfigId(queryStmt, UUIDConverter.fromTimeUUID(metadataId))));
+    }
+
+    @Override
     public List<MetadataQuery> findAll() {
         List<MetadataQueryEntity> metadataQueryEntities = metadataQueryRepository.findAll();
         return DaoUtil.convertDataList(metadataQueryEntities);

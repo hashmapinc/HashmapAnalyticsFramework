@@ -17,6 +17,8 @@ public interface MetadataQueryDao {
 
     List<MetadataQuery> findByMetadataConfigId(UUID metadataId, TextPageLink pageLink);
 
+    Optional<MetadataQuery> findByQueryStmtAndMetadataConfigId(String queryStmt, UUID metadataId);
+
     boolean removeById(UUID id);
 
     int removeByMetadataConfigId(UUID metadataId);

@@ -28,8 +28,14 @@ public class MetadataQueryController extends BaseController {
     @PreAuthorize("#oauth2.hasScope('server')")
     @RequestMapping(value = "/metaquery", method = RequestMethod.POST)
     public ResponseEntity saveMetadataQuery(@RequestBody MetadataQuery metadataQuery) {
-        MetadataQuery savedMetadataQuery = checkNotNull(metadataQueryService.saveMetadataQuery(metadataQuery));
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMetadataQuery);
+        if (metadataQuery.getId() == null
+                && metadataQueryService.findMetadataQueryByQueryStmtAndMetadataConfigId(
+                        metadataQuery.getQueryStmt(), metadataQuery.getMetadataConfigId()) == null) {
+            MetadataQuery savedMetadataQuery = checkNotNull(metadataQueryService.saveMetadataQuery(metadataQuery));
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMetadataQuery);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("MetadataQuery already present with this query statement.");
+        }
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")

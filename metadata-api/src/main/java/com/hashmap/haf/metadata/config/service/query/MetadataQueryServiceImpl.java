@@ -54,6 +54,13 @@ public class MetadataQueryServiceImpl  implements MetadataQueryService {
         return metadataQuery.orElse(null);
     }
 
+    @Override
+    public MetadataQuery findMetadataQueryByQueryStmtAndMetadataConfigId(String queryStmt , MetadataConfigId metadataConfigId) {
+        log.trace("Executing findMetadataQueryByQueryStmtAndMetadataConfigId [{}], [{}]", queryStmt, metadataConfigId);
+        Validator.validateId(metadataConfigId, INCORRECT_METADATAQUERY_ID+ metadataConfigId);
+        Optional<MetadataQuery> foundMetadataQuery = metadataQueryDao.findByQueryStmtAndMetadataConfigId(queryStmt, metadataConfigId.getId());
+        return foundMetadataQuery.orElse(null);
+    }
 
     @Override
     public TextPageData<MetadataQuery> findAllMetadataQueryByMetadataId(MetadataConfigId metadataConfigId, TextPageLink pageLink) {
