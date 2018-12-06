@@ -2,7 +2,6 @@ package com.hashmap.dataquality.data
 
 import org.codehaus.jackson.annotate.JsonProperty
 
-case class TelemetryData(@JsonProperty("deviceId") deviceId: String,
-                         @JsonProperty("ts") ts: Long,
-                         @JsonProperty("tag") tag: String,
-                         @JsonProperty("value") value: String)
+import scala.collection.mutable.ListBuffer
+
+case class TelemetryData(@JsonProperty("tagList") tagList: ListBuffer[TsKvData])
