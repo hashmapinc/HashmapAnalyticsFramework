@@ -4,15 +4,15 @@ import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 import com.hashmap.dataquality.data.TelemetryData
+import com.hashmap.dataquality.processor.{TelemetryDataConsumer, WindowProcessor}
 import com.hashmap.dataquality.serdes.TelemetryDataSerde
-import org.apache.kafka.common.serialization.{Serde, Serdes}
-import org.apache.kafka.streams.kstream.{Consumed, TimeWindows}
-import org.apache.kafka.streams.scala.ImplicitConversions._
-import org.apache.kafka.streams.scala.Serdes._
-import org.apache.kafka.streams.scala.StreamsBuilder
-import org.apache.kafka.streams.scala.kstream.KStream
-import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
+import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.streams.processor.ProcessorSupplier
+import org.apache.kafka.streams.state.Stores
+import org.apache.kafka.streams.{KafkaStreams, StreamsConfig, Topology}
 import org.springframework.stereotype.Service
+
+import scala.language.postfixOps
 
 
 @Service
@@ -24,29 +24,35 @@ class KafkaStreamingApp {
     config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
     config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String.getClass)
     config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, "com.hashmap.dataquality.serdes.TelemetryDataSerde")
-    implicit val telemetryDataSerde: Serde[TelemetryData] = new TelemetryDataSerde;
     config.put("auto.offset.reset", "latest")
 
-    val builder = new StreamsBuilder()
-    implicit val consumer: Consumed[String, TelemetryData] = Consumed.`with`(Serdes.String(), telemetryDataSerde)
-    val inputData: KStream[String, TelemetryData] = builder.stream("data-quality-topic")
-    val ktable = inputData
-      .groupByKey
-      .windowedBy(TimeWindows.of(TimeUnit.SECONDS.toMillis(60000)))
-      .reduce(reducer)
+    val aggregatedValueStore = Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("aggregated-value-store"),
+      new Serdes.StringSerde, new TelemetryDataSerde)
 
-    val streams = new KafkaStreams(builder.build(), config)
+    val builder = new Topology()
+
+    // add the source processor node that takes Kafka topic "source-topic" as input
+
+    builder.addSource("Source", "data-quality-topic")
+      .addProcessor("Consumer-Processor",
+        new ProcessorSupplier[String, TelemetryData]() {
+          override def get = new TelemetryDataConsumer()
+        }, "Source")
+
+    builder.addProcessor("Window-Processor",
+        new ProcessorSupplier[String, TelemetryData]() {
+          override def get = new WindowProcessor()
+        }, "Consumer-Processor")
+
+    builder.addStateStore(aggregatedValueStore, "Consumer-Processor")
+
+    val streams = new KafkaStreams(builder, config)
 
     streams.start()
 
     sys.ShutdownHookThread {
       streams.close(10, TimeUnit.SECONDS)
     }
-  }
-
-  def reducer(data: TelemetryData, value: TelemetryData): TelemetryData = {
-    println(s"""-----  Value ----- $value""")
-    value
   }
 
 }
