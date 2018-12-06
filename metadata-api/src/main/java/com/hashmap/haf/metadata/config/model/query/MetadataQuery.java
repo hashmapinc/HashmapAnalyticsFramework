@@ -14,6 +14,7 @@ public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
     private String queryStmt;
     private TriggerType triggerType;
     private String triggerSchedule;
+    private String attribute;
 
     public MetadataQuery() {
     }
@@ -28,6 +29,7 @@ public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
         this.queryStmt = metadataQuery.queryStmt;
         this.triggerType = metadataQuery.triggerType;
         this.triggerSchedule = metadataQuery.triggerSchedule;
+        this.attribute = metadataQuery.attribute;
     }
 
     public MetadataConfigId getMetadataConfigId() {
@@ -67,6 +69,14 @@ public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
         this.triggerSchedule = triggerSchedule;
     }
 
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
     @Override
     public String toString() {
         return "MetadataQuery{" +
@@ -74,6 +84,7 @@ public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
                 ", queryStmt=" + queryStmt +
                 ", triggerType=" + triggerType +
                 ", triggerSchedule=" + triggerSchedule +
+                ", attribute=" + attribute +
                 '}';
     }
 
@@ -83,5 +94,6 @@ public class MetadataQuery extends SearchTextBased<MetadataQueryId> {
         }
         this.setTriggerType(metadataQuery.getTriggerType());
         this.setTriggerSchedule(metadataQuery.getTriggerSchedule());
+        this.setAttribute(metadataQuery.getAttribute());
     }
 }

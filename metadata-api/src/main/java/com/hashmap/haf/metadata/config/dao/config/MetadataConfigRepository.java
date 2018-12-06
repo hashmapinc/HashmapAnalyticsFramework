@@ -17,4 +17,6 @@ public interface MetadataConfigRepository extends JpaRepository<MetadataConfigEn
     List<MetadataConfigEntity> findByOwnerId(@Param("ownerId") String ownerId,
                                              @Param("idOffset") String idOffset,
                                              Pageable pageable);
+
+    MetadataConfigEntity findByNameAndOwnerId(String name, String ownerId);
 }

@@ -20,10 +20,12 @@ CREATE TABLE IF NOT EXISTS metadata_resource_rest (
 
 
 CREATE TABLE IF NOT EXISTS metadata_query (
-  id varchar(31) NOT NULL CONSTRAINT query_pkey PRIMARY KEY,
-  query varchar NOT NULL UNIQUE,
+  id varchar(31) NOT NULL,
+  query varchar NOT NULL,
   metadata_id varchar(31) NOT NULL,
   trigger_schdl varchar,
   trigger_type varchar,
-  CONSTRAINT metadata_query_config_foreign_key foreign key (metadata_id) references metadata_config
+  attribute varchar,
+  CONSTRAINT metadata_query_config_foreign_key foreign key (metadata_id) references metadata_config,
+  CONSTRAINT query_pkey UNIQUE (id, metadata_id, query)
 );

@@ -12,6 +12,8 @@ public interface MetadataQueryService {
 
     MetadataQuery findMetadataQueryById(MetadataQueryId metadataQueryId);
 
+    MetadataQuery findMetadataQueryByQueryStmtAndMetadataConfigId(String queryStmt, MetadataConfigId metadataConfigId);
+
     MetadataQuery saveMetadataQuery(MetadataQuery metadataQuery);
 
     void deleteMetadataQuery(MetadataQueryId metadataQueryId);

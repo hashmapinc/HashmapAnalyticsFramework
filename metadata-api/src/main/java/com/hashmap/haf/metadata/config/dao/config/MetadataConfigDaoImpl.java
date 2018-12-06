@@ -47,6 +47,13 @@ public class MetadataConfigDaoImpl implements MetadataConfigDao {
     }
 
     @Override
+    public Optional<MetadataConfig> findByNameAndOwnerId(String name , String ownerId) {
+        Optional<MetadataConfig> metadataConfig = Optional.ofNullable(DaoUtil.getData(metadataConfigRepository.findByNameAndOwnerId(name, ownerId)));
+        metadataConfig.ifPresent(this::cleanUpFromDb);
+        return metadataConfig;
+    }
+
+    @Override
     public List<MetadataConfig> findByOwnerId(String ownerId, TextPageLink textPageLink) {
         List<MetadataConfigEntity> metadataConfigEntities = metadataConfigRepository.findByOwnerId(ownerId,
                 textPageLink.getIdOffset() == null ? ModelConstants.NULL_UUID_STR : UUIDConverter.fromTimeUUID(textPageLink.getIdOffset()),

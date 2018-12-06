@@ -36,6 +36,9 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
     @Column(name = ModelConstants.METADATA_QUERY_TRIGGER_SCHEDULE)
     private String triggerSchedule;
 
+    @Column(name = ModelConstants.METADATA_QUERY_ATTRIBUTE)
+    private String attribute;
+
     public MetadataQueryEntity() {
         super();
     }
@@ -54,6 +57,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         this.queryStmt = metadataQuery.getQueryStmt();
         this.triggerType = metadataQuery.getTriggerType();
         this.triggerSchedule = metadataQuery.getTriggerSchedule();
+        this.attribute = metadataQuery.getAttribute();
     }
 
     @Override
@@ -66,6 +70,7 @@ public class MetadataQueryEntity extends BaseSqlEntity<MetadataQuery> {
         metadataQuery.setQueryStmt(this.queryStmt);
         metadataQuery.setTriggerType(this.triggerType);
         metadataQuery.setTriggerSchedule(this.triggerSchedule);
+        metadataQuery.setAttribute(this.attribute);
         return metadataQuery;
     }
 }

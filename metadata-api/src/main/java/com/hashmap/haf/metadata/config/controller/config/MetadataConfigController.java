@@ -31,8 +31,12 @@ public class MetadataConfigController extends BaseController {
     @PreAuthorize("#oauth2.hasScope('server')")
     @RequestMapping(value = "/metaconfig", method = RequestMethod.POST)
     public ResponseEntity saveMetadataConfig(@RequestBody MetadataConfig metadataConfig) {
-        MetadataConfig savedMetadataConfig = checkNotNull(metadataConfigService.saveMetadataConfig(metadataConfig));
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMetadataConfig);
+        if (metadataConfig.getId() == null && metadataConfigService.findMetadataConfigByNameAndOwnerId(metadataConfig.getName(), metadataConfig.getOwnerId()) == null) {
+            MetadataConfig savedMetadataConfig = checkNotNull(metadataConfigService.saveMetadataConfig(metadataConfig));
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMetadataConfig);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("MetadataConfig already present for this name!");
+        }
     }
 
     @PreAuthorize("#oauth2.hasScope('server')")

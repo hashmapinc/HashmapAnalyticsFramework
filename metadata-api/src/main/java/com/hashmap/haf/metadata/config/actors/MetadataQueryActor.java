@@ -64,6 +64,7 @@ public class MetadataQueryActor extends AbstractActor {
                 .configId(metadataConfig.getId())
                 .configName(metadataConfig.getName())
                 .ownerId(metadataConfig.getOwnerId())
+                .attribute(metadataQuery.getAttribute())
                 .data(data)
                 .build();
         sink.push(payload);

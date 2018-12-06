@@ -19,4 +19,6 @@ public interface MetadataQueryRepository extends JpaRepository<MetadataQueryEnti
                                                      Pageable pageable);
 
     int removeByMetadataConfigId(@Param("metadataConfigId") String metadataConfigId);
+
+    MetadataQueryEntity findByQueryStmtAndMetadataConfigId(@Param("queryStmt") String query, @Param("metadataConfigId") String metadataConfigId);
 }
