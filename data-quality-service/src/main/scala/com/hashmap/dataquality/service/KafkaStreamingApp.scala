@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 import com.hashmap.dataquality.data.TelemetryData
 import com.hashmap.dataquality.processor.{TelemetryDataConsumer, WindowProcessor}
 import com.hashmap.dataquality.serdes.TelemetryDataSerde
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.processor.ProcessorSupplier
 import org.apache.kafka.streams.state.Stores
@@ -21,6 +22,7 @@ class KafkaStreamingApp {
   def run(): Unit = {
     val config = new Properties()
     config.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-quality-service-app")
+    config.put(ConsumerConfig.GROUP_ID_CONFIG, "1")
     config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
     config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String.getClass)
     config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, "com.hashmap.dataquality.serdes.TelemetryDataSerde")
