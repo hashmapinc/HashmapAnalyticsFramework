@@ -30,7 +30,10 @@ class MetadataDao {
 
   def fetch(id: String): Option[String] = {
     val v = db.get(id.getBytes(UTF8))
-    Some(new String(v, UTF8))
+    v match {
+      case null => None
+      case _ => Some(new String(v, UTF8))
+    }
   }
 
 }

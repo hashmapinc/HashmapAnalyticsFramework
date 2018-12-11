@@ -4,4 +4,4 @@ import org.codehaus.jackson.annotate.JsonProperty
 
 import scala.collection.mutable.ListBuffer
 
-case class TelemetryData(@JsonProperty("tagList") tagList: ListBuffer[TsKvData])
+case class KafkaInboundMsg(@JsonProperty("deviceName") deviceName: String, @JsonProperty("tagList") tagList: ListBuffer[TsKvData])

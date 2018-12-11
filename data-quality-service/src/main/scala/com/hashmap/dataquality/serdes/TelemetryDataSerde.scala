@@ -2,19 +2,19 @@ package com.hashmap.dataquality.serdes
 
 import java.util
 
-import com.hashmap.dataquality.data.TelemetryData
+import com.hashmap.dataquality.data.KafkaInboundMsg
 import org.apache.kafka.common.serialization.{Deserializer, Serde, Serializer}
 
-class TelemetryDataSerde extends Serde[TelemetryData]{
+class TelemetryDataSerde extends Serde[KafkaInboundMsg]{
 
-  val telemetryDataSerializer = new TelemetryDataSerializer
-  val telemetryDataDeserializer = new TelemetryDataDeserializer
+  val telemetryDataSerializer = new KafkaInboundMsgSerializer
+  val telemetryDataDeserializer = new KafkaInboundMsgDeserializer
 
-  override def deserializer(): Deserializer[TelemetryData] = {
+  override def deserializer(): Deserializer[KafkaInboundMsg] = {
      telemetryDataDeserializer
   }
 
-  override def serializer(): Serializer[TelemetryData] = {
+  override def serializer(): Serializer[KafkaInboundMsg] = {
      telemetryDataSerializer
   }
 

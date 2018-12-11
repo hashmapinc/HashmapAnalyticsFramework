@@ -1,0 +1,27 @@
+spring.application:
+    name: data-quality-service
+server:
+  # Server bind address
+  address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
+  # Server bind port
+  port: "${HTTP_BIND_PORT:8095}"
+
+spring.logging.file: ${LOG_FILE:${spring.application.name}/target}
+
+security:
+  oauth2:
+    client:
+      clientId: "${DATA_QUALITY_CLIENT_ID:data-quality-service}"
+      clientSecret: "${DATA_QUALITY_CLIENT_SECRET:password}"
+      accessTokenUri: "${ACCESS_TOKEN_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/token}"
+      grant-type: "${DATA_QUALITY_CLIENT_GRANT_TYPE:client_credentials}"
+      scope: ["server"]
+    resource:
+      tokenInfoUri: "${TOKEN_INFO_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/check_token}"
+
+tempus:
+  uri: "${TEMPUS_URL:http://localhost:8080}"
+  mqtt-url: "${TEMPUS_MQTT_URL:tcp://localhost:1883}"
+  gateway-access-token: "${TEMPUS_GATEWAY_TOKEN:DEVICE_GATEWAY_TOKEN}"
+
+

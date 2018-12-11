@@ -1,13 +1,13 @@
 package com.hashmap.dataquality.processor
 
-import com.hashmap.dataquality.data.TelemetryData
+import com.hashmap.dataquality.data.KafkaInboundMsg
 import org.apache.kafka.streams.processor.{Processor, ProcessorContext, PunctuationType, Punctuator}
 import org.apache.kafka.streams.state.KeyValueStore
 
-class TelemetryDataConsumer extends Processor[String, TelemetryData]{
+class TelemetryDataConsumer extends Processor[String, KafkaInboundMsg]{
 
   private var context: ProcessorContext = _
-  private var kvStore: KeyValueStore[String, TelemetryData] = _
+  private var kvStore: KeyValueStore[String, KafkaInboundMsg] = _
 
   override def init(context: ProcessorContext): Unit = {
     this.context = context
@@ -15,23 +15,21 @@ class TelemetryDataConsumer extends Processor[String, TelemetryData]{
     // aggregation is done.
     this.context.schedule(10000, PunctuationType.WALL_CLOCK_TIME, new PuncutatorImp)
 
-    kvStore = context.getStateStore("aggregated-value-store").asInstanceOf[KeyValueStore[String, TelemetryData]]
+    kvStore = context.getStateStore("aggregated-value-store").asInstanceOf[KeyValueStore[String, KafkaInboundMsg]]
   }
 
-  override def process(key: String, value: TelemetryData): Unit = {
-    println(s"""-----val $value-----""")
+  override def process(key: String, value: KafkaInboundMsg): Unit = {
     if (kvStore.get(key) == null) {
       kvStore.put(key, value)
     } else {
       var tagList = kvStore.get(key).tagList
       tagList ++= value.tagList.toList
-      kvStore.put(key, TelemetryData(tagList))
+      kvStore.put(key, KafkaInboundMsg(kvStore.get(key).deviceName, tagList))
     }
   }
 
   class PuncutatorImp extends Punctuator {
     override def punctuate(timestamp: Long): Unit = {
-      println("----Inside punctuator-----")
       val iter = kvStore.all
       while ( {
         iter.hasNext

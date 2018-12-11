@@ -49,6 +49,13 @@ oauth2.clients:
         - client_credentials
       scopes:
         - server
+  data-quality-service:
+        clientSecret: ${DATAQUALITY_SERVICE_PASSWORD:password}
+        grantTypes:
+          - refresh_token
+          - client_credentials
+        scopes:
+          - server
   tempus:
        clientSecret: ${TEMPUS_SERVICE_PASSWORD:tempus}
        grantTypes:

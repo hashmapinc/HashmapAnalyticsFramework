@@ -3,10 +3,11 @@ package com.hashmap.dataquality
 import com.hashmap.dataquality.service.KafkaStreamingApp
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{ComponentScan, Configuration, PropertySource}
 
 @EnableAutoConfiguration
 @Configuration
+@PropertySource(Array("classpath:data-quality-service.yml"))
 @ComponentScan(Array("com.hashmap.dataquality"))
 class DataQualityServiceApplication
 

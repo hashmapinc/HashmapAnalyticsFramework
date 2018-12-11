@@ -59,6 +59,7 @@
         <module>scheduler</module>
         <module>identity-service</module>
         <module>metadata-api</module>
+        <module>data-quality-service</module>
         <!--<module>ui</module>-->
     </modules>
 
