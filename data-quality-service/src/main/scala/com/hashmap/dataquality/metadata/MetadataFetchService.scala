@@ -1,5 +1,6 @@
 package com.hashmap.dataquality.metadata
 
+import com.hashmap.dataquality.data.TagMetaData
 import com.hashmap.dataquality.util.JsonUtil
 import lombok.Getter
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
@@ -10,15 +11,19 @@ import org.springframework.web.client.RestTemplate
 class MetadataFetchService {
 
   @Autowired
-  private var metadataDao: MetadataDao = _
+  private val metadataDao: MetadataDao = null
 
   @Autowired @Qualifier("oauth2RestTemplate")
   @Getter
-  private var oauth2RestTemplate: RestTemplate = _
+  private val oauth2RestTemplate: RestTemplate = null
 
   @Value("${tempus.uri}") private val URI = ""
 
   private val URL_FORMAT = "%s/api/%s/attribute/mandatory-tags"
+
+  def saveMetaDataForDevice(tagMetaData: TagMetaData): Unit = {
+    metadataDao.persist(tagMetaData.deviceId, tagMetaData.getMandatoryTags.toString)
+  }
 
   def getMetadataForDevice(deviceId: String): Either[String, Map[String, String]] = metadataDao.fetch(deviceId) match {
     case Some(metadataString: String) => Right(JsonUtil.fromJson[Map[String, String]](metadataString))

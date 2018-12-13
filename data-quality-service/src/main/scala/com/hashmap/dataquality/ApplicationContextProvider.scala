@@ -5,7 +5,7 @@ import org.springframework.context.{ApplicationContext, ApplicationContextAware}
 import org.springframework.stereotype.Component
 
 object ApplicationContextProvider {
-  private var context:  ApplicationContext = null
+  private var context:  ApplicationContext = _
 
   def getApplicationContext: ApplicationContext = context
 }
