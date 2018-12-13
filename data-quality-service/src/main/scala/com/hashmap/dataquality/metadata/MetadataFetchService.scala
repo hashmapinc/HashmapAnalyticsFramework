@@ -1,6 +1,5 @@
 package com.hashmap.dataquality.metadata
 
-import com.hashmap.dataquality.data.TagMetaData
 import com.hashmap.dataquality.util.JsonUtil
 import lombok.Getter
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
@@ -21,8 +20,8 @@ class MetadataFetchService {
 
   private val URL_FORMAT = "%s/api/%s/attribute/mandatory-tags"
 
-  def saveMetaDataForDevice(tagMetaData: TagMetaData): Unit = {
-    metadataDao.persist(tagMetaData.deviceId, tagMetaData.getMandatoryTags.toString)
+  def saveMetaDataForDevice(tagMetaData: DeviceMetaData): Unit = {
+    metadataDao.persist(tagMetaData.deviceId, JsonUtil.toJson(tagMetaData.getMandatoryTags))
   }
 
   def getMetadataForDevice(deviceId: String): Either[String, Map[String, String]] = metadataDao.fetch(deviceId) match {

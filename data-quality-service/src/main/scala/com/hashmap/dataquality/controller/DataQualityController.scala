@@ -1,7 +1,6 @@
 package com.hashmap.dataquality.controller
 
-import com.hashmap.dataquality.data.TagMetaData
-import com.hashmap.dataquality.metadata.MetadataFetchService
+import com.hashmap.dataquality.metadata.{DeviceMetaData, MetadataFetchService}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
@@ -15,7 +14,7 @@ class DataQualityController {
 
   @PostMapping(value = Array("/mandatory-tags"))
   @ResponseStatus(value = HttpStatus.OK)
-  def saveMandatoryTags(@RequestBody tagMetaData: TagMetaData): Unit = {
-    metaDataFetchService.saveMetaDataForDevice(tagMetaData)
+  def saveMandatoryTags(@RequestBody deviceMetaData: DeviceMetaData): Unit = {
+    metaDataFetchService.saveMetaDataForDevice(deviceMetaData)
   }
 }
