@@ -3,7 +3,7 @@ package com.hashmap.dataquality.qualitycheck
 import java.util.Optional
 
 import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
-import com.hashmap.dataquality.metadata.MetadataFetchService
+import com.hashmap.dataquality.metadata.{MetadataFetchService, TagMetaData}
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
 import javax.annotation.PostConstruct
@@ -43,7 +43,7 @@ class TagPresenceQualityCheck extends QualityCheck {
       case Right(metadata) => metadata
       case Left(_) => return Map.empty //log
     }
-    qualityAttributes.map(mandatoryAttributes => (mandatoryAttributes._1, tagsPresent.map(_.tag).contains(mandatoryAttributes._1)))
+    qualityAttributes.map(mandatoryAttributes => (mandatoryAttributes.tag, tagsPresent.map(_.tag).contains(mandatoryAttributes.tag))).toMap
   }
 
 }

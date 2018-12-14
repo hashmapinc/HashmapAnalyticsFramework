@@ -20,14 +20,14 @@ class MetadataFetchService {
 
   private val URL_FORMAT = "%s/api/%s/attribute/mandatory-tags"
 
-  def saveMetaDataForDevice(tagMetaData: DeviceMetaData): Unit = {
-    metadataDao.persist(tagMetaData.deviceId, JsonUtil.toJson(tagMetaData.getMandatoryTags))
+  def saveMetaDataForDevice(deviceMetaData: DeviceMetaData): Unit = {
+    metadataDao.persist(deviceMetaData.deviceId, JsonUtil.toJson(deviceMetaData.getMandatoryTags))
   }
 
-  def getMetadataForDevice(deviceId: String): Either[String, Map[String, String]] = metadataDao.fetch(deviceId) match {
-    case Some(metadataString: String) => Right(JsonUtil.fromJson[Map[String, String]](metadataString))
+  def getMetadataForDevice(deviceId: String): Either[String, List[TagMetaData]] = metadataDao.fetch(deviceId) match {
+    case Some(metadataString: String) => Right(JsonUtil.fromJson[List[TagMetaData]](metadataString))
     case None => getMetadataFromRemote(deviceId) match {
-      case Right(metadataString) => metadataDao.persist(deviceId, metadataString); Right(JsonUtil.fromJson[Map[String, String]](metadataString))
+      case Right(metadataString) => metadataDao.persist(deviceId, metadataString); Right(JsonUtil.fromJson[List[TagMetaData]](metadataString))
       case Left(errorMsg) => Left(errorMsg)
     }
   }

@@ -1,6 +1,12 @@
 package com.hashmap.dataquality.metadata
 
-import org.codehaus.jackson.annotate.JsonProperty
+import scala.beans.BeanProperty
 
-case class TagMetaData(@JsonProperty("tag") tag: String,
-                       @JsonProperty("avgTagFrequency") avgTagFrequency: String)
+class TagMetaData {
+
+  @BeanProperty
+  var tag: String =_
+
+  @BeanProperty
+  var avgTagFrequency: String =_
+}
