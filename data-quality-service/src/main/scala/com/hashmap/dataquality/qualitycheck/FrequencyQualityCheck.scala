@@ -6,29 +6,15 @@ import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.{MetadataFetchService, TagMetaData}
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
-import javax.annotation.PostConstruct
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class FrequencyQualityCheck extends QualityCheck {
+class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
+                                         mqttConnector: MqttConnector) extends QualityCheck {
 
   private val log = LoggerFactory.getLogger(classOf[FrequencyQualityCheck])
-
-  @Autowired
-  private val metadataFetchService: MetadataFetchService = null
-
-  @Value("${tempus.mqtt-url}") private val MQTT_URL = ""
-
-  @Value("${tempus.gateway-access-token}") private val ACCESS_TOKEN = ""
-
-  private var mqttConnector: MqttConnector = _
-
-  @PostConstruct
-  def init(): Unit = {
-    mqttConnector = new MqttConnector(MQTT_URL, ACCESS_TOKEN)
-  }
 
   override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
     val tagsWithMissedFrequency = checkTagsFrequency(deviceId, payload.tagList.toList)
