@@ -6,31 +6,18 @@ import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.MetadataFetchService
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
-import javax.annotation.PostConstruct
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TagPresenceQualityCheck extends QualityCheck {
+class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
+                                           mqttConnector: MqttConnector) extends QualityCheck {
 
   private val log = LoggerFactory.getLogger(classOf[TagPresenceQualityCheck])
 
-  @Autowired
-  private val metadataFetchService: MetadataFetchService = null
-
-  @Value("${tempus.mqtt-url}") private val MQTT_URL = ""
-
-  @Value("${tempus.gateway-access-token}") private val ACCESS_TOKEN = ""
-
-  private var mqttConnector: MqttConnector = _
-
-  @PostConstruct
-  def init(): Unit = {
-    mqttConnector = new MqttConnector(MQTT_URL, ACCESS_TOKEN)
-  }
-
   override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
+    System.out.println("Kafka Inbound Msg {}" + JsonUtil.toJson(payload))
     val tagPresence: Map[String, Boolean] = checkTagsPresence(deviceId, payload.tagList.toList)
     publish(payload.deviceName, tagPresence.filter(!_._2).keys.toList)
   }
