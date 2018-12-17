@@ -38,10 +38,6 @@ class KafkaStreamingApp {
     val aggregatedValueStore = Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("aggregated-value-store"),
       new Serdes.StringSerde, new TelemetryDataSerde)
 
-//    val response = oauth2RestTemplate.getForObject("http://localhost:8080/api/08b88e70-f26d-11e8-9384-836123f6f05f/attribute/mandatory-tags"
-//      , classOf[String])
-//    println(s"---- $response")
-
     val builder = new Topology()
 
     // add the source processor node that takes Kafka topic "source-topic" as input

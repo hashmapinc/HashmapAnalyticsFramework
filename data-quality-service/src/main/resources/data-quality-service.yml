@@ -24,4 +24,8 @@ tempus:
   mqtt-url: "${TEMPUS_MQTT_URL:tcp://localhost:1883}"
   gateway-access-token: "${TEMPUS_GATEWAY_TOKEN:DEVICE_GATEWAY_TOKEN}"
 
+# Time window for quality check operations
+kafka-app:
+  time-window: "${TIME_WINDOW:10000}"
+
 
