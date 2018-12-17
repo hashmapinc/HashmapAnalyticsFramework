@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class MqttConnectorBean {
+class MqttConnectorConfig {
 
   @Value("${tempus.mqtt-url}") private val MQTT_URL: String = ""
 
