@@ -18,8 +18,7 @@ class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataFetchSe
 
   override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
     System.out.println("Kafka Inbound Msg {}" + JsonUtil.toJson(payload))
-    val tagPresence: Map[String, Boolean] = checkTagsPresence(deviceId, payload.tagList.toList)
-    publish(payload.deviceName, tagPresence.filter(!_._2).keys.toList)
+    publish(payload.deviceName, checkTagsPresence(deviceId, payload.tagList.toList))
   }
 
   private def publish(deviceName: String, missingTags: List[String]): Unit = {
@@ -28,12 +27,12 @@ class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataFetchSe
       Optional.empty(), deviceName)
   }
 
-  private def checkTagsPresence(deviceId: String, tagsPresent: List[TsKvData]): Map[String, Boolean] = {
+  private def checkTagsPresence(deviceId: String, tagsPresent: List[TsKvData]): List[String] = {
     val qualityAttributes = metadataFetchService.getMetadataForDevice(deviceId) match {
       case Right(metadata) => metadata
-      case Left(_) => log.error(s"Missing metadata for $deviceId. Tag presence quality check failed"); return Map.empty
+      case Left(_) => log.error(s"Missing metadata for $deviceId. Tag presence quality check failed"); return List.empty
     }
-    qualityAttributes.map(mandatoryAttributes => (mandatoryAttributes.tag, tagsPresent.map(_.tag).contains(mandatoryAttributes.tag))).toMap
+    qualityAttributes.filter(mandatoryAttributes => !tagsPresent.map(_.tag).contains(mandatoryAttributes.tag)).map(_.tag)
   }
 
 }
