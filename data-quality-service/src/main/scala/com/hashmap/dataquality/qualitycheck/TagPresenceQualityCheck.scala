@@ -18,7 +18,10 @@ class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataFetchSe
 
   override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
     System.out.println("Kafka Inbound Msg {}" + JsonUtil.toJson(payload))
-    publish(payload.deviceName, checkTagsPresence(deviceId, payload.tagList.toList))
+    val tagsNotPresent = checkTagsPresence(deviceId, payload.tagList.toList)
+    if (tagsNotPresent.nonEmpty) {
+      publish(payload.deviceName, tagsNotPresent)
+    }
   }
 
   private def publish(deviceName: String, missingTags: List[String]): Unit = {

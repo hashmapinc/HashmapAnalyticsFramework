@@ -1,22 +1,14 @@
 package com.hashmap.dataquality.metadata
 
 import com.hashmap.dataquality.util.JsonUtil
-import lombok.Getter
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
 @Service
-class MetadataFetchService {
-
-  @Autowired
-  private val metadataDao: MetadataDao = null
-
-  @Autowired @Qualifier("oauth2RestTemplate")
-  @Getter
-  private val oauth2RestTemplate: RestTemplate = null
-
-  @Value("${tempus.uri}") private val URI = ""
+class MetadataFetchService @Autowired()(metadataDao: MetadataDao,
+                                        @Qualifier("oauth2RestTemplate") oauth2RestTemplate: RestTemplate,
+                                        @Value("${tempus.uri}") private val URI: String) {
 
   private val URL_FORMAT = "%s/api/%s/attribute/mandatory-tags"
 

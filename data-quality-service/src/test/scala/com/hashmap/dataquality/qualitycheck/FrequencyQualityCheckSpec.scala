@@ -22,35 +22,33 @@ class FrequencyQualityCheckSpec {
   def setup(): Unit = {
     metadataFetchService = mock(classOf[MetadataFetchService])
     mqttConnector = mock(classOf[MqttConnector])
-    frequencyQualityCheck = new FrequencyQualityCheck(metadataFetchService, mqttConnector)
+    frequencyQualityCheck = new FrequencyQualityCheck(metadataFetchService, mqttConnector, 50, 10)
   }
 
   @Test
   def noFrequencyMismatch(): Unit = {
     //given
     val givenDeviceId = "someDeviceId"
-    val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
+    val givenTagMetadata = List(TagMetaData("tag1", "1"), TagMetaData("tag2", "5"))
     val givenDeviceName = "someDeviceName"
-    val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1001, "tag2", "value1"), TsKvData(1050, "tag1", "value2"), TsKvData(1100, "tag2", "value2"))
+    val givenTsKvData = List(TsKvData(1, "tag1", "value1"), TsKvData(2, "tag2", "value1"), TsKvData(2, "tag1", "value2"), TsKvData(3, "tag1", "value2"), TsKvData(4, "tag1", "value2"), TsKvData(5, "tag1", "value2"), TsKvData(6, "tag2", "value2"))
     val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
-    val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))
 
     //when
     frequencyQualityCheck.check(givenDeviceId, givenPayload)
-    Mockito.verify(mqttConnector).publish(captor.capture(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
 
     //then
-    assert(captor.getValue.toString == "{\"frequencyMismatchElements\":[]}")
+    Mockito.verify(mqttConnector, Mockito.never()).publish(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
   }
 
   @Test
   def oneFrequencyMismatch(): Unit = {
     //given
     val givenDeviceId = "someDeviceId"
-    val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
+    val givenTagMetadata = List(TagMetaData("tag1", "5"), TagMetaData("tag2", "10"))
     val givenDeviceName = "someDeviceName"
-    val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1001, "tag2", "value1"), TsKvData(1100, "tag2", "value2"))
+    val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1010, "tag2", "value1"), TsKvData(1020, "tag2", "value2"))
     val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
     val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))
@@ -67,9 +65,9 @@ class FrequencyQualityCheckSpec {
   def someFrequencyMismatch(): Unit = {
     //given
     val givenDeviceId = "someDeviceId"
-    val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
+    val givenTagMetadata = List(TagMetaData("tag1", "5"), TagMetaData("tag2", "5"))
     val givenDeviceName = "someDeviceName"
-    val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1001, "tag2", "value1"), TsKvData(1200, "tag2", "value2"))
+    val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1001, "tag2", "value1"), TsKvData(1005, "tag1", "value2"), TsKvData(1011, "tag1", "value2"))
     val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
     val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))

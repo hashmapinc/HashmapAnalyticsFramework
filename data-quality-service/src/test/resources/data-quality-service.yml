@@ -1,5 +1,5 @@
 spring.application:
-    name: data-quality-service
+  name: data-quality-service
 server:
   # Server bind address
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
