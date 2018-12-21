@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
                                          mqttConnector: MqttConnector,
-                                         @Value("frequency-quality-threshold.max") maxThreshold: Long,
-                                         @Value("frequency-quality-threshold.min") minThreshold: Long) extends QualityCheck {
+                                         @Value("data-quality-frequency.threhold") missmatchThreshold: Long) extends QualityCheck {
 
   private val log = LoggerFactory.getLogger(classOf[FrequencyQualityCheck])
 
@@ -42,22 +41,17 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchServ
   private def isFrequencyMismatch(metadata: TagMetaData, tagList: List[TsKvData]): Boolean = {
     val tagPresenceCount = tagList.map(_.tag).count(metadata.tag.equals(_))
     val timestampRange = tagList.map(_.ts)
-    val timeWindow = timestampRange.max - timestampRange.min
+    val timeWindow = timestampRange.max - timestampRange.min + 1
     val expectedCount = (timeWindow / metadata.avgTagFrequency.toLong).round
-    val mismatchThresholdBasedOnExpectedFrequency = mismatchThreshold(metadata.avgTagFrequency.toLong, timeWindow)
+
+    assert(metadata.avgTagFrequency.toLong <= timeWindow)
 
     if (tagPresenceCount == expectedCount) {
       false
     } else if (tagPresenceCount <= expectedCount) {
-      (((expectedCount.toFloat - tagPresenceCount.toFloat) / expectedCount.toFloat) * 100) > mismatchThresholdBasedOnExpectedFrequency
+      (((expectedCount.toFloat - tagPresenceCount.toFloat) / expectedCount.toFloat) * 100) > missmatchThreshold
     } else {
-      (((tagPresenceCount.toFloat - expectedCount.toFloat) / tagPresenceCount.toFloat) * 100) > mismatchThresholdBasedOnExpectedFrequency
+      (((tagPresenceCount.toFloat - expectedCount.toFloat) / tagPresenceCount.toFloat) * 100) > missmatchThreshold
     }
-  }
-
-  private def mismatchThreshold(frequency: Long, timeWindow: Long): Int = {
-    assert(frequency <= timeWindow)
-    val frequencyWeight = frequency.toFloat / timeWindow.toFloat
-    (((maxThreshold - minThreshold) * frequencyWeight) + minThreshold).round
   }
 }

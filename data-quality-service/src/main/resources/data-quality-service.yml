@@ -29,6 +29,5 @@ kafka-app:
   time-window: "${TIME_WINDOW:10000}"
 
 # Frequency mismatch threshold for data quality checking
-frequency-quality-threshold:
-  max: "{FREQUENCY_QUALITY_THRESHOLD_MAX:50}"
-  min: "{FREQUENCY_QUALITY_THRESHOLD_MIN:10}"
+data-quality-frequency:
+  threhold: "{FREQUENCY_QUALITY_THRESHOLD:10}"
