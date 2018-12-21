@@ -2,4 +2,11 @@ package com.hashmap.dataquality.metadata
 
 import scala.beans.BeanProperty
 
-case class DeviceMetaData (@BeanProperty deviceId: String, @BeanProperty mandatoryTags: java.util.List[TagMetaData])
+class DeviceMetaData {
+
+  @BeanProperty
+  val deviceId: String = null
+
+  @BeanProperty
+  val mandatoryTags: java.util.List[TagMetaData] = null
+}
