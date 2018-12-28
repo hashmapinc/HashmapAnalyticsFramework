@@ -15,6 +15,6 @@ class DataQualityResourceServer extends ResourceServerConfigurerAdapter {
   @throws[Exception]
   override def configure(http: HttpSecurity): Unit = {
     http.sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-      and.authorizeRequests.antMatchers("/").permitAll()
+      and.authorizeRequests.antMatchers("/").permitAll().anyRequest.authenticated
   }
 }
