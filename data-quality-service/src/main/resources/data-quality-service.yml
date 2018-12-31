@@ -30,4 +30,4 @@ kafka-app:
 
 # Frequency mismatch threshold for data quality checking
 data-quality-frequency:
-  threhold: "{FREQUENCY_QUALITY_THRESHOLD:10}"
+  threhold: "${FREQUENCY_QUALITY_THRESHOLD:10}"

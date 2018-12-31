@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
                                          mqttConnector: MqttConnector,
-                                         @Value("data-quality-frequency.threhold") missmatchThreshold: Long) extends QualityCheck {
+                                         @Value("${data-quality-frequency.threhold}") missmatchThreshold: Long) extends QualityCheck {
 
   private val log = LoggerFactory.getLogger(classOf[FrequencyQualityCheck])
 
