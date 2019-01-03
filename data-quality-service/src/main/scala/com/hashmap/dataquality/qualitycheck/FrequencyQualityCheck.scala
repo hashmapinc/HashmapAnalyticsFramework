@@ -33,7 +33,7 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchServ
   private def tagsWithFrequencyMismatch(deviceId: String, tagList: List[TsKvData]): List[String] = {
     val tagsMetadata = metadataFetchService.getMetadataForDevice(deviceId) match {
       case Right(metadata) => metadata
-      case Left(_) => log.error(s"Missing metadata for $deviceId. Tag frequency quality check failed"); return List.empty
+      case Left(errorMsg: String) => log.error(s"""Missing metadata for $deviceId because "$errorMsg". Tag frequency quality check failed"""); return List.empty
     }
     tagsMetadata.filter(metadata => isFrequencyMismatch(metadata, tagList)).map(_.tag)
   }

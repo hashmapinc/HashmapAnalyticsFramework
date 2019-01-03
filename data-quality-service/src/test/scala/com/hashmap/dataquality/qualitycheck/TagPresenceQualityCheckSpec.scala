@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
-import com.hashmap.dataquality.metadata.{MetadataFetchService, TagMetaData}
+import com.hashmap.dataquality.metadata.MetadataFetchService
 import com.hashmapinc.tempus.MqttConnector
 import org.junit.runner.RunWith
 import org.junit.{Before, Test}
@@ -38,10 +38,9 @@ class TagPresenceQualityCheckSpec {
 
     //when
     tagQualityCheck.check(givenDeviceId, givenPayload)
-    Mockito.verify(mqttConnector).publish(captor.capture(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
 
     //then
-    assert(captor.getValue.toString == "{\"missingElements\":[]}")
+    Mockito.verify(mqttConnector, Mockito.never()).publish(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
   }
 
   @Test

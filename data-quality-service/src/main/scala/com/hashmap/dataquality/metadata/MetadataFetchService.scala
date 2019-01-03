@@ -17,11 +17,14 @@ class MetadataFetchService @Autowired()(metadataDao: MetadataDao,
   }
 
   def getMetadataForDevice(deviceId: String): Either[String, List[TagMetaData]] = metadataDao.fetch(deviceId) match {
-    case Some(metadataString: String) => Right(JsonUtil.fromJson[List[TagMetaData]](metadataString))
-    case None => getMetadataFromRemote(deviceId) match {
-      case Right(metadataString) => metadataDao.persist(deviceId, metadataString); Right(JsonUtil.fromJson[List[TagMetaData]](metadataString))
-      case Left(errorMsg) => Left(errorMsg)
+    case Right(metadata: Option[String]) => metadata match {
+      case Some(metadataString: String) => Right(JsonUtil.fromJson[List[TagMetaData]](metadataString))
+      case None => getMetadataFromRemote(deviceId) match {
+        case Right(metadataStringFromRemote) => metadataDao.persist(deviceId, metadataStringFromRemote); Right(JsonUtil.fromJson[List[TagMetaData]](metadataStringFromRemote))
+        case Left(errorMsg) => Left(errorMsg)
+      }
     }
+    case Left(daoErrorMsg: String) => Left(daoErrorMsg)
   }
 
   private def getMetadataFromRemote(deviceId: String): Either[String, String] = {
