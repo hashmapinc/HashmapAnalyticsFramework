@@ -167,36 +167,37 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>it.ozimov</groupId>-->
-            <!--<artifactId>yaml-properties-maven-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<phase>initialize</phase>-->
-            <!--<goals>-->
-            <!--<goal>read-project-properties</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<files>-->
-            <!--<file>${project.basedir}/src/main/resources/functions-api.yml</file>-->
-            <!--</files>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-            <!--<groupId>com.spotify</groupId>-->
-            <!--<artifactId>dockerfile-maven-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<skip>false</skip>-->
-            <!--<repository>${docker.repository}/${project.parent.artifactId}-${project.artifactId}</repository>-->
-            <!--<tag>${project.parent.version}</tag>-->
-            <!--<buildArgs>-->
-            <!--<JAR_FILE>target/${project.name}.jar</JAR_FILE>-->
-            <!--<SERVER_PORT>${server.port}</SERVER_PORT> &lt;!&ndash; Will come from application.properties by using properties plugin &ndash;&gt;-->
-            <!--</buildArgs>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>it.ozimov</groupId>
+                <artifactId>yaml-properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/src/main/resources/data-quality-service.yml</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <repository>${docker.repository}/${project.parent.artifactId}-${project.artifactId}</repository>
+                    <tag>${project.parent.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.name}.jar</JAR_FILE>
+                        <SERVER_PORT>${server.port}
+                        </SERVER_PORT> <!-- Will come from application.properties by using properties plugin -->
+                    </buildArgs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
