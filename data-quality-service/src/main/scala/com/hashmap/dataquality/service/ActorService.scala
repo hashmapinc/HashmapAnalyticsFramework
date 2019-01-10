@@ -35,7 +35,7 @@ class ActorService {
   }
 
   def process(key: String, msg: KafkaInboundMsg): Unit = {
-    actorContext.masterActor.tell(new ToActorMsg(key, msg), ActorRef.noSender)
+    actorContext.masterActor.tell(msg = ToActorMsg(key, msg), sender = ActorRef.noSender)
   }
 
 }

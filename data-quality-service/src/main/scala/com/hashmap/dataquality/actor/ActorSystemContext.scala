@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.actor
 
 import akka.actor.{ActorRef, ActorSystem}
-import com.hashmap.dataquality.metadata.MetadataFetchService
+import com.hashmap.dataquality.metadata.MetadataService
 import com.typesafe.config.{Config, ConfigFactory}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -17,7 +17,7 @@ class ActorSystemContext {
   var config: Config = _
 
   @Autowired
-  val metadataFetchService: MetadataFetchService = null
+  val metadataService: MetadataService = null
 
   @Value("${tempus.mqtt-url}") val MQTT_URL: String = ""
 

@@ -3,7 +3,7 @@ package com.hashmap.dataquality.qualitycheck
 import java.util.Optional
 
 import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
-import com.hashmap.dataquality.metadata.MetadataFetchService
+import com.hashmap.dataquality.metadata.MetadataService
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
+class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataService,
                                            mqttConnector: MqttConnector) extends QualityCheck {
 
   private val log = LoggerFactory.getLogger(classOf[TagPresenceQualityCheck])

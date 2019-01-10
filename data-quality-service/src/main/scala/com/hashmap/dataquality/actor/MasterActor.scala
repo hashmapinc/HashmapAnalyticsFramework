@@ -7,11 +7,11 @@ import scala.collection.mutable
 
 class MasterActor(actorSystemContext: ActorSystemContext) extends Actor {
 
-  private var deviceActorMap: mutable.Map[String, ActorRef] = _
+  private val deviceActorMap: mutable.Map[String, ActorRef] = new mutable.HashMap[String, ActorRef]()
 
   private val DEVICE_ACTOR_DISPATCHER_NAME = "core-dispatcher"
 
-  override def receive = {
+  override def receive: PartialFunction[Any, Unit] = {
       case inboundMsg: ToActorMsg =>
         processToMasterActorMsg(inboundMsg)
 
@@ -27,7 +27,7 @@ class MasterActor(actorSystemContext: ActorSystemContext) extends Actor {
     if(deviceActorMap.contains(msg.deviceId))
       deviceActorMap(msg.deviceId).tell(msg, context.self)
     else {
-      val deviceActor = actorSystemContext.actorSystem.actorOf(Props(new DeviceActor(actorSystemContext)).withDispatcher(DEVICE_ACTOR_DISPATCHER_NAME), msg.deviceId)
+      val deviceActor = context.actorOf(Props(new DeviceActor(actorSystemContext)).withDispatcher(DEVICE_ACTOR_DISPATCHER_NAME), msg.deviceId)
       deviceActorMap.put(msg.deviceId, deviceActor)
       deviceActor.tell(msg, context.self)
     }

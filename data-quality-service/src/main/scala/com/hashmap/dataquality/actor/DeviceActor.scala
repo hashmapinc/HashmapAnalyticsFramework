@@ -3,7 +3,7 @@ package com.hashmap.dataquality.actor
 import akka.actor.Actor
 import com.hashmap.dataquality.ApplicationContextProvider
 import com.hashmap.dataquality.data.ToActorMsg
-import com.hashmap.dataquality.metadata.{MetadataDao, TagMetaData}
+import com.hashmap.dataquality.metadata.{DataQualityMetaData, MetadataDao}
 import com.hashmap.dataquality.qualitycheck.QualityCheckingService
 import com.hashmap.dataquality.util.JsonUtil
 import org.eclipse.paho.client.mqttv3._
@@ -16,7 +16,6 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
   private val log = LoggerFactory.getLogger(classOf[MetadataDao])
   private var subscriptionState = false
-  private var deviceToken = ""
 
   override def receive: PartialFunction[Any, Unit] = {
       case msg: ToActorMsg =>
@@ -27,16 +26,18 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
   def processToActorMsg(msg: ToActorMsg): Unit ={
     if (!subscriptionState) {
-      deviceToken = fetchDeviceToken(msg.deviceId)
-      if(!deviceToken.contentEquals("")) {
-        createAttributeSubscription(msg.deviceId)
+      val deviceMetaData = fetchDeviceMetadata(msg.deviceId)
+      if(deviceMetaData.mandatoryTags != null)
+        actorSystemContext.metadataService.saveMetaDataForDevice(msg.deviceId, deviceMetaData.mandatoryTags)
+      if(deviceMetaData.token != null) {
+        createAttributeSubscription(msg.deviceId, deviceMetaData.token)
       }
     }
     ApplicationContextProvider.getApplicationContext.getBean(classOf[QualityCheckingService])
-      .processForQualityChecks(msg.deviceId, msg.kafkaInboundMsg);
+      .processForQualityChecks(msg.deviceId, msg.kafkaInboundMsg)
   }
 
-  private def createAttributeSubscription(deviceId: String): Unit = {
+  private def createAttributeSubscription(deviceId: String, deviceToken: String): Unit = {
 
     val persistence = new MemoryPersistence
     val client = new MqttClient(actorSystemContext.MQTT_URL, MqttClient.generateClientId, persistence)
@@ -47,15 +48,13 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
     client.subscribe(MQTT_ATTRIBUTE_TOPIC)
 
     val callback = new MqttCallback {
-
       override def messageArrived(topic: String, message: MqttMessage): Unit = {
         println("Receiving Data, Topic : %s, Message : %s".format(topic, message))
-        val sharedAttrib: String = new String(message.getPayload)
+        val sharedAttribute: String = new String(message.getPayload)
         try {
-          val sharedAttribMap: Map[String, List[TagMetaData]] = JsonUtil.fromJson[Map[String, List[TagMetaData]]](sharedAttrib)
-          sharedAttribMap foreach (x => if (x._1.contentEquals("mandatory_tags")) {
-            actorSystemContext.metadataFetchService.saveMetaDataForDevice(deviceId, x._2)
-            subscriptionState = true
+          val sharedAttributeMap: Map[String, String] = JsonUtil.fromJson[Map[String, String]](sharedAttribute)
+          sharedAttributeMap foreach (x => if (x._1.contentEquals("mandatory_tags")) {
+            actorSystemContext.metadataService.saveMetaDataForDevice(deviceId, x._2)
           })
 
         } catch {
@@ -71,14 +70,14 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
       }
     }
-
     client.setCallback(callback)
 
+    subscriptionState = true
   }
 
-  def fetchDeviceToken(deviceId: String): String = actorSystemContext.metadataFetchService.getMetadataFromRemote(deviceId) match {
-    case Right(token) => token
-    case Left(error) => log.info("Error occurred in fetching {}", error); ""
+  def fetchDeviceMetadata(deviceId: String): DataQualityMetaData = actorSystemContext.metadataService.getMetadataFromRemote(deviceId) match {
+    case Right(deviceMetaData) => deviceMetaData
+    case Left(error) => log.info("Error occurred in fetching {}", error); new DataQualityMetaData
   }
 
 }
