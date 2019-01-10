@@ -17,6 +17,6 @@ class DataQualityController {
   @PreAuthorize("#oauth2.hasScope('server')")
   @ResponseStatus(value = HttpStatus.OK)
   def saveMandatoryTags(@RequestBody deviceMetaData: DeviceMetaData): Unit = {
-    metaDataFetchService.saveMetaDataForDevice(deviceMetaData)
+    //metaDataFetchService.saveMetaDataForDevice(deviceMetaData)
   }
 }

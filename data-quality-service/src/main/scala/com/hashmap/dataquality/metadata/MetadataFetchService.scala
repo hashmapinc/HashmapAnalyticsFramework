@@ -12,8 +12,8 @@ class MetadataFetchService @Autowired()(metadataDao: MetadataDao,
 
   private val URL_FORMAT = "%s/api/%s/attribute/mandatory-tags"
 
-  def saveMetaDataForDevice(deviceMetaData: DeviceMetaData): Unit = {
-    metadataDao.persist(deviceMetaData.deviceId, JsonUtil.toJson(deviceMetaData.getMandatoryTags))
+  def saveMetaDataForDevice(deviceId: String, mandatoryTags: List[TagMetaData]): Unit = {
+    metadataDao.persist(deviceId, JsonUtil.toJson(mandatoryTags))
   }
 
   def getMetadataForDevice(deviceId: String): Either[String, List[TagMetaData]] = metadataDao.fetch(deviceId) match {
@@ -27,7 +27,7 @@ class MetadataFetchService @Autowired()(metadataDao: MetadataDao,
     case Left(daoErrorMsg: String) => Left(daoErrorMsg)
   }
 
-  private def getMetadataFromRemote(deviceId: String): Either[String, String] = {
+  def getMetadataFromRemote(deviceId: String): Either[String, String] = {
     val url = String.format(URL_FORMAT, URI, deviceId)
     val response = oauth2RestTemplate.getForObject(url
       , classOf[String])
@@ -37,5 +37,6 @@ class MetadataFetchService @Autowired()(metadataDao: MetadataDao,
     }
 
   }
+
 
 }
