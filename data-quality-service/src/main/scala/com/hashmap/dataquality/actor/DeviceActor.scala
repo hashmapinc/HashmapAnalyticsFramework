@@ -49,7 +49,7 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
     val callback = new MqttCallback {
       override def messageArrived(topic: String, message: MqttMessage): Unit = {
-        println("Receiving Data, Topic : %s, Message : %s".format(topic, message))
+        log.info("Receiving Data, Topic : %s, Message : %s".format(topic, message))
         val sharedAttribute: String = new String(message.getPayload)
         try {
           val sharedAttributeMap: Map[String, String] = JsonUtil.fromJson[Map[String, String]](sharedAttribute)
@@ -64,6 +64,7 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
       override def connectionLost(cause: Throwable): Unit = {
         log.info("Connection lost {}", cause)
+        subscriptionState = false
       }
 
       override def deliveryComplete(token: IMqttDeliveryToken): Unit = {

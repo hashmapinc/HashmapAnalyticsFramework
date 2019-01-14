@@ -44,7 +44,7 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataService,
     val timeWindow = timestampRange.max - timestampRange.min + 1
     val expectedCount = (timeWindow / metadata.avgTagFrequency.toLong).round
 
-    assert(metadata.avgTagFrequency.toLong <= timeWindow)
+    //assert(metadata.avgTagFrequency.toLong <= timeWindow)
 
     if (tagPresenceCount == expectedCount) {
       false

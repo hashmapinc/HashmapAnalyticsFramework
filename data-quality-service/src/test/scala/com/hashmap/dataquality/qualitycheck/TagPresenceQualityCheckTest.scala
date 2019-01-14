@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
-import com.hashmap.dataquality.metadata.MetadataService
+import com.hashmap.dataquality.metadata.{MetadataService, TagMetaData}
 import com.hashmapinc.tempus.MqttConnector
 import org.junit.runner.RunWith
 import org.junit.{Before, Test}
@@ -12,7 +12,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[MockitoJUnitRunner])
-class TagPresenceQualityCheckSpec {
+class TagPresenceQualityCheckTest {
 
   private var metadataFetchService: MetadataService = _
   private var mqttConnector: MqttConnector = _

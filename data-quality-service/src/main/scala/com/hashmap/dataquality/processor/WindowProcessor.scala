@@ -12,7 +12,8 @@ class WindowProcessor extends Processor[String, KafkaInboundMsg] {
   }
 
   override def process(key: String, value: KafkaInboundMsg): Unit = {
-    ApplicationContextProvider.getApplicationContext.getBean(classOf[ActorService]).process(key, value)
+    if(key != null && value != null)
+      ApplicationContextProvider.getApplicationContext.getBean(classOf[ActorService]).process(key, value)
   }
 
   override def close(): Unit = {

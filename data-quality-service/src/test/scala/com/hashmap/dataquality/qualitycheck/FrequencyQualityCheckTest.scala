@@ -12,7 +12,7 @@ import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[MockitoJUnitRunner])
-class FrequencyQualityCheckSpec {
+class FrequencyQualityCheckTest {
 
   private var metadataFetchService: MetadataService = _
   private var mqttConnector: MqttConnector = _
