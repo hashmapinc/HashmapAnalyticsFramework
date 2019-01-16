@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit
 import com.hashmap.dataquality.data.KafkaInboundMsg
 import com.hashmap.dataquality.processor.{TelemetryDataConsumer, WindowProcessor}
 import com.hashmap.dataquality.serdes.TelemetryDataSerde
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import lombok.Getter
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.processor.ProcessorSupplier
 import org.apache.kafka.streams.state.Stores
@@ -15,7 +15,6 @@ import org.apache.kafka.streams.{KafkaStreams, StreamsConfig, Topology}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import scalaj.http.HttpResponse
 
 import scala.language.postfixOps
 
@@ -24,7 +23,7 @@ import scala.language.postfixOps
 class KafkaStreamingApp {
 
   @Autowired @Qualifier("oauth2RestTemplate") @Getter
-  private var oauth2RestTemplate: RestTemplate = null
+  private var oauth2RestTemplate: RestTemplate = _
 
   def run(): Unit = {
     val config = new Properties()

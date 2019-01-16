@@ -3,7 +3,7 @@ package com.hashmap.dataquality.qualitycheck
 import java.util.Optional
 
 import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
-import com.hashmap.dataquality.metadata.{MetadataFetchService, TagMetaData}
+import com.hashmap.dataquality.metadata.{MetadataService, TagMetaData}
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Service
 
 @Service
-class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchService,
+class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataService,
                                          mqttConnector: MqttConnector,
                                          @Value("${data-quality-frequency.threhold}") missmatchThreshold: Long) extends QualityCheck {
 
@@ -44,7 +44,10 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataFetchServ
     val timeWindow = timestampRange.max - timestampRange.min + 1
     val expectedCount = (timeWindow / metadata.avgTagFrequency.toLong).round
 
-    assert(metadata.avgTagFrequency.toLong <= timeWindow)
+    if (metadata.avgTagFrequency.toLong > timeWindow) {
+      log.error(s"Device frequency (${metadata.avgTagFrequency}) cannot be higher than the configured timewindow ($timeWindow)")
+      return true
+    }
 
     if (tagPresenceCount == expectedCount) {
       false
