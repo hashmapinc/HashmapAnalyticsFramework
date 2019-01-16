@@ -44,7 +44,7 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataService,
     val timeWindow = timestampRange.max - timestampRange.min + 1
     val expectedCount = (timeWindow / metadata.avgTagFrequency.toLong).round
 
-    if (metadata.avgTagFrequency.toLong <= timeWindow) {
+    if (metadata.avgTagFrequency.toLong > timeWindow) {
       log.error(s"Device frequency (${metadata.avgTagFrequency}) cannot be higher than the configured timewindow ($timeWindow)")
       return true
     }
