@@ -31,11 +31,11 @@ class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataService
   }
 
   private def checkTagsPresence(deviceId: String, tagsPresent: List[TsKvData]): List[String] = {
-    val qualityAttributes = metadataFetchService.getMetadataForDevice(deviceId) match {
+    val metaData = metadataFetchService.getMetadataForDevice(deviceId) match {
       case Right(metadata) => metadata
       case Left(errorMsg) => log.error(s"""Missing metadata for $deviceId because "$errorMsg". Tag presence quality check failed"""); return List.empty
     }
-    qualityAttributes.filter(mandatoryAttributes => !tagsPresent.map(_.tag).contains(mandatoryAttributes.tag)).map(_.tag)
+    metaData.filter(mandatoryAttributes => !tagsPresent.map(_.tag).contains(mandatoryAttributes.tag)).map(_.tag)
   }
 
 }

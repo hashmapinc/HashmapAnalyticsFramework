@@ -9,5 +9,5 @@ class DataQualityMetaData {
   val token: String = null
 
   @JsonProperty
-  val mandatoryTags: String = null
+  val metaData: String = null
 }

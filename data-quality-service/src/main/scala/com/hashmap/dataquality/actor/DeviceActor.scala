@@ -27,8 +27,8 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
   def processToActorMsg(msg: ToActorMsg): Unit ={
     if (!subscriptionState) {
       val deviceMetaData = fetchDeviceMetadata(msg.deviceId)
-      if(deviceMetaData.mandatoryTags != null)
-        actorSystemContext.metadataService.saveMetaDataForDevice(msg.deviceId, deviceMetaData.mandatoryTags)
+      if(deviceMetaData.metaData != null)
+        actorSystemContext.metadataService.saveMetaDataForDevice(msg.deviceId, deviceMetaData.metaData)
       if(deviceMetaData.token != null) {
         createAttributeSubscription(msg.deviceId, deviceMetaData.token)
       }
