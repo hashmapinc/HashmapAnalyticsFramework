@@ -20,7 +20,7 @@ security:
       tokenInfoUri: "${TOKEN_INFO_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/check_token}"
 
 db:
-  file-path: "${DB_FILE_PATH:abcd/db}"
+  file-path: "${DB_FILE_PATH:rox/db}"
 
 tempus:
   uri: "${TEMPUS_URL:http://localhost:8080}"
