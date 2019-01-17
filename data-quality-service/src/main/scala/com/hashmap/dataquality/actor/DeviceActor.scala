@@ -3,7 +3,7 @@ package com.hashmap.dataquality.actor
 import akka.actor.Actor
 import com.hashmap.dataquality.ApplicationContextProvider
 import com.hashmap.dataquality.data.ToActorMsg
-import com.hashmap.dataquality.metadata.{DataQualityMetaData, MetadataDao}
+import com.hashmap.dataquality.metadata.DataQualityMetaData
 import com.hashmap.dataquality.qualitycheck.QualityCheckingService
 import com.hashmap.dataquality.util.JsonUtil
 import org.eclipse.paho.client.mqttv3._
@@ -14,7 +14,7 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
   private val MQTT_ATTRIBUTE_TOPIC = "v1/devices/me/attributes"
 
-  private val log = LoggerFactory.getLogger(classOf[MetadataDao])
+  private val log = LoggerFactory.getLogger(classOf[DeviceActor])
   private var subscriptionState = false
 
   override def receive: PartialFunction[Any, Unit] = {
@@ -53,7 +53,7 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
         val sharedAttribute: String = new String(message.getPayload)
         try {
           val sharedAttributeMap: Map[String, String] = JsonUtil.fromJson[Map[String, String]](sharedAttribute)
-          sharedAttributeMap foreach (x => if (x._1.contentEquals("mandatory_tags")) {
+          sharedAttributeMap foreach (x => if (x._1.contentEquals("quality_meta_data")) {
             actorSystemContext.metadataService.saveMetaDataForDevice(deviceId, x._2)
           })
 
@@ -76,7 +76,7 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
     subscriptionState = true
   }
 
-  def fetchDeviceMetadata(deviceId: String): DataQualityMetaData = actorSystemContext.metadataService.getMetadataFromRemote(deviceId) match {
+  private def fetchDeviceMetadata(deviceId: String): DataQualityMetaData = actorSystemContext.metadataService.getMetadataFromRemote(deviceId) match {
     case Right(deviceMetaData) => deviceMetaData
     case Left(error) => log.info("Error occurred in fetching {}", error); new DataQualityMetaData
   }

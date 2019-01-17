@@ -11,7 +11,7 @@ class MetadataService @Autowired()(metadataDao: MetadataDao,
                                    @Qualifier("oauth2RestTemplate") oauth2RestTemplate: RestTemplate,
                                    @Value("${tempus.uri}") private val URI: String) {
 
-  private val log = LoggerFactory.getLogger(classOf[MetadataDao])
+  private val log = LoggerFactory.getLogger(classOf[MetadataService])
 
   private val URL_FORMAT = "%s/api/device/%s/data-quality-meta-data"
 
