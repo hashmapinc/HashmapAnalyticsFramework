@@ -22,12 +22,14 @@ class TelemetryDataConsumer extends Processor[String, KafkaInboundMsg]{
   }
 
   override def process(key: String, value: KafkaInboundMsg): Unit = {
-    if (kvStore.get(key) == null) {
-      kvStore.put(key, value)
-    } else {
-      var tagList = kvStore.get(key).tagList
-      tagList ++= value.tagList.toList
-      kvStore.put(key, KafkaInboundMsg(kvStore.get(key).deviceName, tagList))
+    if(key != null && value != null) {
+      if (kvStore.get(key) == null) {
+        kvStore.put(key, value)
+      } else {
+        var tagList = kvStore.get(key).tagList
+        tagList ++= value.tagList.toList
+        kvStore.put(key, KafkaInboundMsg(kvStore.get(key).deviceName, tagList))
+      }
     }
   }
 
