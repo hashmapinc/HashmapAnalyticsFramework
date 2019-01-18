@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk
 VOLUME /tmp
 ARG JAR_FILE
 ARG SERVER_PORT
