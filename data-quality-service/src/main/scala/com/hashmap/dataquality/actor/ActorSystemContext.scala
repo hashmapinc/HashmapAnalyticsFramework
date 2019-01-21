@@ -19,7 +19,11 @@ class ActorSystemContext {
   @Autowired
   val metadataService: MetadataService = null
 
-  @Value("${tempus.mqtt-url}") val MQTT_URL: String = ""
+  @Value("${tempus.mqtt-bind-address}") val MQTT_BIND_ADDRESS: String = ""
+
+  @Value("${tempus.mqtt-bind-port}") val MQTT_BIND_PORT: String = ""
+
+  @Value("${tempus.gateway-access-token}") val ACCESS_TOKEN: String = ""
 
   @PostConstruct
   def init() = {

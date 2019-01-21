@@ -17,6 +17,8 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
   private val log = LoggerFactory.getLogger(classOf[DeviceActor])
   private var subscriptionState = false
 
+  private val MQTT_URL_FORMAT = "tcp://%s:%s"
+
   override def receive: PartialFunction[Any, Unit] = {
       case msg: ToActorMsg =>
         processToActorMsg(msg)
@@ -40,7 +42,8 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
   private def createAttributeSubscription(deviceId: String, deviceToken: String): Unit = {
 
     val persistence = new MemoryPersistence
-    val client = new MqttClient(actorSystemContext.MQTT_URL, MqttClient.generateClientId, persistence)
+    val mqttUrl = String.format(MQTT_URL_FORMAT, actorSystemContext.MQTT_BIND_ADDRESS, actorSystemContext.MQTT_BIND_PORT)
+    val client = new MqttClient(mqttUrl, MqttClient.generateClientId, persistence)
 
     val options = new MqttConnectOptions()
     options.setUserName(deviceToken)
