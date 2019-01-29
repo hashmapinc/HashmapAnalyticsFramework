@@ -16,4 +16,6 @@ public interface UsersRepository extends BaseRepository<UserEntity, String> {
     List<UserEntity> findByAuthorities(String id);
 
     List<UserEntity> findByIdIn(List<String> id, Pageable pageable);
+
+    List<UserEntity> findByTenantId(String tenantId);
 }

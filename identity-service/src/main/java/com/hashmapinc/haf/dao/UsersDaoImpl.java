@@ -71,6 +71,16 @@ public class UsersDaoImpl implements UsersDao{
         return convertDataList(usersRepository.findPaginated(request, new PageRequest(0, request.getPageLink().getLimit())));
     }
 
+    @Override
+    public List<User> findByAuthorities(String id) {
+        return convertDataList(usersRepository.findByAuthorities(id));
+    }
+
+    @Override
+    public List<User> findByTenantId(String tenantId) {
+        return convertDataList(usersRepository.findByTenantId(tenantId));
+    }
+
     private List<User> convertDataList(Iterable<UserEntity> toDataList){
         List<UserEntity> entities = new ArrayList<>();
         List<User> list = new ArrayList<>();
