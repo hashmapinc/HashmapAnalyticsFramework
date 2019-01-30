@@ -32,11 +32,11 @@ public class UserVerificationServiceImpl implements UserVerificationService{
 
             for (User user : tenantAdminUsers) {
                 Map<String, String> additionalDetails = user.getAdditionalDetails();
-                Boolean trialUser = getTrialUser(additionalDetails);
+                boolean trialUser = getTrialUser(additionalDetails);
                 Long registeredTime = getRegisteredTime(additionalDetails);
 
-                if(trialUser != null && registeredTime != null) {
-                    if (trialUser.equals(true) && isUserExpired(registeredTime,expiryTimeInMinutes)) {
+                if(trialUser && (registeredTime != null)) {
+                    if (isUserExpired(registeredTime,expiryTimeInMinutes)) {
                         user.setEnabled(false);
                         userDetailsService.save(user);
                         disableExpiredTenantCustomers(user.getTenantId());
@@ -56,11 +56,10 @@ public class UserVerificationServiceImpl implements UserVerificationService{
         return registeredTime;
     }
 
-    private Boolean getTrialUser(Map<String, String> additionalDetails) {
-        Boolean trialUser = null;
+    private boolean getTrialUser(Map<String, String> additionalDetails) {
         if(additionalDetails.get(IS_TRIAL_ACCOUNT) != null)
-            trialUser = Boolean.parseBoolean(additionalDetails.get(IS_TRIAL_ACCOUNT));
-        return trialUser;
+            return Boolean.parseBoolean(additionalDetails.get(IS_TRIAL_ACCOUNT));
+        return false;
     }
 
     private void disableExpiredTenantCustomers(String tenantId) {
