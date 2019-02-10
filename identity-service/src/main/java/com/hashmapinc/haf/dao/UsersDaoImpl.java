@@ -81,6 +81,16 @@ public class UsersDaoImpl implements UsersDao{
         return convertDataList(usersRepository.findByTenantId(tenantId));
     }
 
+    @Override
+    public List<User> findByClientIdAndAuthorities(String clientId, String authority) {
+        return convertDataList(usersRepository.findByClientIdAndAuthorities(clientId, authority));
+    }
+
+    @Override
+    public List<User> findByClientIdAndAuthoritiesAndAdditionalDetails(String clientId, String authority, String keyName, String keyValue) {
+        return convertDataList(usersRepository.findByClientIdAndAuthoritiesAndAdditionalDetails(clientId, authority,keyName,keyValue));
+    }
+
     private List<User> convertDataList(Iterable<UserEntity> toDataList){
         List<UserEntity> entities = new ArrayList<>();
         List<User> list = new ArrayList<>();

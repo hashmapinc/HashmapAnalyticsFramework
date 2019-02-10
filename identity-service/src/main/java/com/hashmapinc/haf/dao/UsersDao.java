@@ -28,4 +28,8 @@ public interface UsersDao {
     List<User> findByAuthorities(String id);
 
     List<User> findByTenantId(String tenantId);
+
+    List<User> findByClientIdAndAuthorities(String clientId , String authority);
+
+    List<User> findByClientIdAndAuthoritiesAndAdditionalDetails(String clientId, String authority, String keyName, String keyValue);
 }
