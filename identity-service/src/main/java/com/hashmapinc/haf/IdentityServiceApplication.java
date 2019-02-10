@@ -9,12 +9,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootConfiguration
 @EnableDiscoveryClient
 @EnableAutoConfiguration
-@EnableScheduling
 @EnableJpaRepositories(repositoryBaseClass = DefaultBaseRepository.class)
 @ComponentScan
 public class IdentityServiceApplication {
