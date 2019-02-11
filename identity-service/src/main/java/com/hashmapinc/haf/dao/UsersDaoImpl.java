@@ -72,8 +72,8 @@ public class UsersDaoImpl implements UsersDao{
     }
 
     @Override
-    public List<User> findByAuthorities(String id) {
-        return convertDataList(usersRepository.findByAuthorities(id));
+    public List<User> findByAuthorities(String authority) {
+        return convertDataList(usersRepository.findByAuthorities(authority));
     }
 
     @Override

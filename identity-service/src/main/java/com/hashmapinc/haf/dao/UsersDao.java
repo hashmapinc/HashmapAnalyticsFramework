@@ -25,7 +25,7 @@ public interface UsersDao {
 
     List<User> findByCriteria(PaginatedRequest request);
 
-    List<User> findByAuthorities(String id);
+    List<User> findByAuthorities(String authority);
 
     List<User> findByTenantId(String tenantId);
 

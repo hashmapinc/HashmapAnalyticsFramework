@@ -14,7 +14,7 @@ public interface UsersRepository extends BaseRepository<UserEntity, String> {
 
     List<UserEntity> findByClientId(String clientId);
 
-    List<UserEntity> findByAuthorities(String id);
+    List<UserEntity> findByAuthorities(String authority);
 
     List<UserEntity> findByIdIn(List<String> id, Pageable pageable);
 
