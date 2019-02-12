@@ -20,7 +20,7 @@ public interface UsersRepository extends BaseRepository<UserEntity, String> {
 
     List<UserEntity> findByTenantId(String tenantId);
 
-    List<UserEntity> findByClientIdAndAuthorities(String clientId , String id);
+    List<UserEntity> findByClientIdAndAuthorities(String clientId , String authority);
 
     @Query(value = "SELECT * from  haf_users  INNER JOIN haf_user_details ON haf_users.id = haf_user_details.user_id INNER JOIN  haf_user_authorities ON haf_users.id = haf_user_authorities.user_id " +
             " WHERE haf_users.client_id = ?1" +
