@@ -277,6 +277,32 @@ public class UserController {
         return ResponseEntity.ok(userService.findByIds(uuids, createPageLink(limit, textSearch, idOffset, textOffset)));
     }
 
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/list/{clientId}/{authority}", method = RequestMethod.GET)
+    public ResponseEntity getAllUsersByClientIdAndAuthority(@PathVariable String clientId , @PathVariable String authority){
+        List<User> users = userService.findByClientIdAndAuthorities(clientId,authority);
+        if(users == null || users.isEmpty())
+            return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(users);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/list/{tenantId}", method = RequestMethod.GET)
+    public ResponseEntity getAllUsersByTenantId(@PathVariable String tenantId){
+        List<User> users = userService.findByTenantId(tenantId);
+        if(users == null || users.isEmpty())
+            return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(users);
+    }
+
+    @PreAuthorize("#oauth2.hasAnyScope('server', 'ui')")
+    @RequestMapping(value = "/list/{clientId}/{authority}/trialAccount", method = RequestMethod.GET)
+    public ResponseEntity getAllTrialUsersByClientIdAndAuthority(@PathVariable String clientId , @PathVariable String authority){
+        List<User> users = userService.findByClientIdAndAuthoritiesAndAdditionalDetails(clientId,authority,"trialAccount","true");
+        if(users == null || users.isEmpty())
+            return new ResponseEntity<>("No Users found", HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(users);
+    }
 
     private String getCurrentClientId(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

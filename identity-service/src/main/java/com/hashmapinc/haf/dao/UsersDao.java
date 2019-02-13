@@ -24,4 +24,12 @@ public interface UsersDao {
     Collection<User> findAllByClientId(String clientId);
 
     List<User> findByCriteria(PaginatedRequest request);
+
+    List<User> findByAuthorities(String authority);
+
+    List<User> findByTenantId(String tenantId);
+
+    List<User> findByClientIdAndAuthorities(String clientId , String authority);
+
+    List<User> findByClientIdAndAuthoritiesAndAdditionalDetails(String clientId, String authority, String keyName, String keyValue);
 }

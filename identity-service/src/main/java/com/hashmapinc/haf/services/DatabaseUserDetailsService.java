@@ -131,4 +131,19 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public UserCredentials saveUserCredentials(UserCredentials credentials) {
         return userCredentialsDao.save(credentials);
     }
+
+    @Override
+    public List<User> findByClientIdAndAuthorities(String clientId, String authority) {
+        return usersDao.findByClientIdAndAuthorities(clientId,authority);
+    }
+
+    @Override
+    public List<User> findByTenantId(String tenantId) {
+        return usersDao.findByTenantId(tenantId);
+    }
+
+    @Override
+    public List<User> findByClientIdAndAuthoritiesAndAdditionalDetails(String clientId , String authority ,String keyName , String keyValue) {
+        return usersDao.findByClientIdAndAuthoritiesAndAdditionalDetails(clientId,authority, keyName,keyValue);
+    }
 }

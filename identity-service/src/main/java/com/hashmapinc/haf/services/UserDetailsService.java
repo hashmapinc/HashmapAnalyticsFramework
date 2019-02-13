@@ -42,4 +42,9 @@ public interface UserDetailsService {
 
     TextPageData<User> findPaginatedUsersByCriteria(PaginatedRequest request);
 
+    List<User> findByClientIdAndAuthorities(String clientId , String authority);
+
+    List<User> findByTenantId(String tenantId);
+
+    List<User> findByClientIdAndAuthoritiesAndAdditionalDetails(String clientId , String authority ,String keyName , String keyValue);
 }
