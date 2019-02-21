@@ -13,6 +13,7 @@ class KafkaInboundMsgDeserializer extends Deserializer[KafkaInboundMsg]{
 
   override def deserialize(s: String, bytes: Array[Byte]): KafkaInboundMsg = {
     try {
+      println("inbound msg " + new String(bytes))
       return JsonUtil.fromJson[KafkaInboundMsg](new String(bytes))
     } catch {
       case _: Exception => print("Error ")

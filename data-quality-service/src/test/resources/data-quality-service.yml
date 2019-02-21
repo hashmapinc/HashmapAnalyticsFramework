@@ -32,3 +32,6 @@ kafka-app:
 frequency-quality-threshold:
   max: "{FREQUENCY_QUALITY_THRESHOLD_MAX:50}"
   min: "{FREQUENCY_QUALITY_THRESHOLD_MIN:10}"
+
+kinesis-support:
+  enabled: "${KINESIS_SUPPORT_ENABLED:false}"

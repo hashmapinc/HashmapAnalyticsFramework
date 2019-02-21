@@ -10,6 +10,11 @@
         <artifactId>redtail</artifactId>
     </parent>
 
+    <properties>
+        <scala.version>2.12.8</scala.version>
+        <scala.compat.version>2.12</scala.compat.version>
+    </properties>
+
     <artifactId>data-quality-service</artifactId>
 
     <dependencies>
@@ -79,7 +84,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_2.11</artifactId>
+            <artifactId>jackson-module-scala_2.12</artifactId>
             <version>2.8.10</version>
         </dependency>
         <dependency>
@@ -128,6 +133,16 @@
             <artifactId>mockito-core</artifactId>
             <version>2.21.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lightbend.akka</groupId>
+            <artifactId>akka-stream-alpakka-kinesis_2.12</artifactId>
+            <version>1.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream-kafka_2.12</artifactId>
+            <version>1.0-RC1</version>
         </dependency>
     </dependencies>
 
