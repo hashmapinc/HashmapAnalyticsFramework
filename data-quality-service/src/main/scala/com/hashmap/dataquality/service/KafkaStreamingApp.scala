@@ -3,7 +3,7 @@ package com.hashmap.dataquality.service
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 
-import com.hashmap.dataquality.data.KafkaInboundMsg
+import com.hashmap.dataquality.data.InboundMsg
 import com.hashmap.dataquality.processor.{TelemetryDataConsumer, WindowProcessor}
 import com.hashmap.dataquality.serdes.TelemetryDataSerde
 import lombok.Getter
@@ -51,12 +51,12 @@ class KafkaStreamingApp {
     
     builder.addSource("Source", DATA_QUALITY_TOPIC)
       .addProcessor("Consumer-Processor",
-        new ProcessorSupplier[String, KafkaInboundMsg]() {
+        new ProcessorSupplier[String, InboundMsg]() {
           override def get = new TelemetryDataConsumer()
         }, "Source")
 
     builder.addProcessor("Window-Processor",
-        new ProcessorSupplier[String, KafkaInboundMsg]() {
+        new ProcessorSupplier[String, InboundMsg]() {
           override def get = new WindowProcessor()
         }, "Consumer-Processor")
 

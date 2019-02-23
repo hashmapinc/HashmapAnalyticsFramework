@@ -1,6 +1,6 @@
 package com.hashmap.dataquality.qualitycheck
 
-import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
+import com.hashmap.dataquality.data.{InboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.{MetadataService, TagMetaData}
 import com.hashmapinc.tempus.MqttConnector
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ class TagPresenceQualityCheckTest {
     val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
     val givenDeviceName = "someDeviceName"
     val givenTsKvData = List(TsKvData(1000, "tag1", "value1"), TsKvData(1001, "tag2", "value1"), TsKvData(1050, "tag1", "value2"), TsKvData(1100, "tag2", "value2"))
-    val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
+    val givenPayload = InboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
     val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))
 
@@ -50,7 +50,7 @@ class TagPresenceQualityCheckTest {
     val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
     val givenDeviceName = "someDeviceName"
     val givenTsKvData = List(TsKvData(1001, "tag2", "value1"), TsKvData(1100, "tag2", "value2"))
-    val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
+    val givenPayload = InboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
     val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))
 
@@ -69,7 +69,7 @@ class TagPresenceQualityCheckTest {
     val givenTagMetadata = List(TagMetaData("tag1", "50"), TagMetaData("tag2", "50"))
     val givenDeviceName = "someDeviceName"
     val givenTsKvData = List(TsKvData(1000, "tag3", "value1"), TsKvData(1001, "tag4", "value1"), TsKvData(1200, "tag4", "value2"))
-    val givenPayload = KafkaInboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
+    val givenPayload = InboundMsg(givenDeviceName, givenTsKvData.to[ListBuffer])
     val captor = ArgumentCaptor.forClass(classOf[String])
     when(metadataFetchService.getMetadataForDevice(givenDeviceId)).thenReturn(Right(givenTagMetadata))
 
