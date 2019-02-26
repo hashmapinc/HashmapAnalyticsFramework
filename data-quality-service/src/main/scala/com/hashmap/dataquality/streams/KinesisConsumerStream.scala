@@ -11,6 +11,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.kinesis.model.{Record, ShardIteratorType}
 import com.amazonaws.services.kinesis.{AmazonKinesisAsync, AmazonKinesisAsyncClientBuilder}
 import com.hashmap.dataquality.data.{InboundMsg, KinesisInboundMsg}
+import com.hashmap.dataquality.service.StreamsService
 import com.hashmap.dataquality.util.JsonUtil
 
 import scala.concurrent.duration._

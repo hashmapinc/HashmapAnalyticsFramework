@@ -19,19 +19,32 @@ security:
     resource:
       tokenInfoUri: "${TOKEN_INFO_URI:${IDENTITY_BASE_URL:http://localhost:9002/uaa}/oauth/check_token}"
 
+db:
+  file-path: "${DB_FILE_PATH:rox/db}"
+
 tempus:
   uri: "${TEMPUS_URL:http://localhost:8080}"
-  mqtt-url: "${TEMPUS_MQTT_URL:tcp://localhost:1883}"
+  mqtt-bind-address: "${TEMPUS_MQTT_BIND_ADDRESS:localhost}"
+  mqtt-bind-port: "${TEMPUS_MQTT_BIND_PORT:1883}"
   gateway-access-token: "${TEMPUS_GATEWAY_TOKEN:DEVICE_GATEWAY_TOKEN}"
 
 # Time window for quality check operations
 kafka-app:
-  time-window: "${TIME_WINDOW:10000}"
+  time-window: "${TIME_WINDOW:10}"
+  kafka-bind-address: "${KAFKA_BIND_ADDRESS:kafka}"
+  kafka-bind-port: "${KAFKA_BIND_PORT:9092}"
+  data-quality-topic: "${DATA_QUALITY_TOPIC:data-quality-topic}"
 
 # Frequency mismatch threshold for data quality checking
-frequency-quality-threshold:
-  max: "{FREQUENCY_QUALITY_THRESHOLD_MAX:50}"
-  min: "{FREQUENCY_QUALITY_THRESHOLD_MIN:10}"
+data-quality-frequency:
+  threhold: "${FREQUENCY_QUALITY_THRESHOLD:10}"
 
-kinesis-support:
+# Streams
+kinesis:
   enabled: "${KINESIS_SUPPORT_ENABLED:false}"
+  stream-name: "${STREAM_NAME:stream-name}"
+  shard-id: "${SHARD_ID:shardId}"
+
+aws:
+  access-key: "${AWS_ACCESS_KEY:aws_access_key}"
+  secret-key: "${AWS_SECRET_KEY:aws_secret_key}"

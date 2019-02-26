@@ -30,7 +30,7 @@ tempus:
 
 # Time window for quality check operations
 kafka-app:
-  time-window: "${TIME_WINDOW:10000}"
+  time-window: "${TIME_WINDOW:10}"
   kafka-bind-address: "${KAFKA_BIND_ADDRESS:kafka}"
   kafka-bind-port: "${KAFKA_BIND_PORT:9092}"
   data-quality-topic: "${DATA_QUALITY_TOPIC:data-quality-topic}"

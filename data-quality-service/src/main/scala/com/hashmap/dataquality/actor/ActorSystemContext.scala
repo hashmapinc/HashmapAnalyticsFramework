@@ -2,6 +2,7 @@ package com.hashmap.dataquality.actor
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.hashmap.dataquality.metadata.MetadataService
+import com.hashmap.dataquality.qualitycheck.QualityCheckingService
 import com.typesafe.config.{Config, ConfigFactory}
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -16,8 +17,9 @@ class ActorSystemContext {
   var actorSystem: ActorSystem = _
   var config: Config = _
 
-  @Autowired
-  val metadataService: MetadataService = null
+  @Autowired val metadataService: MetadataService = null
+
+  @Autowired val qualityCheckingService: QualityCheckingService = null
 
   @Value("${tempus.mqtt-bind-address}") val MQTT_BIND_ADDRESS: String = ""
 

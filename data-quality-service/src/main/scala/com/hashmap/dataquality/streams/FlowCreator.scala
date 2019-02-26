@@ -13,7 +13,7 @@ trait FlowCreator {
 
   protected val appConfig: AppConfig = ApplicationContextProvider.getApplicationContext.getBean(classOf[AppConfig])
 
-  protected def createFlow(): Flow[(String, InboundMsg), ToActorMsg, NotUsed] = {
+  def createFlow(): Flow[(String, InboundMsg), ToActorMsg, NotUsed] = {
     Flow[(String, InboundMsg)].groupedWithin(Integer.MAX_VALUE, appConfig.TIME_WINDOW second).mapConcat(entry => {
       val ret: immutable.Iterable[ToActorMsg] = reduceByKey(entry).map(e => ToActorMsg(e._1, e._2))
       ret
