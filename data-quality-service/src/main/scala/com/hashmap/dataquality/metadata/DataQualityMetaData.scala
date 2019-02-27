@@ -1,8 +1,14 @@
 package com.hashmap.dataquality.metadata
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import lombok.{AllArgsConstructor, NoArgsConstructor}
+import lombok.AllArgsConstructor
+
 
 @AllArgsConstructor
-@NoArgsConstructor
-class DataQualityMetaData(@JsonProperty val token: String, @JsonProperty val metaData: String)
+class DataQualityMetaData {
+  @JsonProperty
+  val token: String = null
+
+  @JsonProperty
+  val metaData: String = null
+}

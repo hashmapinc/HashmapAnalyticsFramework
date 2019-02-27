@@ -2,7 +2,7 @@ package com.hashmap.dataquality.serdes
 
 import java.util
 
-import com.hashmap.dataquality.data.InboundMsg
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 import com.hashmap.dataquality.util.JsonUtil
 import org.apache.kafka.common.serialization.Serializer
 

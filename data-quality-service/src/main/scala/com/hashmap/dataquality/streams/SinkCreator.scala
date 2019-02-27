@@ -3,7 +3,7 @@ package com.hashmap.dataquality.streams
 import akka.NotUsed
 import akka.stream.scaladsl.Sink
 import com.hashmap.dataquality.ApplicationContextProvider
-import com.hashmap.dataquality.data.ToActorMsg
+import com.hashmap.dataquality.data.Msgs.ToActorMsg
 import com.hashmap.dataquality.service.ActorService
 
 trait SinkCreator {

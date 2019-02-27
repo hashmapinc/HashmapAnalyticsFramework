@@ -1,6 +1,6 @@
 package com.hashmap.dataquality.qualitycheck
 
-import com.hashmap.dataquality.data.InboundMsg
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 
 trait QualityCheck {
 

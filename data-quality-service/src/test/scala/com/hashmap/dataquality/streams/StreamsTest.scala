@@ -2,9 +2,9 @@ package com.hashmap.dataquality.streams
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
-import com.hashmap.dataquality.data.InboundMsg
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 import com.hashmap.dataquality.metadata.{DataQualityMetaData, MetadataService, TagMetaData}
-import com.hashmap.dataquality.service.{StreamStartService, StreamsService}
+import com.hashmap.dataquality.service.{StreamsApp, StreamsService}
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
 import org.junit.runner.RunWith
@@ -29,7 +29,7 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration}
 class StreamsTest {
 
   @Autowired
-  val streamStartService: StreamStartService = null
+  val streamsApp: StreamsApp = null
 
   @Autowired
   val metadataService: MetadataService = null
@@ -39,12 +39,13 @@ class StreamsTest {
 
   var testSource : TestSource = _
 
+
   @Before
   def before(): Unit = {
     MockitoAnnotations.initMocks(this)
-    doNothing().when(streamStartService).run()
+    doNothing().when(streamsApp).run()
     testSource = new TestSource
-    Mockito.reset(mqttConnector, metadataService, streamStartService)
+    Mockito.reset(mqttConnector, metadataService, streamsApp)
   }
 
   @Test
@@ -52,7 +53,8 @@ class StreamsTest {
 
     val metadataString = "[{\"tag\":\"waterTankLevel\", \"avgTagFrequency\": \"1000\"}, {\"tag\":\"Attn\", \"avgTagFrequency\": \"1000\"}, {\"tag\":\"TankLevel\", \"avgTagFrequency\": \"1000\"}]"
     val listTagMetaData = JsonUtil.fromJson[List[TagMetaData]](metadataString)
-    val givenTagMetadata = new DataQualityMetaData("token", metadataString)
+    val dataQualityMetaDataStr = "{\"token\":\"token\", \"metaData\": \"[{\\\"tag\\\":\\\"waterTankLevel\\\", \\\"avgTagFrequency\\\": \\\"1000\\\"}, {\\\"tag\\\":\\\"humidity\\\", \\\"avgTagFrequency\\\": \\\"1000\\\"}]\"}"
+    val givenTagMetadata = JsonUtil.fromJson[DataQualityMetaData](dataQualityMetaDataStr)
 
     when(metadataService.getMetadataFromRemote(any())).
       thenReturn(Right(givenTagMetadata))
@@ -80,7 +82,8 @@ class StreamsTest {
 
     val metadataString = "[{\"tag\":\"waterTankLevel\", \"avgTagFrequency\": \"1000\"}, {\"tag\":\"humidity\", \"avgTagFrequency\": \"1000\"}]"
     val listTagMetaData = JsonUtil.fromJson[List[TagMetaData]](metadataString)
-    val givenTagMetadata = new DataQualityMetaData("token", metadataString)
+    val dataQualityMetaDataStr = "{\"token\":\"token\", \"metaData\": \"[{\\\"tag\\\":\\\"waterTankLevel\\\", \\\"avgTagFrequency\\\": \\\"1000\\\"}, {\\\"tag\\\":\\\"humidity\\\", \\\"avgTagFrequency\\\": \\\"1000\\\"}]\"}"
+    val givenTagMetadata = JsonUtil.fromJson[DataQualityMetaData](dataQualityMetaDataStr)
 
     when(metadataService.getMetadataFromRemote(any())).
       thenReturn(Right(givenTagMetadata))
@@ -138,7 +141,7 @@ class TestSource extends StreamsService[NotUsed] {
 @Profile(Array("streams-test"))
 @Configuration class StreamsTestConfiguration {
   @Bean
-  @Primary def streamStartService: StreamStartService = Mockito.mock(classOf[StreamStartService])
+  @Primary def streamsApp: StreamsApp = Mockito.mock(classOf[StreamsApp])
 
   @Bean
   @Primary def metadataService: MetadataService = Mockito.mock(classOf[MetadataService])

@@ -1,8 +1,7 @@
 package com.hashmap.dataquality.serdes
 
 import java.util
-
-import com.hashmap.dataquality.data.InboundMsg
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 import org.apache.kafka.common.serialization.{Deserializer, Serde, Serializer}
 
 class TelemetryDataSerde extends Serde[InboundMsg]{

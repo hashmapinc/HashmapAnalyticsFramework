@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class StreamStartService {
+class StreamsApp {
 
   @Value("${kinesis.enabled}") val KINESIS_SUPPORT_ENABLED: Boolean = false
 

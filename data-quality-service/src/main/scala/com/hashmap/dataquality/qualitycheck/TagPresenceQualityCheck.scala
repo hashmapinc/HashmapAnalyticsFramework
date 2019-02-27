@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.MqttPublisher
-import com.hashmap.dataquality.data.{InboundMsg, TsKvData}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.MetadataService
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector

@@ -1,12 +1,13 @@
 package com.hashmap.dataquality.actor
 
 import akka.actor.Actor
-import com.hashmap.dataquality.data.ToActorMsg
+import com.hashmap.dataquality.data.Msgs.ToActorMsg
 import com.hashmap.dataquality.metadata.DataQualityMetaData
 import com.hashmap.dataquality.util.JsonUtil
 import org.eclipse.paho.client.mqttv3._
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.slf4j.LoggerFactory
+import scala.util.control.Exception._
 
 class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
@@ -38,49 +39,56 @@ class DeviceActor(actorSystemContext: ActorSystemContext) extends Actor {
 
     val persistence = new MemoryPersistence
     val mqttUrl = String.format(MQTT_URL_FORMAT, actorSystemContext.MQTT_BIND_ADDRESS, actorSystemContext.MQTT_BIND_PORT)
-    val client = new MqttClient(mqttUrl, MqttClient.generateClientId, persistence)
+    val client: MqttClient = new MqttClient(mqttUrl, MqttClient.generateClientId, persistence)
 
-    try {
-      val options = new MqttConnectOptions()
-      options.setUserName(deviceToken)
-      client.connect(options)
-      client.subscribe(MQTT_ATTRIBUTE_TOPIC)
+    makeConnection(client, deviceToken) match {
+      case Right(value) => subscribe(client, deviceId)
+      case Left(error) => log.error(s"""Connection exception for device "$deviceId" {}""", error)
+    }
+  }
 
-      val callback = new MqttCallback {
-        override def messageArrived(topic: String, message: MqttMessage): Unit = {
-          log.info("Receiving Data, Topic : %s, Message : %s".format(topic, message))
-          val sharedAttribute: String = new String(message.getPayload)
-          try {
-            val sharedAttributeMap: Map[String, String] = JsonUtil.fromJson[Map[String, String]](sharedAttribute)
-            sharedAttributeMap foreach (x => if (x._1.contentEquals("quality_meta_data")) {
-              actorSystemContext.metadataService.saveMetaDataForDevice(deviceId, x._2)
-            })
+  private def makeConnection(client: MqttClient, deviceToken: String): Either[Throwable, Unit] = {
+    val options = new MqttConnectOptions()
+    options.setUserName(deviceToken)
+    allCatch.either(client.connect(options))
+  }
 
-          } catch {
-            case e: Exception => log.error(s"""Exception occurred while receiving subscription for device "$deviceId". Exception {}""", e)
-          }
-        }
+  private def subscribe(client: MqttClient, deviceId: String): Unit = {
+    client.subscribe(MQTT_ATTRIBUTE_TOPIC)
+    val callback = new MqttCallback {
 
-        override def connectionLost(cause: Throwable): Unit = {
-          log.info("Connection lost {}", cause)
-          subscriptionState = false
-        }
-
-        override def deliveryComplete(token: IMqttDeliveryToken): Unit = {
-
+      override def messageArrived(topic: String, message: MqttMessage): Unit = {
+        log.info("Receiving Data, Topic : %s, Message : %s".format(topic, message))
+        val sharedAttribute: String = new String(message.getPayload)
+        parseJson(sharedAttribute) match {
+          case Right(value) => value.map(entry => if(entry._1.contentEquals("quality_meta_data")){
+            actorSystemContext.metadataService.saveMetaDataForDevice(deviceId, entry._2)
+          })
+          case Left(error) => log.error(s"""Exception occurred while receiving subscription for device "$deviceId". Exception {}""", error)
         }
       }
-      client.setCallback(callback)
 
-      subscriptionState = true
-    } catch {
-      case e : Exception => log.error(s"""Connection exception for device "$deviceId" {}""", e)
+      override def connectionLost(cause: Throwable): Unit = {
+        log.info("Connection lost {}", cause)
+        subscriptionState = false
+      }
+
+      override def deliveryComplete(token: IMqttDeliveryToken): Unit = {
+        log.info(s"""Delivery complete for deviceId "$deviceId" """)
+      }
+
     }
+    client.setCallback(callback)
+    subscriptionState = true
+  }
+
+  private def parseJson(json: String): Either[Throwable, Map[String, String]] = {
+    allCatch.either(JsonUtil.fromJson[Map[String, String]](json))
   }
 
   private def fetchDeviceMetadata(deviceId: String): DataQualityMetaData = actorSystemContext.metadataService.getMetadataFromRemote(deviceId) match {
     case Right(deviceMetaData) => deviceMetaData
-    case Left(error) => log.error(s"""Error occurred in fetching device metaData for deviceId "$deviceId". Error {}""", error); new DataQualityMetaData(null, null)
+    case Left(error) => log.error(s"""Error occurred in fetching device metaData for deviceId "$deviceId". Error {}""", error); new DataQualityMetaData
   }
 
 }

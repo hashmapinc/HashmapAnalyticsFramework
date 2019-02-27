@@ -10,7 +10,7 @@ import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.kinesis.model.{Record, ShardIteratorType}
 import com.amazonaws.services.kinesis.{AmazonKinesisAsync, AmazonKinesisAsyncClientBuilder}
-import com.hashmap.dataquality.data.{InboundMsg, KinesisInboundMsg}
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 import com.hashmap.dataquality.service.StreamsService
 import com.hashmap.dataquality.util.JsonUtil
 
@@ -23,8 +23,8 @@ class KinesisConsumerStream extends StreamsService [NotUsed]{
   override def createSource(): Source[(String, InboundMsg), NotUsed] = {
     getKinesisSource
       .map(record => new String(record.getData.array(), StandardCharsets.UTF_8))
-      .map(entry => JsonUtil.fromJson[KinesisInboundMsg](entry))
-      .map(entry => (entry.deviceId, InboundMsg(entry.deviceName, entry.tagList)))
+      .map(entry => JsonUtil.fromJson[InboundMsg](entry))
+      .map(entry => (entry.deviceId.get, entry))
   }
 
   private def getKinesisSource: Source[Record, NotUsed] = {

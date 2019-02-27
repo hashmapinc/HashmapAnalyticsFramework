@@ -3,7 +3,7 @@ package com.hashmap.dataquality.streams
 import akka.kafka.scaladsl.Consumer
 import akka.kafka.{ConsumerSettings, Subscriptions}
 import akka.stream.scaladsl.Source
-import com.hashmap.dataquality.data.InboundMsg
+import com.hashmap.dataquality.data.Msgs.InboundMsg
 import com.hashmap.dataquality.serdes.TelemetryDataSerde
 import com.hashmap.dataquality.service.StreamsService
 import com.typesafe.config.Config

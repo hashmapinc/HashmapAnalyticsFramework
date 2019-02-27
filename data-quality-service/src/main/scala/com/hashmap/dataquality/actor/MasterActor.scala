@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.actor
 
 import akka.actor.{Actor, ActorRef, Props}
-import com.hashmap.dataquality.data.ToActorMsg
+import com.hashmap.dataquality.data.Msgs.ToActorMsg
 
 import scala.collection.mutable
 

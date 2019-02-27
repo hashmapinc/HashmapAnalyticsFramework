@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.MqttPublisher
-import com.hashmap.dataquality.data.{InboundMsg, TsKvData}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.{MetadataService, TagMetaData}
 import com.hashmapinc.tempus.MqttConnector
 import org.slf4j.LoggerFactory

@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.stream.scaladsl.Flow
 import com.hashmap.dataquality.ApplicationContextProvider
 import com.hashmap.dataquality.config.AppConfig
-import com.hashmap.dataquality.data.{InboundMsg, ToActorMsg}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, ToActorMsg}
 
 import scala.collection.immutable
 import scala.concurrent.duration._
