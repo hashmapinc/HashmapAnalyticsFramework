@@ -3,6 +3,7 @@ package com.hashmap.dataquality.metadata
 import com.fasterxml.jackson.annotation.JsonProperty
 import lombok.AllArgsConstructor
 
+
 @AllArgsConstructor
 class DataQualityMetaData {
   @JsonProperty

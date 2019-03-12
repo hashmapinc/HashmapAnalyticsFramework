@@ -1,6 +1,6 @@
 package com.hashmap.dataquality
 
-import com.hashmap.dataquality.service.KafkaStreamingApp
+import com.hashmap.dataquality.service.StreamsApp
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration, PropertySource}
@@ -18,7 +18,7 @@ object DataQualityServiceApplication extends App {
 
   private val context = SpringApplication.run(classOf[DataQualityServiceApplication], updateArguments(args): _*)
 
-  context.getBean(classOf[KafkaStreamingApp]).run()
+  context.getBean(classOf[StreamsApp]).run()
 
   private def updateArguments(args: Array[String]): List[String] = {
     val argsAsList = args.toList

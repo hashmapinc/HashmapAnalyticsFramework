@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.MqttPublisher
-import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.MetadataService
 import com.hashmap.dataquality.util.JsonUtil
 import com.hashmapinc.tempus.MqttConnector
@@ -17,7 +17,7 @@ class TagPresenceQualityCheck @Autowired()(metadataFetchService: MetadataService
 
   private val MISSING_ELEMENTS = "missingElements"
 
-  override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
+  override def check(deviceId: String, payload: InboundMsg): Unit = {
     log.info("Kafka Inbound Msg {}" + JsonUtil.toJson(payload))
     val tagsNotPresent = checkTagsPresence(deviceId, payload.tagList.toList)
     if (tagsNotPresent.nonEmpty) {

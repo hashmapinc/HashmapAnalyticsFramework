@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.actor
 
 import akka.actor.{Actor, ActorRef, Props}
-import com.hashmap.dataquality.data.ToActorMsg
+import com.hashmap.dataquality.data.Msgs.ToActorMsg
 
 import scala.collection.mutable
 
@@ -14,9 +14,6 @@ class MasterActor(actorSystemContext: ActorSystemContext) extends Actor {
   override def receive: PartialFunction[Any, Unit] = {
       case inboundMsg: ToActorMsg =>
         processToMasterActorMsg(inboundMsg)
-
-      case _ =>
-
   }
 
   def processToMasterActorMsg(msg: ToActorMsg): Unit = {

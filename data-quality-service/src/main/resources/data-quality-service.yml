@@ -30,7 +30,7 @@ tempus:
 
 # Time window for quality check operations
 kafka-app:
-  time-window: "${TIME_WINDOW:10000}"
+  time-window: "${TIME_WINDOW:10}"
   kafka-bind-address: "${KAFKA_BIND_ADDRESS:kafka}"
   kafka-bind-port: "${KAFKA_BIND_PORT:9092}"
   data-quality-topic: "${DATA_QUALITY_TOPIC:data-quality-topic}"
@@ -38,3 +38,13 @@ kafka-app:
 # Frequency mismatch threshold for data quality checking
 data-quality-frequency:
   threhold: "${FREQUENCY_QUALITY_THRESHOLD:10}"
+
+# Streams
+kinesis:
+  enabled: "${KINESIS_SUPPORT_ENABLED:false}"
+  stream-name: "${STREAM_NAME:stream-name}"
+  shard-id: "${SHARD_ID:shardId}"
+
+aws:
+  access-key: "${AWS_ACCESS_KEY:aws_access_key}"
+  secret-key: "${AWS_SECRET_KEY:aws_secret_key}"

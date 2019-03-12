@@ -1,7 +1,7 @@
 package com.hashmap.dataquality.qualitycheck
 
 import com.hashmap.dataquality.MqttPublisher
-import com.hashmap.dataquality.data.{KafkaInboundMsg, TsKvData}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, TsKvData}
 import com.hashmap.dataquality.metadata.{MetadataService, TagMetaData}
 import com.hashmapinc.tempus.MqttConnector
 import org.slf4j.LoggerFactory
@@ -17,7 +17,7 @@ class FrequencyQualityCheck @Autowired()(metadataFetchService: MetadataService,
 
   private val FREQUENCY_MISMATCH_ELEMENTS = "frequencyMismatchElements"
 
-  override def check(deviceId: String, payload: KafkaInboundMsg): Unit = {
+  override def check(deviceId: String, payload: InboundMsg): Unit = {
     val tagsWithMissedFrequency = tagsWithFrequencyMismatch(deviceId, payload.tagList.toList)
     if (tagsWithMissedFrequency.nonEmpty) {
       MqttPublisher.publishAsTelemetry(payload.deviceName, tagsWithMissedFrequency, mqttConnector, FREQUENCY_MISMATCH_ELEMENTS)

@@ -2,7 +2,7 @@ package com.hashmap.dataquality.service
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.hashmap.dataquality.actor.{ActorSystemContext, MasterActor}
-import com.hashmap.dataquality.data.{KafkaInboundMsg, ToActorMsg}
+import com.hashmap.dataquality.data.Msgs.{InboundMsg, ToActorMsg}
 import javax.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +32,7 @@ class ActorService {
     actorContext.masterActor = masterActor
   }
 
-  def process(key: String, msg: KafkaInboundMsg): Unit = {
+  def process(key: String, msg: InboundMsg): Unit = {
     actorContext.masterActor.tell(msg = ToActorMsg(key, msg), sender = ActorRef.noSender)
   }
 
