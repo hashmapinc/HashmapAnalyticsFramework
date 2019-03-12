@@ -38,13 +38,14 @@ object MqttPublisher {
   private def getConnection(mqttConnector: MqttConnector): Either[Throwable, MqttAsyncClient] = {
     allCatch.either({
       if(aMqttClient == null) {
-        aMqttClient = new MqttAsyncClient(mqttConnector.getMqttUrl, MqttClient.generateClientId, new MemoryPersistence)
+        aMqttClient = new MqttAsyncClient(mqttConnector.getMqttUrl, MqttClient.generateClientId)
       }
       if(!aMqttClient.isConnected) {
         val options = new MqttConnectOptions
         options.setUserName(mqttConnector.getAccessToken)
         options.setAutomaticReconnect(true)
         options.setCleanSession(false)
+        options.setMaxInflight(1000)
         aMqttClient.connect(options, null, getConnectionActionCallback())
       }
       aMqttClient
