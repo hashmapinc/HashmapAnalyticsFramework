@@ -43,8 +43,7 @@ data-quality-frequency:
 kinesis:
   enabled: "${KINESIS_SUPPORT_ENABLED:false}"
   stream-name: "${STREAM_NAME:stream-name}"
-  shard-id: "${SHARD_ID:shardId}"
-
+  
 aws:
   access-key: "${AWS_ACCESS_KEY:aws_access_key}"
   secret-key: "${AWS_SECRET_KEY:aws_secret_key}"
